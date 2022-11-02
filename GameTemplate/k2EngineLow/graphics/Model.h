@@ -186,10 +186,6 @@ namespace nsK2EngineLow {
 
 		bool m_isHit;
 
-		//ベクトル内積
-		double dot_product(const Vector3& vl, const Vector3 vr) {
-			return vl.x * vr.x + vl.y * vr.y + vl.z * vr.z;
-		}
 
 		//三角形と点の当たり判定
 		bool hittest_polygon_3d(
@@ -218,8 +214,8 @@ namespace nsK2EngineLow {
 			c3.Cross(CA, AP);
 
 			//内積で順方向か逆方向か調べる
-			double dot_12 = dot_product(c1, c2);
-			double dot_13 = dot_product(c1, c3);
+			double dot_12 = c1.Dot(c2);
+			double dot_13 = c1.Dot(c3);
 
 			if (dot_12 > 0 && dot_13 > 0) {
 				int hit = 0;
@@ -317,66 +313,20 @@ namespace nsK2EngineLow {
 				double hiritu = abs(dot_PA) / (abs(dot_PA) + abs(dot_PB));
 
 
-
-
 				//衝突点の座標を求める。
 				vertexBuffer.Rushpoint.x = A.x + (AB.x * hiritu);
 				vertexBuffer.Rushpoint.y = A.y + (AB.y * hiritu);
 				vertexBuffer.Rushpoint.z = A.z + (AB.z * hiritu);
 
-					if (hittest_polygon_3d(vertexBuffer.buffer[0], vertexBuffer.buffer[1], vertexBuffer.buffer[2], vertexBuffer.Rushpoint) == false)
-					{
-						continue;
-					}
-
-
-				//auto v0v1 = vectorBuffer[i].buffer[1] - vectorBuffer[i].buffer[0];
-				//auto v0h = out - vectorBuffer[i].buffer[0];
-				//float z = dot_product(v0v1, v0h);
-				//z *= 0.5f;
-
-				//auto v1v2 = vectorBuffer[i].buffer[2] - vectorBuffer[i].buffer[1];
-				//auto v1h = out - vectorBuffer[i].buffer[1];
-				//float x = dot_product(v1v2, v1h);
-				//x *= 0.5f;
-
-				//auto v2v0 = vectorBuffer[i].buffer[0] - vectorBuffer[i].buffer[2];
-				//auto v2h = out - vectorBuffer[i].buffer[2];
-				//float y = dot_product(v2v0, v2h);
-				//y *= 0.5f;
-
-
-				//float xyz = x + y + z;
-				//float uvx, uvy, uvz;
-
-
-				//uvx = x / xyz;
-				//uvy = y / xyz;
-				//uvz = z / xyz;
-
-				////合計が１になる
-				//float a = uvx + uvy + uvz;
-
-				//Vector2 Huv0;
-				//Huv0.x = vectorBuffer[i].uv[0].x * uvx;
-				//Huv0.y = vectorBuffer[i].uv[0].y * uvx;
-				//Vector2 Huv1;
-				//Huv1.x = vectorBuffer[i].uv[1].x * uvy;
-				//Huv1.y = vectorBuffer[i].uv[1].y * uvy;
-				//Vector2 Huv2;
-				//Huv2.x = vectorBuffer[i].uv[2].x * uvz;
-				//Huv2.y = vectorBuffer[i].uv[2].y * uvz;
-
-				////衝突点のUV座標を求める。
-				//uv.x = Huv0.x + Huv1.x + Huv2.x;
-				//uv.y = Huv0.y + Huv1.y + Huv2.y;
+				if (hittest_polygon_3d(vertexBuffer.buffer[0], vertexBuffer.buffer[1], vertexBuffer.buffer[2], vertexBuffer.Rushpoint) == false)
+				{
+					continue;
+				}
 
 				polygon.push_back(vertexBuffer);
 
 				HitFlag();
 
-			//	int ai = 0;
-			//	return true;
 			}
 
 			if (polygon.size() == 0) {
@@ -405,29 +355,34 @@ namespace nsK2EngineLow {
 			}
 				
 
-				auto v0v1 = rushPoint.buffer[1] - rushPoint.buffer[0];
-				auto v0h = rushPoint.Rushpoint - rushPoint.buffer[0];
-				float z = dot_product(v0v1, v0h);
-	//			z *= 0.5f;
+			auto v0v1 = rushPoint.buffer[1] - rushPoint.buffer[0];
+			auto v0h = rushPoint.Rushpoint - rushPoint.buffer[0];
+			Vector3 z;
+			z.Cross(v0v1, v0h);
+			float zarea = z.Length();
+			zarea *= 0.5f;
 
-				auto v1v2 = rushPoint.buffer[2] - rushPoint.buffer[1];
-				auto v1h = rushPoint.Rushpoint - rushPoint.buffer[1];
-				float x = dot_product(v1v2, v1h);
-	//			x *= 0.5f;
+			auto v1v2 = rushPoint.buffer[2] - rushPoint.buffer[1];
+			auto v1h = rushPoint.Rushpoint - rushPoint.buffer[1];
+			Vector3 x;
+			x.Cross(v1v2, v1h);
+			float xarea = x.Length();
+			xarea *= 0.5f;
 
-				auto v2v0 = rushPoint.buffer[0] - rushPoint.buffer[2];
-				auto v2h = rushPoint.Rushpoint - rushPoint.buffer[2];
-				float y = dot_product(v2v0, v2h);
-	//			y *= 0.5f;
+			auto v2v0 = rushPoint.buffer[0] - rushPoint.buffer[2];
+			auto v2h = rushPoint.Rushpoint - rushPoint.buffer[2];
+			Vector3 y;
+			y.Cross(v2v0, v2h);
+			float yarea = y.Length();
+			yarea *= 0.5f;
 
+			float xyz = xarea + yarea + zarea;
+			float uvx, uvy, uvz;
 
-				float xyz = x + y + z;
-				float uvx, uvy, uvz;
-
-				//面積の比率を求める
-				uvx = x / xyz;
-				uvy = y / xyz;
-				uvz = z / xyz;
+			//面積の比率を求める
+			uvx = xarea / xyz;
+			uvy = yarea / xyz;
+			uvz = zarea / xyz;
 
 
 				Huv0.x = rushPoint.uv[0].x * uvx;

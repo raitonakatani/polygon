@@ -29,6 +29,33 @@ namespace nsK2EngineLow {
 		}
 
 		/// <summary>
+		/// 内積を計算。
+		/// </summary>
+		/// <remarks>
+		/// float d = this->x * _v.x + this->y * _v.y;
+		/// return d;
+		/// </remarks>
+		float Dot(const Vector2& _v) const
+		{
+			DirectX::XMVECTOR xmv0 = DirectX::XMLoadFloat2(&vec);
+			DirectX::XMVECTOR xmv1 = DirectX::XMLoadFloat2(&_v.vec);
+			return DirectX::XMVector2Dot(xmv0, xmv1).m128_f32[0];
+		}
+		/// <summary>
+		/// 外積。
+		/// </summary>
+		/// <remarks>
+		/// float d = v0.x * v1.y - v0.y * v1.y;
+		/// return d;
+		/// </remarks>
+		float Cross(const Vector2& v0, const Vector2& v1) const
+		{
+			DirectX::XMVECTOR xmv0 = DirectX::XMLoadFloat2(&v0.vec);
+			DirectX::XMVECTOR xmv1 = DirectX::XMLoadFloat2(&v1.vec);
+			return DirectX::XMVector2Cross(xmv0, xmv1).m128_f32[1];
+		}
+
+		/// <summary>
 		/// 代入演算子
 		/// </summary>
 		/// <param name="_v"></param>
