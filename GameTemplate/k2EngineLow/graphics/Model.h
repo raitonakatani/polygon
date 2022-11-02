@@ -257,21 +257,16 @@ namespace nsK2EngineLow {
 				//ワールド行列を取得
 				matrix = GetWorldMatrix();
 
-				Matrix mBias;
-				mBias.MakeRotationX(Math::PI * -0.5f);
 				TkmFile::VectorBuffer vertexBuffer = vectorBuffer[i];
-				mBias.Apply(vertexBuffer.buffer[0]);
-				mBias.Apply(vertexBuffer.buffer[1]);
-				mBias.Apply(vertexBuffer.buffer[2]);
-				mBias.Apply(vertexBuffer.normal);
-				//頂点座標をワールド座標に変換
-				mBias.Apply(vectorBuffer[i].buffer[0]);
-				mBias.Apply(vectorBuffer[i].buffer[1]);
-				mBias.Apply(vectorBuffer[i].buffer[2]);
+				matrix.Apply(vertexBuffer.buffer[0]);
+				matrix.Apply(vertexBuffer.buffer[1]);
+				matrix.Apply(vertexBuffer.buffer[2]);
 
-				////法線をワールド座標に変換
-				//matrix.Apply(vectorBuffer[i].normal);
-				//vectorBuffer[i].normal.Normalize();
+				matrix.Inverse();
+				matrix.Transpose();
+
+				matrix.Apply(vertexBuffer.normal);
+				
 
 				//平面上の点P
 				//点P１＝頂点１（Vector3）
@@ -353,7 +348,7 @@ namespace nsK2EngineLow {
 					}
 				}
 			}
-				
+
 
 			auto v0v1 = rushPoint.buffer[1] - rushPoint.buffer[0];
 			auto v0h = rushPoint.Rushpoint - rushPoint.buffer[0];
@@ -385,26 +380,19 @@ namespace nsK2EngineLow {
 			uvz = zarea / xyz;
 
 
-				Huv0.x = rushPoint.uv[0].x * uvx;
-				Huv0.y = rushPoint.uv[0].y * uvx;
+			Huv0.x = rushPoint.uv[0].x * uvx;
+			Huv0.y = rushPoint.uv[0].y * uvx;
 
-				Huv1.x = rushPoint.uv[1].x * uvy;
-				Huv1.y = rushPoint.uv[1].y * uvy;
+			Huv1.x = rushPoint.uv[1].x * uvy;
+			Huv1.y = rushPoint.uv[1].y * uvy;
 
-				Huv2.x = rushPoint.uv[2].x * uvz;
-				Huv2.y = rushPoint.uv[2].y * uvz;
-
-
+			Huv2.x = rushPoint.uv[2].x * uvz;
+			Huv2.y = rushPoint.uv[2].y * uvz;
 
 			out = rushPoint.Rushpoint;
 			//衝突点のUV座標を求める。
 			uv.x = Huv0.x + Huv1.x + Huv2.x;
 			uv.y = Huv0.y + Huv1.y + Huv2.y;
-
-			//uv.x = rushPoint.uv[0].x;
-			//uv.y = rushPoint.uv[0].y;
-			//uv.x = (rushPoint.uv[0].x + rushPoint.uv[1].x + rushPoint.uv[2].x) / 3;
-			//uv.y = (rushPoint.uv[0].y + rushPoint.uv[1].y + rushPoint.uv[2].y) / 3;
 
 			int ab = 0;
 

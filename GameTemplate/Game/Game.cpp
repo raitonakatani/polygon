@@ -56,36 +56,36 @@ bool Game::Start()
 			return true;
 		}
 
-		//if (objData.EqualObjectName(L"box") == true) {
-		//	// 床のオブジェクトを生成する。
-		//	m_box = NewGO<Box>(0, "box");
-		//	m_box->SetPosition(objData.position);
-		//	m_box->SetRotation(objData.rotation);
-		//	m_box->SetScale(objData.scale);
+		if (objData.EqualObjectName(L"box") == true) {
+			// 床のオブジェクトを生成する。
+			m_box = NewGO<Box>(0, "box");
+			m_box->SetPosition(objData.position);
+			m_box->SetRotation(objData.rotation);
+			m_box->SetScale(objData.scale);
 
-		//	//trueにすると、レベルの方でモデルが読み込まれて配置される。
-		//	return true;
-		//}
+			//trueにすると、レベルの方でモデルが読み込まれて配置される。
+			return true;
+		}
 
-		//if (objData.EqualObjectName(L"cylinder") == true) {
-		//	// 床のオブジェクトを生成する。
-		//	m_cylinder = NewGO<Cylinder>(0, "cylinder");
-		//	m_cylinder->SetPosition(objData.position);
-		//	m_cylinder->SetRotation(objData.rotation);
-		//	m_cylinder->SetScale(objData.scale);
-		//	//trueにすると、レベルの方でモデルが読み込まれて配置される。
-		//	return true;
-		//}
+		if (objData.EqualObjectName(L"cylinder") == true) {
+			// 床のオブジェクトを生成する。
+			m_cylinder = NewGO<Cylinder>(0, "cylinder");
+			m_cylinder->SetPosition(objData.position);
+			m_cylinder->SetRotation(objData.rotation);
+			m_cylinder->SetScale(objData.scale);
+			//trueにすると、レベルの方でモデルが読み込まれて配置される。
+			return true;
+		}
 
-		//if (objData.EqualObjectName(L"triangle") == true) {
-		//	// 床のオブジェクトを生成する。
-		//	m_triangle = NewGO<Triangle>(0, "triangle");
-		//	m_triangle->SetPosition(objData.position);
-		//	m_triangle->SetRotation(objData.rotation);
-		//	m_triangle->SetScale(objData.scale);
-		//	//trueにすると、レベルの方でモデルが読み込まれて配置される。
-		//	return true;
-		//}
+		if (objData.EqualObjectName(L"triangle") == true) {
+			// 床のオブジェクトを生成する。
+			m_triangle = NewGO<Triangle>(0, "triangle");
+			m_triangle->SetPosition(objData.position);
+			m_triangle->SetRotation(objData.rotation);
+			m_triangle->SetScale(objData.scale);
+			//trueにすると、レベルの方でモデルが読み込まれて配置される。
+			return true;
+		}
 
 
 		return true;

@@ -45,8 +45,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	rotation.SetRotationDegY(90.f);
 	//boxModel.UpdateWorldMatrix({ 500.0f,350.0f,0.0f }, rotation, g_vec3One);
 
-	boxModel.UpdateWorldMatrix(Vector3::Zero, g_quatIdentity, g_vec3One);
-	//boxModel.UpdateWorldMatrix({ 500.0f,350.0f,0.0f }, g_quatIdentity, g_vec3One);
+	//boxModel.UpdateWorldMatrix(Vector3::Zero, g_quatIdentity, g_vec3One);
+	boxModel.UpdateWorldMatrix({ 500.0f,300.0f,0.0f }, g_quatIdentity, g_vec3One);
 
 	g_renderingEngine.SpriteInit(boxModel.GetTkmFile()->m_albedo);
 
