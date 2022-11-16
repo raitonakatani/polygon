@@ -55,7 +55,8 @@ private:
 	SpriteInitData spriteinitdata;
 	Sprite sprite;
 
-	RenderingEngine m_renderingEngine;
+	RenderingEngine* m_renderingEngine =&g_renderingEngine;
+
 
 	Vector3 startVector;
 	Vector3 endVector;

@@ -42,7 +42,6 @@ namespace nsK2EngineLow {
 			DXGI_FORMAT_UNKNOWN,
 		};	//レンダリングするカラーバッファのフォーマット。
 		D3D12_TEXTURE_ADDRESS_MODE textureAddressMode = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;	// テクスチャアドレッシングモード。
-		Vector2 m_posi;
 		int m_hit;
 	};
 	/// <summary>
@@ -87,6 +86,10 @@ namespace nsK2EngineLow {
 		/// UnityのuGUIに準拠。
 		/// </param>
 		void Update(const Vector3& pos, const Quaternion& rot, const Vector3& scale, const Vector2& pivot = DEFAULT_PIVOT);
+		/// <summary>
+		/// UV座標を設定する。
+		/// </summary>
+		void InitUVPosition(Vector2 uv);
 		/// <summary>
 		/// 描画。
 		/// </summary>
@@ -188,5 +191,6 @@ namespace nsK2EngineLow {
 		Shader				m_vs;					//頂点シェーダー。
 		Shader				m_ps;					//ピクセルシェーダー。
 		Vector4				m_mulColor = Vector4::White;	//乗算カラー。
+		Vector2				m_uv;
 	};
 }

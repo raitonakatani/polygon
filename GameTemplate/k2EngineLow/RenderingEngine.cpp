@@ -28,21 +28,23 @@ namespace nsK2EngineLow
 		m_modelRenderCB.mlvp = GetLightCamera().GetViewProjectionMatrix();
 		// ゲームオブジェクトマネージャーの描画処理を呼び出す。
 		g_engine->ExecuteRender();
-	//	ShadowMapDraw(rc);
+		ShadowMapDraw(rc);
 
-	//	m_postEffect->Render(rc);
+		m_postEffect->Render(rc);
 
 		Render2DDraw(rc);
 		m_renderobject.clear();
 	}
 	void RenderingEngine::Init()
 	{
-	//	m_postEffect = &g_postEffect;
-	//	m_shadowMapRender.Init();
+		m_postEffect = &g_postEffect;
+		m_shadowMapRender.Init();
 		m_modelRenderCB.m_light = g_Light.GetLight();
 		m_modelRenderCB.mlvp = GetLightCamera().GetViewProjectionMatrix();
+	}
 
-
+	void RenderingEngine::InitTextureTarget()
+	{
 		offscreenRenderTarget.Create(
 			FRAME_BUFFER_W,
 			FRAME_BUFFER_H,
@@ -77,7 +79,8 @@ namespace nsK2EngineLow
 		spriteinitdata.m_width = FRAME_BUFFER_W;
 		spriteinitdata.m_height = FRAME_BUFFER_H;
 		spriteinitdata.m_expandShaderResoruceView[0] = &inksprite.GetTexture(0);
-		spriteinitdata.m_expandShaderResoruceView[1] = &offscreenRenderTarget.GetRenderTargetTexture();
+	//	spriteinitdata.m_expandShaderResoruceView[1] = &offscreenRenderTarget.GetRenderTargetTexture();
+		sprite.Init(spriteinitdata);
 		//	spriteinitdata.m_posi = { 0.125f,0.125f };
 			//Sprite初期化オブジェクトを使用して、Spriteを初期化する。
 		//	sprite.Init(spriteinitdata);
@@ -85,7 +88,7 @@ namespace nsK2EngineLow
 
 
 	void RenderingEngine::SpriteDraw(
-		Model& Model,
+		ModelRender& Model,
 		Vector3& POS,	//戻り値　交点が見つかれば格納される 衝突点
 		Vector2& UV,	//戻り値　交点が見つかれば格納される 衝突したポリゴンの３頂点のUV座標
 		Vector3& startVector,		//線分始点
@@ -95,15 +98,14 @@ namespace nsK2EngineLow
 		auto& renderContext = g_graphicsEngine->GetRenderContext();
 
 		//三角形の座標が入っているリストを持ってくる。
-		std::vector<nsK2EngineLow::TkmFile::VectorBuffer> bufferList = Model.GetTkmFile()->GetBuffer();
+		std::vector<nsK2EngineLow::TkmFile::VectorBuffer> bufferList = Model.GetTkm()->GetBuffer();
 
+		Vector3 pos;
+		Vector2 uv;
 		//平面と線分の交点を求める。　POS（交点の座標）、vector3d(線分始点)、vector3dend(線分終点)、ポリゴンの3頂点
-		if (Model.IntersectPlaneAndLine(POS, UV, startVector, endVector, bufferList) == true) {
+		if (Model.IntersectPlaneAndLine(pos, uv, startVector, endVector, bufferList) == true) {
 
-			auto Vector = POS;
-			Vector3 UVPOS = Vector3(UV.x, UV.y, 0.0f);
-
-			Model.ChangeAlbedoMap(
+			Model.Change(
 				"",
 				offscreenRenderTarget.GetRenderTargetTexture()
 			);
@@ -116,11 +118,8 @@ namespace nsK2EngineLow
 
 			// step-5 offscreenRenderTargetに背景、プレイヤーを描画する
 			if (g_pad[0]->IsPress(enButtonA)) {
-				spriteinitdata.m_posi.x = UVPOS.x;
-				spriteinitdata.m_posi.y = UVPOS.y;
-				sprite.Init(spriteinitdata);
+				sprite.InitUVPosition(uv);
 			}
-		
 			sprite.Draw(renderContext);
 
 			renderContext.WaitUntilFinishDrawingToRenderTargets(1, rtArray);
@@ -131,8 +130,6 @@ namespace nsK2EngineLow
 			);
 
 			spriteinitdata.m_hit = 1;
-			//spriteinitdata.m_ddsFilePath[0] = nullptr;
-			//spriteinitdata.m_textures[0] = sprite.GetoffTexture(0);
 		}
 	}
 }

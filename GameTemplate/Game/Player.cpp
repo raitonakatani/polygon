@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Player.h"
 #include "Game.h"
-
+#include "GameSound.h"
 
 // EffectEmitterを使用するために、ファイルをインクルードする。
 #include "graphics/effect/EffectEmitter.h"
@@ -16,7 +16,7 @@ namespace
 	const float CHARACON_RADIUS = 30.0f;						// キャラコンの半径
 	const float CHARACON_HEIGHT = 75.0f;						// キャラコンの高さ
 	const float MOVE_SPEED_MINIMUMVALUE = 0.001f;				// 移動速度の最低値
-	const float WALK_MOVESPEED = 400.0f;						// 歩きステートの移動速度
+	const float WALK_MOVESPEED = 300.0f;						// 歩きステートの移動速度
 	const float GRAVITY = 1000.0f;								// 重力
 	const float START_MOVE = 0.0f;								// 初期設定のスピード
 }
@@ -25,13 +25,31 @@ bool Player::Start()
 {
 	m_animationClipArray[enAnimClip_Idle].Load("Assets/aniData/idle.tka");
 	m_animationClipArray[enAnimClip_Idle].SetLoopFlag(true);
-	m_animationClipArray[enAnimClip_Shot].Load("Assets/aniData/shot.tka");
+	m_animationClipArray[enAnimClip_Shot].Load("Assets/aniData/attack.tka");
 	m_animationClipArray[enAnimClip_Shot].SetLoopFlag(true);
+	m_animationClipArray[enAnimClip_LeftShot].Load("Assets/aniData/leftattack.tka");
+	m_animationClipArray[enAnimClip_LeftShot].SetLoopFlag(true);
+	m_animationClipArray[enAnimClip_RightShot].Load("Assets/aniData/rightattack.tka");
+	m_animationClipArray[enAnimClip_RightShot].SetLoopFlag(true);
+	m_animationClipArray[enAnimClip_ForwardShot].Load("Assets/aniData/forwardattack.tka");
+	m_animationClipArray[enAnimClip_ForwardShot].SetLoopFlag(true);
+	m_animationClipArray[enAnimClip_BackShot].Load("Assets/aniData/backattack.tka");
+	m_animationClipArray[enAnimClip_BackShot].SetLoopFlag(true);
+	m_animationClipArray[enAnimClip_Walk].Load("Assets/aniData/walk.tka");
+	m_animationClipArray[enAnimClip_Walk].SetLoopFlag(true);
+	m_animationClipArray[enAnimClip_Jump].Load("Assets/aniData/walk.tka");
+	m_animationClipArray[enAnimClip_Jump].SetLoopFlag(true);
 
 	// モデルの読み込み
-	m_modelRender.Init("Assets/modelData/unityChan.tkm", false,m_animationClipArray,enAnimClip_Num);
+	m_modelRender.Init("Assets/modelData/testModel/player.tkm", false,m_animationClipArray,enAnimClip_Num);
 	m_modelRender.SetPosition(m_position);
 	m_modelRender.Update();
+
+	// アニメーションイベント用の関数を設定する
+	m_modelRender.AddAnimationEvent([&](const wchar_t* clipName, const wchar_t* eventName) {
+		OnAnimationEvent(clipName, eventName);
+		});
+
 
 	m_testmodel.Init("Assets/modelData/unityChan.tkm", false);
 	m_testmodel.SetPosition(m_position);
@@ -40,33 +58,24 @@ bool Player::Start()
 	// キャラコン
 	m_charaCon.Init(CHARACON_RADIUS, CHARACON_HEIGHT, m_position);
 
+	
 	// ゲームのクラスを探してもってくる。
 	m_game = FindGO<Game>("game");
+	m_gameSound = FindGO<GameSound>("gamesound");
+
 	return true;
 }
 
 void Player::Update()
 {
-
-	if (g_pad[0]->IsTrigger(enButtonA)) {
-
+	if (g_pad[0]->IsPress(enButtonA)) {
 		m_startVector = m_position;
 		m_startVector.y += 100.0f;
-
 		m_endVector = m_startVector;
 		Vector3 forward = Vector3::AxisZ;
 		rotation.Apply(forward);
 		m_endVector += forward * 200.0f;
-		//m_endVector.y += 100.0f;
-		//forward *= 1200.0f;
 		rotation.AddRotationDegY(360.0f);
-
-		//m_endVector += forward * 1000.0f;
-
-	//	m_startVector.y = 500.0f;
-	//	m_endVector.y = 500.0f;
-
-
 	}
 	rotation = m_rotation;
 	m_testmodel.SetPosition(m_endVector);
@@ -75,18 +84,19 @@ void Player::Update()
 	m_testmodel.Update();
 
 
-	// 移動処理
-	Move();
 	// 回転処理
 	Rotation();
+	// 移動処理
+	Move();
+	// アニメーションの再生
+	PlayAnimation();
+	// 各ステートの遷移処理
+	ManageState();
 
 	// 座標、回転、大きさの更新
 	m_modelRender.SetPosition(m_position);
 	m_modelRender.SetRotation(m_rotation);
 	m_modelRender.SetScale(MODEL_SCALE);
-
-
-
 
 
 	// モデルの更新
@@ -111,24 +121,37 @@ void Player::Move()
 	cameraRight.y = START_MOVE;
 	cameraRight.Normalize();
 
-	m_moveSpeed += cameraForward * lStick_y * WALK_MOVESPEED;
-	m_moveSpeed += cameraRight * lStick_x * WALK_MOVESPEED;
+	m_moveSpeed += cameraForward * lStick_y * move;
+	m_moveSpeed += cameraRight * lStick_x * move;
 
-	if (fabsf(m_moveSpeed.x) >= 0.001f || fabsf(m_moveSpeed.z) >= 0.001f){
-		m_modelRender.PlayAnimation(enAnimClip_Shot, 0.1f);
-		m_modelRender.SetAnimationSpeed(2.0f);
+	if (fabsf(m_moveSpeed.x) >= 0.001f || fabsf(m_moveSpeed.z) >= 0.001f) {
+		if (move <= 300.0f) {
+			move *= 1.1f;
+		}
+			Lstick_y = lStick_y;
+			Lstick_x = lStick_x;
+
 	}
 	else {
-		m_modelRender.PlayAnimation(enAnimClip_Idle, 0.1f);
-		m_modelRender.SetAnimationSpeed();
+		if (move >= 100.0f) {
+			move /= 1.08f;
+			m_moveSpeed += cameraForward * Lstick_y * move;
+			m_moveSpeed += cameraRight * Lstick_x * move;
+		}
 	}
+
 
 	if (g_pad[0]->IsTrigger(enButtonB)) {
 		m_moveSpeed.y += 500.0f;
 	}
 
-	// 重力
-	m_moveSpeed.y -= GRAVITY * g_gameTime->GetFrameDeltaTime();
+	if (m_charaCon.IsOnGround() == false) {
+		// 重力
+		m_moveSpeed.y -= GRAVITY * g_gameTime->GetFrameDeltaTime();
+	}
+	else {
+		a = 0;
+	}
 	// キャラコンを使用して、座標を更新する
 	m_position = m_charaCon.Execute(m_moveSpeed, g_gameTime->GetFrameDeltaTime());
 	// 座標の更新
@@ -138,12 +161,24 @@ void Player::Move()
 
 void Player::Rotation()
 {
+	if (g_pad[0]->IsPress(enButtonA) == true)
+	{
+		if (m_moveSpeed.x >= 0.001f|| m_moveSpeed.x <= -0.001f||
+			m_moveSpeed.z >= 0.001f || m_moveSpeed.z <= -0.001f) {
+			return;
+		}
+		m_moveSpeed += g_camera3D->GetForward();
+	}
+
 	if (fabsf(m_moveSpeed.x) < MOVE_SPEED_MINIMUMVALUE
 		&& fabsf(m_moveSpeed.z) < MOVE_SPEED_MINIMUMVALUE) {
 		return;
 	}
+
 	float angle = atan2(-m_moveSpeed.x, m_moveSpeed.z);
 	m_rotation.SetRotationY(-angle);
+
+
 	// 回転を設定する
 	m_modelRender.SetRotation(m_rotation);
 	// プレイヤーの正面ベクトルを計算する
@@ -158,4 +193,186 @@ void Player::Render(RenderContext& rc)
 
 	m_testmodel.Draw(rc);
 
+}
+
+void Player::ProcessCommonStateTransition()
+{
+	if (g_pad[0]->IsTrigger(enButtonB)) {
+		//ジャンプステートに遷移
+		m_playerState = enPlayerState_Jump;
+		return;
+	}
+
+	// xかzの移動速度があったら
+	if (fabsf(m_moveSpeed.x) >= 0.001f || fabsf(m_moveSpeed.z) >= 0.001f)
+	{
+	/*	if (g_pad[0]->IsPress(enButtonA)==true) {
+			if (Lstick_x<= -0.1f) {
+				m_playerState = enPlayerState_LeftShot;
+				return;
+			}
+			else if (Lstick_x >= 0.1f)
+			{
+				m_playerState = enPlayerState_RightShot;
+				return;
+			}
+			else if (Lstick_y >= 0.1f)
+			{
+				m_playerState = enPlayerState_ForwardShot;
+				return;
+			}
+			else if (Lstick_y <= -0.1f)
+			{
+				m_playerState = enPlayerState_BackShot;
+				return;
+			}
+		}
+		else {*/
+			//走りステートに遷移
+			m_playerState = enPlayerState_Walk;
+			return;
+	//	}
+	}
+	else {
+		
+		if (g_pad[0]->IsPress(enButtonA)) {
+			//攻撃ステートに遷移
+			m_playerState = enPlayerState_Shot;
+			return;
+		}
+
+		if (m_charaCon.IsOnGround() == true) {
+			//待機ステートに遷移
+			m_playerState = enPlayerState_Idle;
+			return;
+		}
+	}
+
+}
+
+void Player::ProcessIdleStateTransition()
+{
+	ProcessCommonStateTransition();
+	
+}
+
+void Player::ProcessRunStateTransition()
+{
+		ProcessCommonStateTransition();
+}
+
+void Player::ProcessJumpStateTransition()
+{
+		ProcessCommonStateTransition();
+}
+
+void Player::ProcessAttackStateTransition()
+{
+		ProcessCommonStateTransition();
+}
+
+void Player::PlayAnimation()
+{
+	switch (m_playerState)
+	{
+		// 待機ステートの時
+	case Player::enPlayerState_Idle:
+		m_modelRender.PlayAnimation(enAnimClip_Idle, 0.1f);
+		m_modelRender.SetAnimationSpeed(0.8f);
+		break;
+		// ジャンプステートの時
+	case Player::enPlayerState_Jump:
+		m_modelRender.PlayAnimation(enAnimClip_Jump, 0.1f);
+		m_modelRender.SetAnimationSpeed(1.2f);
+		break;
+		// 走りステートの時
+	case Player::enPlayerState_Walk:
+		m_modelRender.PlayAnimation(enAnimClip_Walk, 0.1f);
+		m_modelRender.SetAnimationSpeed(1.2f);
+		break;
+		// 攻撃ステートの時
+	case Player::enPlayerState_Shot:
+		m_modelRender.PlayAnimation(enAnimClip_Shot, 0.1f);
+		m_modelRender.SetAnimationSpeed();
+		break;
+		// 攻撃ステートの時左
+	case Player::enPlayerState_LeftShot:
+		m_modelRender.PlayAnimation(enAnimClip_LeftShot, 0.1f);
+		m_modelRender.SetAnimationSpeed();
+		break;
+		// 攻撃ステートの時
+	case Player::enPlayerState_RightShot:
+		m_modelRender.PlayAnimation(enAnimClip_RightShot, 0.1f);
+		m_modelRender.SetAnimationSpeed();
+		break;
+		// 攻撃ステートの時左
+	case Player::enPlayerState_ForwardShot:
+		m_modelRender.PlayAnimation(enAnimClip_ForwardShot, 0.1f);
+		m_modelRender.SetAnimationSpeed();
+		break;
+		// 攻撃ステートの時
+	case Player::enPlayerState_BackShot:
+		m_modelRender.PlayAnimation(enAnimClip_ForwardShot, 0.1f);
+		m_modelRender.SetAnimationSpeed();
+		break;
+	default:
+		break;
+	}
+}
+
+void Player::ManageState()
+{
+	switch (m_playerState)
+	{
+		// 待機ステートの時
+	case Player::enPlayerState_Idle:
+		ProcessIdleStateTransition();
+		break;
+		// ジャンプステートの時
+	case Player::enPlayerState_Jump:
+		ProcessJumpStateTransition();
+		break;
+		// 走りステートの時
+	case Player::enPlayerState_Walk:
+		ProcessRunStateTransition();
+		break;
+		// 攻撃ステートの時
+	case Player::enPlayerState_Shot:
+		ProcessAttackStateTransition();
+		break;
+		// 攻撃ステートの時
+	case Player::enPlayerState_LeftShot:
+		ProcessAttackStateTransition();
+		break;
+		// 攻撃ステートの時
+	case Player::enPlayerState_RightShot:
+		ProcessAttackStateTransition();
+		break;	
+	case Player::enPlayerState_ForwardShot:
+		ProcessAttackStateTransition();
+		break;
+		// 攻撃ステートの時
+	case Player::enPlayerState_BackShot:
+		ProcessAttackStateTransition();
+		break;
+	default:
+		break;
+	}
+}
+
+
+void Player::OnAnimationEvent(const wchar_t* clipName, const wchar_t* eventName)
+{
+	(void)clipName;
+	if (wcscmp(eventName, L"Run_step") == 0 && m_charaCon.IsOnGround() == true) {
+		// 足音。
+		// 効果音を再生する。
+		m_gameSound->PlayerStepSE(0.4f);
+	}
+
+	if (wcscmp(eventName, L"attack") == 0) {
+		// 足音。
+		// 効果音を再生する。
+		m_gameSound->PlayerAttackSE(0.3f);
+	}
 }

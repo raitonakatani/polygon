@@ -20,6 +20,7 @@
     <ClCompile Include="Magic.cpp" />
     <ClCompile Include="Cylinder.cpp" />
     <ClCompile Include="Triangle.cpp" />
+    <ClCompile Include="GameSound.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -35,5 +36,6 @@
     <ClInclude Include="Magic.h" />
     <ClInclude Include="Cylinder.h" />
     <ClInclude Include="Triangle.h" />
+    <ClInclude Include="GameSound.h" />
   </ItemGroup>
 </Project>

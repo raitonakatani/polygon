@@ -221,11 +221,6 @@ namespace nsK2EngineLow {
 
 		bool m_isHit;
 
-		//ベクトル内積
-		double dot_product(const Vector3& vl, const Vector3 vr) {
-			return vl.x * vr.x + vl.y * vr.y + vl.z * vr.z;
-		}
-
 		//三角形と点の当たり判定
 		bool hittest_polygon_3d(
 			Vector3& A,
@@ -253,11 +248,10 @@ namespace nsK2EngineLow {
 			c3.Cross(CA, AP);
 
 			//内積で順方向か逆方向か調べる
-			double dot_12 = dot_product(c1, c2);
-			double dot_13 = dot_product(c1, c3);
+			double dot_12 = c1.Dot(c2);
+			double dot_13 = c1.Dot(c3);
 
 			if (dot_12 > 0 && dot_13 > 0) {
-
 				int hit = 0;
 				//三角形の内側に点がある
 				return true;
@@ -269,7 +263,6 @@ namespace nsK2EngineLow {
 		}
 
 
-
 		//線分ABと平面の交点を計算する
 		bool IntersectPlaneAndLine(
 			Vector3& out,	//戻り値　交点が見つかれば格納される 衝突点
@@ -279,6 +272,17 @@ namespace nsK2EngineLow {
 			std::vector<nsK2EngineLow::TkmFile::VectorBuffer>& vectorBuffer
 		) //平面
 		{
+
+			int n = 0;
+			Vector3 posi;
+			float a = 0.0f;
+			float b = 0.0f;
+			Vector3 diff;
+			Vector3 diff2;
+			Vector2 Huv0, Huv1, Huv2;
+
+			std::vector<nsK2EngineLow::TkmFile::VectorBuffer> polygon;
+
 			for (int i = 0;i < vectorBuffer.size();i++)
 			{
 
@@ -287,26 +291,29 @@ namespace nsK2EngineLow {
 				//ワールド行列を取得
 				matrix = m_model.GetWorldMatrix();
 
-				//頂点座標をワールド座標に変換
-				matrix.Apply(vectorBuffer[i].buffer[0]);
-				matrix.Apply(vectorBuffer[i].buffer[1]);
-				matrix.Apply(vectorBuffer[i].buffer[2]);
+				TkmFile::VectorBuffer vertexBuffer = vectorBuffer[i];
+				matrix.Apply(vertexBuffer.buffer[0]);
+				matrix.Apply(vertexBuffer.buffer[1]);
+				matrix.Apply(vertexBuffer.buffer[2]);
 
-				////法線をワールド座標に変換
-				//matrix.Apply(vectorBuffer[i].normal);
-				//vectorBuffer[i].normal.Normalize();
+				matrix.Inverse();
+				matrix.Transpose();
+
+				matrix.Apply(vertexBuffer.normal);
+
 
 				//平面上の点P
 				//点P１＝頂点１（Vector3）
-				Vector3 P = Vector3(vectorBuffer[i].buffer[0]);
+				Vector3 P = Vector3(vertexBuffer.buffer[0]);
 
 				//PA PBベクトル
 				Vector3 PA = Vector3(P.x - A.x, P.y - A.y, P.z - A.z);
 				Vector3 PB = Vector3(P.x - B.x, P.y - B.y, P.z - B.z);
 
 				//PA PBそれぞれを平面法線と内積
-				double dot_PA = PA.Dot(vectorBuffer[i].normal);
-				double dot_PB = PB.Dot(vectorBuffer[i].normal);
+				double dot_PA = PA.Dot(vertexBuffer.normal);
+				double dot_PB = PB.Dot(vertexBuffer.normal);
+
 
 				//これは線端が平面上にあった時の計算の誤差を吸収しています。調整して使ってください。
 				if (abs(dot_PA) < 0.000001) { dot_PA = 0.0; }
@@ -329,72 +336,101 @@ namespace nsK2EngineLow {
 				}
 
 				//以下、交点を求める 
-
 				Vector3 AB = Vector3(B.x - A.x, B.y - A.y, B.z - A.z);
 
 				//交点とAの距離 : 交点とBの距離 = dot_PA : dot_PB
 				double hiritu = abs(dot_PA) / (abs(dot_PA) + abs(dot_PB));
 
+
 				//衝突点の座標を求める。
-				out.x = A.x + (AB.x * hiritu);
-				out.y = A.y + (AB.y * hiritu);
-				out.z = A.z + (AB.z * hiritu);
+				vertexBuffer.Rushpoint.x = A.x + (AB.x * hiritu);
+				vertexBuffer.Rushpoint.y = A.y + (AB.y * hiritu);
+				vertexBuffer.Rushpoint.z = A.z + (AB.z * hiritu);
 
-				/*	if (hittest_polygon_3d(vectorBuffer[i].buffer[0], vectorBuffer[i].buffer[1], vectorBuffer[i].buffer[2], out) == false)
-					{
-						continue;
-					}*/
+				if (hittest_polygon_3d(vertexBuffer.buffer[0], vertexBuffer.buffer[1], vertexBuffer.buffer[2], vertexBuffer.Rushpoint) == false)
+				{
+					continue;
+				}
 
-
-				auto v0v1 = vectorBuffer[i].buffer[1] - vectorBuffer[i].buffer[0];
-				auto v0h = out - vectorBuffer[i].buffer[0];
-				float z = dot_product(v0v1, v0h);
-				z *= 0.5f;
-
-				auto v1v2 = vectorBuffer[i].buffer[2] - vectorBuffer[i].buffer[1];
-				auto v1h = out - vectorBuffer[i].buffer[1];
-				float x = dot_product(v1v2, v1h);
-				x *= 0.5f;
-
-				auto v2v0 = vectorBuffer[i].buffer[0] - vectorBuffer[i].buffer[2];
-				auto v2h = out - vectorBuffer[i].buffer[2];
-				float y = dot_product(v2v0, v2h);
-				y *= 0.5f;
-
-
-				float xyz = x + y + z;
-				float uvx, uvy, uvz;
-
-
-				uvx = x / xyz;
-				uvy = y / xyz;
-				uvz = z / xyz;
-
-				//合計が１になる
-				float a = uvx + uvy + uvz;
-
-				Vector2 Huv0;
-				Huv0.x = vectorBuffer[i].uv[0].x * uvx;
-				Huv0.y = vectorBuffer[i].uv[0].y * uvx;
-				Vector2 Huv1;
-				Huv1.x = vectorBuffer[i].uv[1].x * uvy;
-				Huv1.y = vectorBuffer[i].uv[1].y * uvy;
-				Vector2 Huv2;
-				Huv2.x = vectorBuffer[i].uv[2].x * uvz;
-				Huv2.y = vectorBuffer[i].uv[2].y * uvz;
-
-				//衝突点のUV座標を求める。
-				uv.x = Huv0.x + Huv1.x + Huv2.x;
-				uv.y = Huv0.y + Huv1.y + Huv2.y;
-
+				polygon.push_back(vertexBuffer);
 
 				HitFlag();
 
-				int ai = 0;
-				return true;
 			}
 
-			return false;
+			if (polygon.size() == 0) {
+				return false;
+			}
+
+			nsK2EngineLow::TkmFile::VectorBuffer rushPoint;
+			for (int v = 0; v < polygon.size();v++) {
+
+
+				if (v == 0)
+				{
+					rushPoint = polygon[v];
+					posi = polygon[v].Rushpoint;
+					diff = A - posi;
+					a = diff.Length();
+				}
+				else {
+					diff2 = A - polygon[v].Rushpoint;
+					b = diff2.Length();
+					if (a > b) {
+						posi = polygon[v].Rushpoint;
+						rushPoint = polygon[v];
+					}
+				}
+			}
+
+
+			auto v0v1 = rushPoint.buffer[1] - rushPoint.buffer[0];
+			auto v0h = rushPoint.Rushpoint - rushPoint.buffer[0];
+			Vector3 z;
+			z.Cross(v0v1, v0h);
+			float zarea = z.Length();
+			zarea *= 0.5f;
+
+			auto v1v2 = rushPoint.buffer[2] - rushPoint.buffer[1];
+			auto v1h = rushPoint.Rushpoint - rushPoint.buffer[1];
+			Vector3 x;
+			x.Cross(v1v2, v1h);
+			float xarea = x.Length();
+			xarea *= 0.5f;
+
+			auto v2v0 = rushPoint.buffer[0] - rushPoint.buffer[2];
+			auto v2h = rushPoint.Rushpoint - rushPoint.buffer[2];
+			Vector3 y;
+			y.Cross(v2v0, v2h);
+			float yarea = y.Length();
+			yarea *= 0.5f;
+
+			float xyz = xarea + yarea + zarea;
+			float uvx, uvy, uvz;
+
+			//面積の比率を求める
+			uvx = xarea / xyz;
+			uvy = yarea / xyz;
+			uvz = zarea / xyz;
+
+
+			Huv0.x = rushPoint.uv[0].x * uvx;
+			Huv0.y = rushPoint.uv[0].y * uvx;
+
+			Huv1.x = rushPoint.uv[1].x * uvy;
+			Huv1.y = rushPoint.uv[1].y * uvy;
+
+			Huv2.x = rushPoint.uv[2].x * uvz;
+			Huv2.y = rushPoint.uv[2].y * uvz;
+
+			out = rushPoint.Rushpoint;
+			//衝突点のUV座標を求める。
+			uv.x = Huv0.x + Huv1.x + Huv2.x;
+			uv.y = Huv0.y + Huv1.y + Huv2.y;
+
+			int ab = 0;
+
+			return true;
 		}
 
 

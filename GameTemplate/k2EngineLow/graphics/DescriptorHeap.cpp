@@ -57,8 +57,11 @@ namespace nsK2EngineLow {
 	int g_numDescriptorHeap = 0;
 	void DescriptorHeap::Commit()
 	{
-		Release();
 		const auto& d3dDevice = g_graphicsEngine->GetD3DDevice();
+		auto hr1 = d3dDevice->GetDeviceRemovedReason();
+		Release();
+		//const auto& d3dDevice = g_graphicsEngine->GetD3DDevice();
+		auto hr2 = d3dDevice->GetDeviceRemovedReason();
 		D3D12_DESCRIPTOR_HEAP_DESC srvHeapDesc = {};
 
 		srvHeapDesc.NumDescriptors = (m_numShaderResource + m_numConstantBuffer + m_numUavResource) * 2;
@@ -67,6 +70,7 @@ namespace nsK2EngineLow {
 
 
 		auto hr = d3dDevice->CreateDescriptorHeap(&srvHeapDesc, IID_PPV_ARGS(&m_descriptorHeap));
+		auto hr3 = d3dDevice->GetDeviceRemovedReason();
 		g_numDescriptorHeap++;
 		if (FAILED(hr)) {
 			MessageBox(nullptr, L"DescriptorHeap::Commit ディスクリプタヒープの作成に失敗しました。", L"エラー", MB_OK);

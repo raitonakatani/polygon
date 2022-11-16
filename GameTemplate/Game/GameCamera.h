@@ -23,7 +23,7 @@ public:
 	/// <returns>座標。</returns>
 	const Vector3& GetPosition() const
 	{
-		return pos2;
+		return m_pos;
 	}
 
 	/// <summary>
@@ -32,7 +32,7 @@ public:
 	/// <returns>回転。</returns>
 	const Quaternion& GetQuaternion() const
 	{
-		return qRot2;
+		return m_xyRot;
 	}
 
 	/// <summary>
@@ -45,14 +45,13 @@ public:
 	}
 
 private:
-	Player* m_player = nullptr;				//プレイヤー
+	Player*					m_player = nullptr;				//プレイヤー
 	Vector3					m_toCameraPos = Vector3::One;	//注視点から視点に向かうベクトル。
 	Vector3					m_forward;						//前方向のベクトル	
-	Vector3					pos2;							//カメラの位置(視点)
-	Vector3					toCameraPosOld2;				//注視点から視点に向かうベクトル。
-	Vector3					m_toCameraPos2;					//注視点から視点に向かうベクトル。
+	Vector3					m_pos;							//カメラの位置(視点)
+	Vector3					m_toCameraPosOld;				//注視点から視点に向かうベクトル。
 	Quaternion              m_rotation;						//回転
-	Quaternion qRot2;
+	Quaternion				m_xyRot;							//XY軸周りの回転
 	int						m_camera = 0;					//カメラの切り替え判定。
 	float					m_timer = 0.0f;					//タイマー。
 

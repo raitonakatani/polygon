@@ -18,10 +18,12 @@ namespace nsK2EngineLow
 	public:
 		void Init();
 
+		void InitTextureTarget();
+
 		void SpriteInit(const char* aldeboMap);
 
 		void SpriteDraw(
-			Model& Model,
+			ModelRender& Model,
 			Vector3& out,	//戻り値　交点が見つかれば格納される 衝突点
 			Vector2& uv,	//戻り値　交点が見つかれば格納される 衝突したポリゴンの３頂点のUV座標
 			Vector3& A,		//線分始点

@@ -9,16 +9,16 @@ namespace
 bool Background::Start()
 {
 	// 通常モデル
-	m_modelRender.Init("Assets/modelData/box.tkm", true);
-	// モデルの座標を設定。
-	m_modelRender.SetPosition(m_position);
-	// モデルの回転を設定。
-	m_modelRender.SetRotation(m_rotation);
-	// モデルの大きさを設定。
-	m_modelRender.SetScale(m_scale);
-	// モデルの更新処理。
-	m_modelRender.Update();
-	// 静的物理オブジェクトの初期化処理。
+	//m_modelRender.Init("Assets/modelData/box.tkm", true);
+	//// モデルの座標を設定。
+	//m_modelRender.SetPosition(m_position);
+	//// モデルの回転を設定。
+	//m_modelRender.SetRotation(m_rotation);
+	//// モデルの大きさを設定。
+	//m_modelRender.SetScale(m_scale);
+	//// モデルの更新処理。
+	//m_modelRender.Update();
+	//// 静的物理オブジェクトの初期化処理。
 //	m_physicsStaticObject.CreateFromModel(m_modelRender.GetModel(), m_modelRender.GetModel().GetWorldMatrix());
 //	m_physicsStaticObject.GetbtCollisionObject()->setUserIndex(enCollisionAttr_Wall);
 
@@ -30,7 +30,7 @@ bool Background::Start()
 void Background::Update()
 {
 	//三角形の座標が入っているリストを持ってくる。
-	std::vector<nsK2EngineLow::TkmFile::VectorBuffer> bufferList = m_modelRender.GetTkm()->GetBuffer();
+	//std::vector<nsK2EngineLow::TkmFile::VectorBuffer> bufferList = m_modelRender.GetTkm()->GetBuffer();
 
 
 	Vector3 startVector;
@@ -45,5 +45,5 @@ void Background::Update()
 void Background::Render(RenderContext& rc)
 {
 	// 通常モデルを描画する
-	m_modelRender.Draw(rc);
+	//m_modelRender.Draw(rc);
 }

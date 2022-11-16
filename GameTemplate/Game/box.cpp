@@ -22,34 +22,28 @@ bool Box::Start()
 	m_physicsStaticObject.CreateFromModel(m_modelRender.GetModel(), m_modelRender.GetModel().GetWorldMatrix());
 	m_physicsStaticObject.GetbtCollisionObject()->setUserIndex(enCollisionAttr_Wall);
 
-//	m_sprite.Init("Assets/sprite/white.DDS",256.0f, 256.0f);
+	m_renderingEngine = &g_renderingEngine;
+	m_renderingEngine->SpriteInit(m_modelRender.GetTkm()->m_albedo);
 
-//	m_player = FindGO<Player>("player");
 
-	//g_renderingEngine.SpriteInit(
-	//	m_modelRender.GetTkm()->m_albedo,
-	//	inkspriteinitdata,
-	//	spriteinitdata,
-	//	inksprite,
-	//	sprite
-	//	);
+	m_player = FindGO<Player>("player");
 
 	return true;
 }
 void Box::Update()
 {
+	m_modelRender.SetPosition(m_position);
+	m_modelRender.SetScale(m_scale);
+	m_modelRender.Update();
+
 	m_player = FindGO<Player>("player");
 	startVector = m_player->GetStartVector();
 	endVector = m_player->GetEndVector();
-
-
-
+	m_renderingEngine->SpriteDraw(m_modelRender, POS, UV, startVector, endVector);
 
 }
 void Box::Render(RenderContext& rc)
 {
 	// ’Êíƒ‚ƒfƒ‹‚ğ•`‰æ‚·‚é
 	m_modelRender.Draw(rc);
-	//	m_sprite.Draw(rc);
-	//g_renderingEngine.SpriteDraw(m_modelRender,POS,UV,startVector,endVector,spriteinitdata,sprite);
 }
