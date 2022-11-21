@@ -8,6 +8,8 @@
 #include "Triangle.h"
 #include "Player.h"
 
+#include "SkyCube.h"
+
 namespace
 {
 	const Vector3 PLAYER_SET_POSITION = { 0.0f,350.0f,-500.0f };	//プレイヤーのセットポジション
@@ -36,6 +38,7 @@ Game::~Game()
 }
 bool Game::Start()
 {
+	int i = 1;
 	// プレイヤーのオブジェクトを生成する
 	m_player = NewGO<Player>(0, "player");
 	m_player->SetPosition(PLAYER_SET_POSITION);
@@ -62,7 +65,8 @@ bool Game::Start()
 			m_box->SetPosition(objData.position);
 			m_box->SetRotation(objData.rotation);
 			m_box->SetScale(objData.scale);
-
+			m_box->SetNumber(i);
+			i++;
 			//trueにすると、レベルの方でモデルが読み込まれて配置される。
 			return true;
 		}
@@ -93,6 +97,8 @@ bool Game::Start()
 
 	// 当たり判定の描画
 	PhysicsWorld::GetInstance()->EnableDrawDebugWireFrame();
+
+	SkyCube* m_sky = NewGO<SkyCube>(0, "sky");
 
 
 	return true;

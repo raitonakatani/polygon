@@ -41,7 +41,7 @@ public:
 	}
 
 
-
+	
 	/// <summary>
 	/// 始点の座標を取得する。
 	/// </summary>
@@ -75,7 +75,7 @@ public:
 		enAnimClip_Num,				//アニメーションの数
 	};
 
-
+	Vector3 cameraforward;
 private:
 	/// <summary>
 	/// 移動処理
@@ -130,6 +130,7 @@ private:
 	ModelRender			m_modelRender;									// モデルレンダー
 	ModelRender			m_testmodel;									// モデルレンダー
 	CharacterController     m_charaCon;	                                // キャラコン
+	EffectEmitter* m_effect = nullptr;
 	// 関数
 	Vector3					m_startVector;								// 開始線分
 	Vector3					m_endVector;								// 終了線分
@@ -147,5 +148,6 @@ private:
 	float Lstick_x = 0.0f;
 	float Lstick_y = 0.0f;
 
+	int                     m_gunId = -1;					//「Gun」ボーンのID。
 	int a = 0;
 };

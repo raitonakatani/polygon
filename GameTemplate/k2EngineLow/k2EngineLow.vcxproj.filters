@@ -241,6 +241,7 @@
     <ClCompile Include="MyRenderer.cpp" />
     <ClCompile Include="RenderMode.cpp" />
     <ClCompile Include="CascadeShadowMapMatrix.cpp" />
+    <ClCompile Include="SkyCube.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="k2EngineLowPreCompile.h" />
@@ -531,6 +532,7 @@
     <ClInclude Include="MyRenderer.h" />
     <ClInclude Include="RenderMode.h" />
     <ClInclude Include="CascadeShadowMapMatrix.h" />
+    <ClInclude Include="SkyCube.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="graphics">

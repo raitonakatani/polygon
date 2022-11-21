@@ -100,22 +100,52 @@ namespace nsK2EngineLow {
 		for (auto& mesh : m_meshs) {
 			for (int matNo = 0; matNo < mesh->m_materials.size(); matNo++) {
 
+				const auto& d3dDevice = g_graphicsEngine->GetD3DDevice();
+
+				HRESULT hr;
+				hr = d3dDevice->GetDeviceRemovedReason();
+				if (FAILED(hr))
+				{
+					std::abort();
+				}
+
+				
 				//ディスクリプタヒープにディスクリプタを登録していく。
 				m_descriptorHeap.RegistShaderResource(srvNo, mesh->m_materials[matNo]->GetAlbedoMap());		//アルベドマップ。
 				m_descriptorHeap.RegistShaderResource(srvNo + 1, mesh->m_materials[matNo]->GetNormalMap());		//法線マップ。
 				m_descriptorHeap.RegistShaderResource(srvNo + 2, mesh->m_materials[matNo]->GetSpecularMap());		//スペキュラマップ。
 				m_descriptorHeap.RegistShaderResource(srvNo + 3, m_boneMatricesStructureBuffer);							//ボーンのストラクチャードバッファ。
+
+				hr = d3dDevice->GetDeviceRemovedReason();
+				if (FAILED(hr))
+				{
+					std::abort();
+				}
+
 				for (int i = 0; i < MAX_MODEL_EXPAND_SRV; i++) {
 					if (m_expandShaderResourceView[i]) {
 						m_descriptorHeap.RegistShaderResource(srvNo + EXPAND_SRV_REG__START_NO + i, *m_expandShaderResourceView[i]);
 					}
 				}
+
+				hr = d3dDevice->GetDeviceRemovedReason();
+				if (FAILED(hr))
+				{
+					std::abort();
+				}
+
 				srvNo += NUM_SRV_ONE_MATERIAL;
 				m_descriptorHeap.RegistConstantBuffer(cbNo, m_commonConstantBuffer);
 				if (m_expandConstantBuffer.IsValid()) {
 					m_descriptorHeap.RegistConstantBuffer(cbNo + 1, m_expandConstantBuffer);
 				}
 				cbNo += NUM_CBV_ONE_MATERIAL;
+
+				
+				if (FAILED(hr))
+				{
+					std::abort();
+				}
 			}
 		}
 		m_descriptorHeap.Commit();

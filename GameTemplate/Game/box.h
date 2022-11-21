@@ -35,6 +35,10 @@ public:
 		m_scale = scale;
 	}
 
+	void SetNumber(const int& number)
+	{
+		m_number = number;
+	}
 
 	ModelRender					m_modelRender;					//ステージ
 private:

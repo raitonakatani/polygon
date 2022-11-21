@@ -127,5 +127,7 @@ static const int MAX_BONE = 512;	// ƒ{[ƒ“‚ÌÅ‘å”B
 #include "sound/SoundSource.h"
 #include "graphics/effect/EffectEmitter.h"
 
+#include "SkyCube.h"
+
 #include "CollisionObject.h"
 #include "k2EngineLow.h"

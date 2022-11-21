@@ -11,14 +11,11 @@ namespace
 
 	const float TARGET_YPOSITION = 150.0f;
 	const float ANGLE = 2.0f;					//回転角度
-	const float MAX_ANGLE = 0.8f;
+	const float MAX_ANGLE = 0.6f;
 	const float SET_NEAR = 1.0f;				// 近平面
-	const float SET_FAR = 4000.0f;				// 遠平面
+	const float SET_FAR = 10000.0f;				// 遠平面
 
-
-
-	const Vector3 SPECIAL_CAMERA_POSI = { 0.0f, 80.0f, 400.0f };
-	const Vector3 NOMAL_CAMERA_POSI = { 0.0f, 80.0f, -350.0f };
+	const Vector3 NOMAL_CAMERA_POSI = { 0.0f, 80.0f, -250.0f };
 }
 
 GameCamera::GameCamera()
@@ -33,8 +30,6 @@ GameCamera::~GameCamera()
 }
 bool GameCamera::Start()
 {
-
-	m_toCameraPos.Set(SPECIAL_CAMERA_POSI);
 	//注視点から視点までのベクトルを設定。
 	m_toCameraPos.Set(NOMAL_CAMERA_POSI);
 	//プレイヤーのインスタンスを探す。
@@ -85,6 +80,8 @@ void GameCamera::Update()
 		//カメラが下向きすぎ。
 		m_toCameraPos = m_toCameraPosOld;
 	}
+
+	m_player->cameraforward = m_player->GetPosition() - m_pos;
 
 
 	//視点を計算する。

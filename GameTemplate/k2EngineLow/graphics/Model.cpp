@@ -81,6 +81,12 @@ namespace nsK2EngineLow {
 				material->GetAlbedoMap().InitFromD3DResource(albedoMap.Get());
 			}
 		});
+		const auto& d3dDevice = g_graphicsEngine->GetD3DDevice();
+		auto hr = d3dDevice->GetDeviceRemovedReason();
+		if (FAILED(hr))
+		{
+			std::abort();
+		}
 		//ディスクリプタヒープの再作成。
 		m_meshParts.CreateDescriptorHeaps();
 	}

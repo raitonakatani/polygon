@@ -58,7 +58,10 @@ bool Player::Start()
 	// キャラコン
 	m_charaCon.Init(CHARACON_RADIUS, CHARACON_HEIGHT, m_position);
 
+	EffectEngine::GetInstance()->ResistEffect(0, u"Assets/efk/shot.efk");
 	
+	m_gunId = m_modelRender.FindBoneID(L"eff_muzzle");
+
 	// ゲームのクラスを探してもってくる。
 	m_game = FindGO<Game>("game");
 	m_gameSound = FindGO<GameSound>("gamesound");
@@ -73,9 +76,13 @@ void Player::Update()
 		m_startVector.y += 100.0f;
 		m_endVector = m_startVector;
 		Vector3 forward = Vector3::AxisZ;
-		rotation.Apply(forward);
-		m_endVector += forward * 200.0f;
-		rotation.AddRotationDegY(360.0f);
+		rotation.Apply(m_rotation);
+		cameraforward.Normalize();
+		m_endVector += cameraforward * 200.0f;
+	}
+	else
+	{
+		m_endVector = m_startVector = Vector3::Zero;
 	}
 	rotation = m_rotation;
 	m_testmodel.SetPosition(m_endVector);
@@ -152,8 +159,15 @@ void Player::Move()
 	else {
 		a = 0;
 	}
+
 	// キャラコンを使用して、座標を更新する
 	m_position = m_charaCon.Execute(m_moveSpeed, g_gameTime->GetFrameDeltaTime());
+
+	if (m_position.y <= -45.0f) {
+		m_position = { 0.0f,350.0f,-500.0f };
+		m_charaCon.SetPosition(m_position);
+	}
+
 	// 座標の更新
 	Vector3 modelPosition = m_position;
 	m_modelRender.SetPosition(modelPosition);
@@ -197,6 +211,30 @@ void Player::Render(RenderContext& rc)
 
 void Player::ProcessCommonStateTransition()
 {
+
+	if (g_pad[0]->IsPress(enButtonA)) {
+		Matrix matrix = m_modelRender.GetBone(m_gunId)->GetWorldMatrix();
+		m_effect = NewGO <EffectEmitter>(0);
+		Vector3 effectposi = m_position;
+		effectposi.y += 35.0f;
+		effectposi += m_forward * 50.0f;
+
+		Vector3 m_right = Vector3::AxisX;
+		m_rotation.Apply(m_right);
+		effectposi += m_right * -7.5f;
+		
+		m_effect->Init(0);
+		m_effect->SetPosition(effectposi);
+		m_effect->SetRotation(m_rotation);
+		// エフェクトの大きさを設定する。
+		m_effect->SetScale(m_scale * 10.0f);
+		m_effect->Play();
+	//	m_effect->SetWorldMatrix(matrix);
+		//攻撃ステートに遷移
+		m_playerState = enPlayerState_Shot;
+		return;
+	}
+
 	if (g_pad[0]->IsTrigger(enButtonB)) {
 		//ジャンプステートに遷移
 		m_playerState = enPlayerState_Jump;
@@ -234,12 +272,6 @@ void Player::ProcessCommonStateTransition()
 	//	}
 	}
 	else {
-		
-		if (g_pad[0]->IsPress(enButtonA)) {
-			//攻撃ステートに遷移
-			m_playerState = enPlayerState_Shot;
-			return;
-		}
 
 		if (m_charaCon.IsOnGround() == true) {
 			//待機ステートに遷移

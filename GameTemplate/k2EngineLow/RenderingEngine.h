@@ -18,14 +18,13 @@ namespace nsK2EngineLow
 	public:
 		void Init();
 
-		void InitTextureTarget();
+		void InitTextureTarget(int i);
 
-		void SpriteInit(const char* aldeboMap);
+		void SpriteInit(const char* aldeboMap,int i);
 
 		void SpriteDraw(
 			ModelRender& Model,
-			Vector3& out,	//戻り値　交点が見つかれば格納される 衝突点
-			Vector2& uv,	//戻り値　交点が見つかれば格納される 衝突したポリゴンの３頂点のUV座標
+			int i,
 			Vector3& A,		//線分始点
 			Vector3& B		//線分終点
 		);
@@ -56,7 +55,7 @@ namespace nsK2EngineLow
 			return m_modelRenderCB;
 		}
 
-		RenderTarget offscreenRenderTarget;
+		RenderTarget offscreenRenderTarget[20];
 	private:
 		std::vector<IRenderer*> m_renderobject;
 		ShadowMapRender m_shadowMapRender;
@@ -64,10 +63,10 @@ namespace nsK2EngineLow
 		ModelRenderCB m_modelRenderCB;
 		RenderTarget m_mainRenderTarget;
 
-		SpriteInitData inkspriteinitdata;
-		Sprite inksprite;
-		SpriteInitData spriteinitdata;
-		Sprite sprite;
+		SpriteInitData inkspriteinitdata[20];
+		Sprite inksprite[20];
+		SpriteInitData spriteinitdata[20];
+		Sprite sprite[20];
 
 	};
 

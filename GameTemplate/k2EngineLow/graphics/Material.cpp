@@ -38,7 +38,7 @@ namespace nsK2EngineLow {
 			{
 				albedoMap = new Texture();
 				albedoMap->InitFromMemory(map, mapSize);
-				g_engine->RegistTextureToBank(filePath, albedoMap);
+//				g_engine->RegistTextureToBank(filePath, albedoMap);
 			}
 			m_albedoMap = albedoMap;
 		}

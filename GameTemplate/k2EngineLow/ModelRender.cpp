@@ -174,9 +174,9 @@ namespace nsK2EngineLow {
 	{
 		m_model.Draw(rc);
 		//半透明オブジェクトを描画！
-		sphereModel.Draw(rc);
+		//sphereModel.Draw(rc);
 
-		m_testmodel.Draw(rc);
+		//m_testmodel.Draw(rc);
 
 		g_renderingEngine.AddRenderObject(this);
 	}

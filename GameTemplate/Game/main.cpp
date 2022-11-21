@@ -30,7 +30,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	g_Light.Init();
 	g_bloom.Init();
 	g_renderingEngine.Init();
-	g_renderingEngine.InitTextureTarget();
+	g_renderingEngine.InitTextureTarget(0);
 	auto gamesound = NewGO<GameSound>(0, "gamesound");
 
 
@@ -42,7 +42,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	ModelRender modelrender;
 	modelrender.Init("Assets/modelData/testModel/testbox2.tkm",false);
 
-	g_renderingEngine.SpriteInit(modelrender.GetTkm()->m_albedo);
+	g_renderingEngine.SpriteInit(modelrender.GetTkm()->m_albedo,0);
 
 
 	Vector3 startVector = Vector3::Zero;
@@ -72,7 +72,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		m_player = FindGO<Player>("player");
 		startVector = m_player->GetStartVector();
 		endVector = m_player->GetEndVector();
-		g_renderingEngine.SpriteDraw(modelrender,POS,UV,startVector,endVector);
+		g_renderingEngine.SpriteDraw(modelrender,0,startVector,endVector);
 		// step-7 画面に表示されるレンダリングターゲットに各種モデルを描画する
 		modelrender.Draw(renderContext);
 

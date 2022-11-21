@@ -23,8 +23,9 @@ bool Box::Start()
 	m_physicsStaticObject.GetbtCollisionObject()->setUserIndex(enCollisionAttr_Wall);
 
 	m_renderingEngine = &g_renderingEngine;
-	m_renderingEngine->SpriteInit(m_modelRender.GetTkm()->m_albedo);
 
+	m_renderingEngine->InitTextureTarget(m_number);
+	m_renderingEngine->SpriteInit(m_modelRender.GetTkm()->m_albedo,m_number);
 
 	m_player = FindGO<Player>("player");
 
@@ -39,8 +40,11 @@ void Box::Update()
 	m_player = FindGO<Player>("player");
 	startVector = m_player->GetStartVector();
 	endVector = m_player->GetEndVector();
-	m_renderingEngine->SpriteDraw(m_modelRender, POS, UV, startVector, endVector);
 
+	if (g_pad[0]->IsTrigger(enButtonA) == true)
+	{
+		m_renderingEngine->SpriteDraw(m_modelRender, m_number, startVector, endVector);
+	}
 }
 void Box::Render(RenderContext& rc)
 {
