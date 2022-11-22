@@ -13,8 +13,8 @@ namespace
 	const Vector3 COLLISION_SCALE = { 20.0f, 20.0f, 120.0f };				//コリジョンの大きさ
 	const Vector3 COLLISION_PORK_SCALE = { 40.0f, 30.0f, 140.0f };			//コリジョン（ポーク）の大きさ
 	// float													
-	const float CHARACON_RADIUS = 30.0f;						// キャラコンの半径
-	const float CHARACON_HEIGHT = 75.0f;						// キャラコンの高さ
+	const float CHARACON_RADIUS = 20.0f;						// キャラコンの半径
+	const float CHARACON_HEIGHT = 55.0f;						// キャラコンの高さ
 	const float MOVE_SPEED_MINIMUMVALUE = 0.001f;				// 移動速度の最低値
 	const float WALK_MOVESPEED = 300.0f;						// 歩きステートの移動速度
 	const float GRAVITY = 1000.0f;								// 重力
@@ -128,22 +128,22 @@ void Player::Move()
 	cameraRight.y = START_MOVE;
 	cameraRight.Normalize();
 
-	m_moveSpeed += cameraForward * lStick_y * move;
-	m_moveSpeed += cameraRight * lStick_x * move;
+	m_moveSpeed += cameraForward * lStick_y * m_move;
+	m_moveSpeed += cameraRight * lStick_x * m_move;
 
 	if (fabsf(m_moveSpeed.x) >= 0.001f || fabsf(m_moveSpeed.z) >= 0.001f) {
-		if (move <= 300.0f) {
-			move *= 1.1f;
+		if (m_move <= 300.0f) {
+			m_move *= 1.1f;
 		}
-			Lstick_y = lStick_y;
-			Lstick_x = lStick_x;
+			m_lStick_y = lStick_y;
+			m_lStick_x = lStick_x;
 
 	}
 	else {
-		if (move >= 100.0f) {
-			move /= 1.08f;
-			m_moveSpeed += cameraForward * Lstick_y * move;
-			m_moveSpeed += cameraRight * Lstick_x * move;
+		if (m_move >= 100.0f) {
+			m_move /= 1.08f;
+			m_moveSpeed += cameraForward * m_lStick_y * m_move;
+			m_moveSpeed += cameraRight * m_lStick_x * m_move;
 		}
 	}
 
@@ -156,9 +156,7 @@ void Player::Move()
 		// 重力
 		m_moveSpeed.y -= GRAVITY * g_gameTime->GetFrameDeltaTime();
 	}
-	else {
-		a = 0;
-	}
+
 
 	// キャラコンを使用して、座標を更新する
 	m_position = m_charaCon.Execute(m_moveSpeed, g_gameTime->GetFrameDeltaTime());

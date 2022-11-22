@@ -243,10 +243,7 @@ namespace nsK2EngineLow {
         m_world = m_world * mTrans;
     }
 
-    void Sprite::InitUVPosition(Vector2 uv)
-    {
-        m_uv = uv;
-    }
+  
 
     void Sprite::Draw(RenderContext& renderContext)
     {
@@ -264,7 +261,7 @@ namespace nsK2EngineLow {
         m_constantBufferCPU.screenParam.z = FRAME_BUFFER_W;
         m_constantBufferCPU.screenParam.w = FRAME_BUFFER_H;
         m_constantBufferCPU.uvposi = m_uv;
-        m_constantBufferCPU.hit = 0;
+        m_constantBufferCPU.hit = m_hit;
 
 
           //定数バッファを更新。

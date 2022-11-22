@@ -53,9 +53,20 @@ float4 PSMain(SPSIn psIn) : SV_Target0
     //求めたUV座標
     float2 inkUV = uvposi;
     float2 ink = float2(0.5, 0.5f);
-    //モデルのテクスチャ
-    float4 color = g_albedo.Sample(g_sampler, psIn.uv);
-   //インクのテクスチャ
+    float4 color;
+    if (hit == 0)
+    {
+        //モデルのテクスチャ
+        color = g_albedo.Sample(g_sampler, psIn.uv);
+    }
+    else
+    {
+        //モデルのテクスチャ
+        color = g_albedo.Sample(g_sampler, psIn.uv);
+    }
+//    color = g_albedo.Sample(g_sampler, psIn.uv);
+
+    //インクのテクスチャ
     float4 inkTextre = g_ink.Sample(g_sampler, ink);
 
     
@@ -66,5 +77,6 @@ float4 PSMain(SPSIn psIn) : SV_Target0
     //インクを塗る
         color.xyz *= inkTextre;
     }
-    return color;
+    float4 test = color;
+    return test;
 }

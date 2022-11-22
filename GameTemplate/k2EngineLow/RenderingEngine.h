@@ -20,7 +20,7 @@ namespace nsK2EngineLow
 
 		void InitTextureTarget(int i);
 
-		void SpriteInit(const char* aldeboMap,int i);
+		void SpriteInit(const char* albedoMap,int i);
 
 		void SpriteDraw(
 			ModelRender& Model,

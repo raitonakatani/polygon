@@ -55,7 +55,7 @@ namespace nsK2EngineLow
 			);
 	}
 
-	void RenderingEngine::SpriteInit(const char* aldeboMap,int i)
+	void RenderingEngine::SpriteInit(const char* albedoMap,int i)
 	{
 		//インクのテクスチャ
 		//これをモデルのテクスチャに塗りたい
@@ -72,18 +72,16 @@ namespace nsK2EngineLow
 		//モデルのテクスチャ
 		//これにインクを塗ってテクスチャ切り替えをしたい
 		//DDSファイル(画像データ)のファイルパスを指定する。
-		spriteinitdata[i].m_ddsFilePath[0] = aldeboMap;
+		spriteinitdata[i].m_ddsFilePath[0] = albedoMap;
+	//	spriteinitdata[i].m_textures[0] = &offscreenRenderTarget[i].GetRenderTargetTexture();
 		//Sprite表示用のシェーダーのファイルパスを指定する。
 		spriteinitdata[i].m_fxFilePath = "Assets/shader/Splatoon/inksprite.fx";
 		//スプライトの幅と高さを指定する。
 		spriteinitdata[i].m_width = FRAME_BUFFER_W;
 		spriteinitdata[i].m_height = FRAME_BUFFER_H;
 		spriteinitdata[i].m_expandShaderResoruceView[0] = &inksprite[i].GetTexture(0);
-	//	spriteinitdata.m_expandShaderResoruceView[1] = &offscreenRenderTarget.GetRenderTargetTexture();
+		spriteinitdata[i].m_expandShaderResoruceView[1] = &offscreenRenderTarget[i].GetRenderTargetTexture();
 		sprite[i].Init(spriteinitdata[i]);
-		//	spriteinitdata.m_posi = { 0.125f,0.125f };
-			//Sprite初期化オブジェクトを使用して、Spriteを初期化する。
-		//	sprite.Init(spriteinitdata);
 	}
 
 
@@ -120,8 +118,12 @@ namespace nsK2EngineLow
 			// step-5 offscreenRenderTargetに背景、プレイヤーを描画する
 			if (g_pad[0]->IsPress(enButtonA)) {
 				sprite[i].InitUVPosition(uv);
-			}
 			sprite[i].Draw(renderContext);
+
+	//		spriteinitdata[i].m_expandShaderResoruceView[1] = &offscreenRenderTarget[i].GetRenderTargetTexture();
+	//		spriteinitdata[i].m_expandShaderResoruceView[1] = &sprite[i].GetTexture(0);
+	//		sprite[i].Init(spriteinitdata[i]);
+			}
 
 			renderContext.WaitUntilFinishDrawingToRenderTargets(1, rtArray);
 			// step-6 画面に表示されるレンダリングターゲットに戻す
@@ -130,7 +132,7 @@ namespace nsK2EngineLow
 				g_graphicsEngine->GetCurrentFrameBuffuerDSV()
 			);
 
-			spriteinitdata[i].m_hit = 1;
+			sprite[i].IsHit(1);
 		}
 	}
 }

@@ -42,7 +42,6 @@ namespace nsK2EngineLow {
 			DXGI_FORMAT_UNKNOWN,
 		};	//レンダリングするカラーバッファのフォーマット。
 		D3D12_TEXTURE_ADDRESS_MODE textureAddressMode = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;	// テクスチャアドレッシングモード。
-		int m_hit;
 	};
 	/// <summary>
 	/// スプライトクラス。
@@ -89,7 +88,17 @@ namespace nsK2EngineLow {
 		/// <summary>
 		/// UV座標を設定する。
 		/// </summary>
-		void InitUVPosition(Vector2 uv);
+		void InitUVPosition(Vector2 uv)
+		{
+			m_uv = uv;
+		};
+		/// <summary>
+		/// 衝突したかどうかを設定する。
+		/// </summary>
+		void IsHit(int hit)
+		{
+			m_hit = hit;
+		};
 		/// <summary>
 		/// 描画。
 		/// </summary>
@@ -192,5 +201,6 @@ namespace nsK2EngineLow {
 		Shader				m_ps;					//ピクセルシェーダー。
 		Vector4				m_mulColor = Vector4::White;	//乗算カラー。
 		Vector2				m_uv;
+		int					m_hit = 0;
 	};
 }

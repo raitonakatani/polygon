@@ -40,7 +40,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 //	box = NewGO<Box>(0, "box");
 
 	ModelRender modelrender;
-	modelrender.Init("Assets/modelData/testModel/testbox2.tkm",false);
+	modelrender.Init("Assets/modelData/testModel/box.tkm",false);
 
 	g_renderingEngine.SpriteInit(modelrender.GetTkm()->m_albedo,0);
 

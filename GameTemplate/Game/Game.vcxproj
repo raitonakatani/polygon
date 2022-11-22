@@ -226,6 +226,7 @@
     <ClCompile Include="Background.cpp" />
     <ClCompile Include="box.cpp" />
     <ClCompile Include="Cylinder.cpp" />
+    <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Floor.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameCamera.cpp" />
@@ -245,6 +246,7 @@
     <ClInclude Include="Background.h" />
     <ClInclude Include="box.h" />
     <ClInclude Include="Cylinder.h" />
+    <ClInclude Include="Enemy.h" />
     <ClInclude Include="Floor.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameCamera.h" />

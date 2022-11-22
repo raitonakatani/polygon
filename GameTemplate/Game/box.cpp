@@ -9,7 +9,7 @@ namespace
 bool Box::Start()
 {
 	// 通常モデル
-	m_modelRender.Init("Assets/modelData/box.tkm", false);
+	m_modelRender.Init("Assets/modelData/testModel/box.tkm", false);
 	// モデルの座標を設定。
 	m_modelRender.SetPosition(m_position);
 	// モデルの回転を設定。
@@ -24,8 +24,8 @@ bool Box::Start()
 
 	m_renderingEngine = &g_renderingEngine;
 
-	m_renderingEngine->InitTextureTarget(m_number);
-	m_renderingEngine->SpriteInit(m_modelRender.GetTkm()->m_albedo,m_number);
+//	m_renderingEngine->InitTextureTarget(m_number);
+//	m_renderingEngine->SpriteInit(m_modelRender.GetTkm()->m_albedo,m_number);
 
 	m_player = FindGO<Player>("player");
 
@@ -43,7 +43,7 @@ void Box::Update()
 
 	if (g_pad[0]->IsTrigger(enButtonA) == true)
 	{
-		m_renderingEngine->SpriteDraw(m_modelRender, m_number, startVector, endVector);
+//		m_renderingEngine->SpriteDraw(m_modelRender, m_number, startVector, endVector);
 	}
 }
 void Box::Render(RenderContext& rc)

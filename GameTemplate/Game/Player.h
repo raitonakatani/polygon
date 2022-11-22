@@ -124,13 +124,13 @@ private:
 
 
 	// クラス IGameObject
-	Game*				m_game = nullptr;								// ゲーム。
-	GameSound*			m_gameSound;									//ゲームサウンド
+	Game*					m_game = nullptr;							// ゲーム。
+	GameSound*				m_gameSound;								// ゲームサウンド
 	// クラス Engine
-	ModelRender			m_modelRender;									// モデルレンダー
-	ModelRender			m_testmodel;									// モデルレンダー
+	ModelRender				m_modelRender;								// モデルレンダー
+	ModelRender				m_testmodel;								// モデルレンダー
 	CharacterController     m_charaCon;	                                // キャラコン
-	EffectEmitter* m_effect = nullptr;
+	EffectEmitter*			m_effect = nullptr;							// エフェクト
 	// 関数
 	Vector3					m_startVector;								// 開始線分
 	Vector3					m_endVector;								// 終了線分
@@ -142,12 +142,8 @@ private:
 	Quaternion				rotation;
 	AnimationClip           m_animationClipArray[enAnimClip_Num];		// アニメーションクリップ
 	EnPlayerState           m_playerState = enPlayerState_Idle;			// プレイヤーステート
-
-
-	float move = 80.0f;
-	float Lstick_x = 0.0f;
-	float Lstick_y = 0.0f;
-
-	int                     m_gunId = -1;					//「Gun」ボーンのID。
-	int a = 0;
+	float					m_move = 80.0f;								// 移動速度（加速度）
+	float					m_lStick_x = 0.0f;							// Lスティックの入力量
+	float					m_lStick_y = 0.0f;							// Lスティックの入力量
+	int                     m_gunId = -1;								//「Gun」ボーンのID。
 };
