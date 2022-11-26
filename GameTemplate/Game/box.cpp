@@ -24,8 +24,8 @@ bool Box::Start()
 
 	m_renderingEngine = &g_renderingEngine;
 
-//	m_renderingEngine->InitTextureTarget(m_number);
-//	m_renderingEngine->SpriteInit(m_modelRender.GetTkm()->m_albedo,m_number);
+	m_renderingEngine->InitTextureTarget(m_number);
+	m_renderingEngine->SpriteInit(m_modelRender.GetTkm()->m_albedo,m_number);
 
 	m_player = FindGO<Player>("player");
 
@@ -41,9 +41,9 @@ void Box::Update()
 	startVector = m_player->GetStartVector();
 	endVector = m_player->GetEndVector();
 
-	if (g_pad[0]->IsTrigger(enButtonA) == true)
+	if (g_pad[0]->IsPress(enButtonA) == true)
 	{
-//		m_renderingEngine->SpriteDraw(m_modelRender, m_number, startVector, endVector);
+		m_renderingEngine->SpriteDraw(m_modelRender, m_number, startVector, endVector);
 	}
 }
 void Box::Render(RenderContext& rc)

@@ -7,6 +7,7 @@
 #include "Cylinder.h"
 #include "Triangle.h"
 #include "Player.h"
+#include "Enemy.h"
 
 #include "SkyCube.h"
 
@@ -43,6 +44,8 @@ bool Game::Start()
 	m_player = NewGO<Player>(0, "player");
 	m_player->SetPosition(PLAYER_SET_POSITION);
 
+//	Enemy* enemy = NewGO<Enemy>(0, "enemy");
+
 	// カメラのオブジェクトを生成する。
 	m_gameCamera = NewGO<GameCamera>(0, "gameCamera");
 
@@ -77,6 +80,8 @@ bool Game::Start()
 			m_cylinder->SetPosition(objData.position);
 			m_cylinder->SetRotation(objData.rotation);
 			m_cylinder->SetScale(objData.scale);
+			m_cylinder->SetNumber(i);
+			i++;
 			//trueにすると、レベルの方でモデルが読み込まれて配置される。
 			return true;
 		}

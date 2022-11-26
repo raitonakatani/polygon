@@ -73,7 +73,6 @@ namespace nsK2EngineLow
 		//これにインクを塗ってテクスチャ切り替えをしたい
 		//DDSファイル(画像データ)のファイルパスを指定する。
 		spriteinitdata[i].m_ddsFilePath[0] = albedoMap;
-	//	spriteinitdata[i].m_textures[0] = &offscreenRenderTarget[i].GetRenderTargetTexture();
 		//Sprite表示用のシェーダーのファイルパスを指定する。
 		spriteinitdata[i].m_fxFilePath = "Assets/shader/Splatoon/inksprite.fx";
 		//スプライトの幅と高さを指定する。
@@ -100,31 +99,21 @@ namespace nsK2EngineLow
 		Vector3 pos;
 		Vector2 uv;
 		//平面と線分の交点を求める。　POS（交点の座標）、vector3d(線分始点)、vector3dend(線分終点)、ポリゴンの3頂点
-		if (Model.IntersectPlaneAndLine(pos, uv, startVector, endVector, bufferList) == true) {
-
-			
+		if (Model.IntersectPlaneAndLine(pos, uv, startVector, endVector, bufferList) == true) {		
 			Model.Change(
 				"",
 				offscreenRenderTarget[i].GetRenderTargetTexture()
 			);
-			
-
 			// step-4 レンダリングターゲットをoffscreenRenderTargetに変更する
 			RenderTarget* rtArray[] = { &offscreenRenderTarget[i] };
 			renderContext.WaitUntilToPossibleSetRenderTargets(1, rtArray);
 			renderContext.SetRenderTargets(1, rtArray);
-			renderContext.ClearRenderTargetViews(1, rtArray);
+//			renderContext.ClearRenderTargetViews(1, rtArray);
 
 			// step-5 offscreenRenderTargetに背景、プレイヤーを描画する
-			if (g_pad[0]->IsPress(enButtonA)) {
 				sprite[i].InitUVPosition(uv);
-			sprite[i].Draw(renderContext);
-
-	//		spriteinitdata[i].m_expandShaderResoruceView[1] = &offscreenRenderTarget[i].GetRenderTargetTexture();
-	//		spriteinitdata[i].m_expandShaderResoruceView[1] = &sprite[i].GetTexture(0);
-	//		sprite[i].Init(spriteinitdata[i]);
-			}
-
+				sprite[i].Draw(renderContext);
+			
 			renderContext.WaitUntilFinishDrawingToRenderTargets(1, rtArray);
 			// step-6 画面に表示されるレンダリングターゲットに戻す
 			renderContext.SetRenderTarget(

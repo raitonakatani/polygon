@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Cylinder.h"
 #include "Player.h"
+#include "Enemy.h"
 
 namespace
 {
@@ -22,27 +23,36 @@ bool Cylinder::Start()
 	m_physicsStaticObject.CreateFromModel(m_modelRender.GetModel(), m_modelRender.GetModel().GetWorldMatrix());
 	m_physicsStaticObject.GetbtCollisionObject()->setUserIndex(enCollisionAttr_Wall);
 
+	m_renderingEngine = &g_renderingEngine;
 
+	m_renderingEngine->InitTextureTarget(m_number);
+	m_renderingEngine->SpriteInit(m_modelRender.GetTkm()->m_albedo, m_number);
+
+	m_player = FindGO<Player>("player");
 
 	return true;
 }
 void Cylinder::Update()
 {
-	//三角形の座標が入っているリストを持ってくる。
-	std::vector<nsK2EngineLow::TkmFile::VectorBuffer> bufferList = m_modelRender.GetTkm()->GetBuffer();
+	m_modelRender.SetPosition(m_position);
+	m_modelRender.SetScale(m_scale);
+	m_modelRender.Update();
 
-
-	Vector3 startVector;
-	Vector3 endVector;
 	m_player = FindGO<Player>("player");
 	startVector = m_player->GetStartVector();
 	endVector = m_player->GetEndVector();
+	if (g_pad[0]->IsPress(enButtonA) == true)
+	{
+		m_renderingEngine->SpriteDraw(m_modelRender, m_number, startVector, endVector);
+	}
 
-	//平面と線分の交点を求める。　POS（交点の座標）、vector3d(線分始点)、vector3dend(線分終点)、ポリゴンの3頂点
-	m_modelRender.IntersectPlaneAndLine(POS, m_uv, startVector, endVector, bufferList);
-	auto Vector = POS;
-	auto Vector2 = POS;
-
+//	m_enemy = FindGO<Enemy>("enemy");
+//	startVector = m_enemy->GetStartVector();
+//	endVector = m_enemy->GetEndVector();
+//	if (m_enemy->m_isAttack == true)
+//	{
+//		m_renderingEngine->SpriteDraw(m_modelRender, m_number, startVector, endVector);
+//	}
 }
 void Cylinder::Render(RenderContext& rc)
 {

@@ -62,13 +62,12 @@ float4 PSMain(SPSIn psIn) : SV_Target0
     else
     {
         //モデルのテクスチャ
-        color = g_albedo.Sample(g_sampler, psIn.uv);
+        color = g_offscreen.Sample(g_sampler, psIn.uv);
     }
-//    color = g_albedo.Sample(g_sampler, psIn.uv);
 
     //インクのテクスチャ
     float4 inkTextre = g_ink.Sample(g_sampler, ink);
-
+//    inkTextre.xyz = (0.0f, 0.0f, 1.0f);
     
     float2 diff = inkUV - psIn.uv;
     float dist = length(diff);

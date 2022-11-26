@@ -56,7 +56,9 @@ bool Player::Start()
 	m_testmodel.Update();
 
 	// ƒLƒƒƒ‰ƒRƒ“
-	m_charaCon.Init(CHARACON_RADIUS, CHARACON_HEIGHT, m_position);
+	Vector3 posi = m_position;
+	posi.y += 10.0f;
+	m_charaCon.Init(CHARACON_RADIUS, CHARACON_HEIGHT, posi);
 
 	EffectEngine::GetInstance()->ResistEffect(0, u"Assets/efk/shot.efk");
 	
@@ -78,7 +80,8 @@ void Player::Update()
 		Vector3 forward = Vector3::AxisZ;
 		rotation.Apply(m_rotation);
 		cameraforward.Normalize();
-		m_endVector += cameraforward * 200.0f;
+		m_forward.y = cameraforward.y;
+		m_endVector += m_forward * 200.0f;
 	}
 	else
 	{
@@ -175,10 +178,10 @@ void Player::Rotation()
 {
 	if (g_pad[0]->IsPress(enButtonA) == true)
 	{
-		if (m_moveSpeed.x >= 0.001f|| m_moveSpeed.x <= -0.001f||
+	/*	if (m_moveSpeed.x >= 0.001f|| m_moveSpeed.x <= -0.001f||
 			m_moveSpeed.z >= 0.001f || m_moveSpeed.z <= -0.001f) {
 			return;
-		}
+		}*/
 		m_moveSpeed += g_camera3D->GetForward();
 	}
 
