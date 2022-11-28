@@ -57,8 +57,8 @@ bool Player::Start()
 
 	// キャラコン
 	Vector3 posi = m_position;
-	posi.y += 10.0f;
-	m_charaCon.Init(CHARACON_RADIUS, CHARACON_HEIGHT, posi);
+//	posi.y += 10.0f;
+	m_charaCon.Init(CHARACON_RADIUS, CHARACON_HEIGHT, m_position);
 
 	EffectEngine::GetInstance()->ResistEffect(0, u"Assets/efk/shot.efk");
 	
@@ -155,6 +155,10 @@ void Player::Move()
 		m_moveSpeed.y += 500.0f;
 	}
 
+	if (g_pad[0]->IsPress(enButtonY)) {
+		m_moveSpeed.y -= 50.0f;
+	}
+
 	if (m_charaCon.IsOnGround() == false) {
 		// 重力
 		m_moveSpeed.y -= GRAVITY * g_gameTime->GetFrameDeltaTime();
@@ -171,6 +175,7 @@ void Player::Move()
 
 	// 座標の更新
 	Vector3 modelPosition = m_position;
+//	modelPosition.y += 5.0f;
 	m_modelRender.SetPosition(modelPosition);
 }
 

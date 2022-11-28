@@ -13,7 +13,7 @@ namespace
 	const float ANGLE = 2.0f;					//‰ñ“]Šp“x
 	const float MAX_ANGLE = 0.6f;
 	const float SET_NEAR = 1.0f;				// ‹ß•½–Ê
-	const float SET_FAR = 10000.0f;				// ‰“•½–Ê
+	const float SET_FAR = 40000.0f;				// ‰“•½–Ê
 
 	const Vector3 NOMAL_CAMERA_POSI = { 0.0f, 80.0f, -250.0f };
 }

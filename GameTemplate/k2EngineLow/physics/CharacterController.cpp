@@ -304,8 +304,14 @@ namespace nsK2EngineLow {
 				}
 			}
 		}
-		//移動確定。
-		m_position = nextPosition;
+		float leng = nextPosition.y - m_position.y;
+		if (leng <= -20.0f|| leng >= 20.0f) {
+		//		m_position.y -= 10.0f;
+		}
+		else {
+			//移動確定。
+			m_position = nextPosition;
+		}
 		btRigidBody* btBody = m_rigidBody.GetBody();
 		//剛体を動かす。
 		btBody->setActivationState(DISABLE_DEACTIVATION);

@@ -33,7 +33,7 @@ bool Enemy::Start()
 
 	// モデルの読み込み
 	m_modelRender.Init("Assets/modelData/testModel/player.tkm", false, m_animationClipArray, enAnimClip_Num);
-	m_modelRender.SetPosition(500.0f, 250.0f, 500.0f);
+	m_modelRender.SetPosition(m_position);
 	m_modelRender.Update();
 
 	// アニメーションイベント用の関数を設定する
@@ -45,7 +45,7 @@ bool Enemy::Start()
 
 
 	// ナビメッシュを構築。
-	m_nvmMesh.Init("Assets/tkn/stage.tkn");
+	m_nvmMesh.Init("Assets/tkn/stage2.tkn");
 
 
 	// キャラコン
@@ -63,9 +63,9 @@ bool Enemy::Start()
 
 void Enemy::Update()
 {
-
+	m_player = FindGO<Player>("player");
 	m_targetPointPosition = { -100.0f,250.0f,0.0f };
-	m_diff = m_targetPointPosition - m_position;
+	m_diff = m_player->GetPosition() - m_position;
 
 	// 回転処理
 	Rotation();
@@ -88,27 +88,26 @@ void Enemy::Update()
 
 void Enemy::Move()
 {
-	Vector3 diff = m_diff;
-	diff.Normalize();
-	m_moveSpeed = diff * 3.0f;
-
+	timer += g_gameTime->GetFrameDeltaTime();
 	bool isEnd;
 	// パス検索
-	if (m_isAttack == false) {
+	if (m_isAttack == false && timer >= 0.3f) {
+		timer = 0.0f;
 		m_pathFiding.Execute(
 			m_path,							// 構築されたパスの格納先
 			m_nvmMesh,						// ナビメッシュ
 			m_position,						// 開始座標
-			m_targetPointPosition,			// 移動目標座標
+			m_player->GetPosition(),		// 移動目標座標
 			PhysicsWorld::GetInstance(),	// 物理エンジン	
 			25.0f,							// AIエージェントの半径
 			55.0f							// AIエージェントの高さ。
 		);
-
+	}
+	if (m_diff.Length() >= 200.0f && timer < 0.3f) {
 		// パス上を移動する。
 		m_position = m_path.Move(
 			m_position,
-			3.0f,
+			8.0f,
 			isEnd
 		);
 	}
@@ -117,21 +116,27 @@ void Enemy::Move()
 		// 重力
 		m_moveSpeed.y -= GRAVITY * g_gameTime->GetFrameDeltaTime();
 	}
-	// キャラコンを使用して、座標を更新する
-	//m_position = m_charaCon.Execute(m_moveSpeed, g_gameTime->GetFrameDeltaTime());
-
+	Vector3 diff2 = m_position - m_charaCon.GetPosition();
+	diff2.Normalize();
+	m_moveSpeed = diff2;
+	
 	// 座標の更新
 	Vector3 modelPosition = m_position;
 	m_modelRender.SetPosition(modelPosition);
+	
+	// キャラコンを更新する
+	m_charaCon.SetPosition(m_position);
+	m_charaCon.Execute(m_moveSpeed, 0.0f);
 }
 
 void Enemy::Rotation()
 {
 	if (m_isAttack == true)
 	{
-		m_diff.Normalize();
-		m_diff *= 2.0f;
-		m_moveSpeed += m_diff;
+		timer = 0.0f;
+		auto diff = m_diff;
+		diff.Normalize();
+		m_moveSpeed = diff;
 	}
 
 	if (fabsf(m_moveSpeed.x) < MOVE_SPEED_MINIMUMVALUE
@@ -153,7 +158,7 @@ void Enemy::Rotation()
 void Enemy::Attack()
 {
 	yup += 0.5f;
-	if (m_diff.Length() <= 300.0f) {
+	if (m_diff.Length() <= 200.0f) {
 		m_isAttack = true;
 		m_startVector = m_position;
 		m_startVector.y += 100.0f;
@@ -239,7 +244,7 @@ void Enemy::PlayAnimation()
 		// 走りステートの時
 	case Enemy::enEnemyState_Walk:
 		m_modelRender.PlayAnimation(enAnimClip_Walk, 0.1f);
-		m_modelRender.SetAnimationSpeed(0.8f);
+		m_modelRender.SetAnimationSpeed(1.2f);
 		break;
 		// 攻撃ステートの時
 	case Enemy::enEnemyState_Shot:

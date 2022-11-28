@@ -14,6 +14,7 @@ bool Floor::Start()
 	m_modelRender.Update();
 	//静的物理オブジェクトの初期化処理。
 	m_physicsStaticObject.CreateFromModel(m_modelRender.GetModel(), m_modelRender.GetModel().GetWorldMatrix());
+	m_physicsStaticObject.GetbtCollisionObject()->setUserIndex(enCollisionAttr_Ground);
 
 
 

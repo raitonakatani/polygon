@@ -154,6 +154,9 @@ namespace nsK2EngineLow {
 	)
 	{
 		ContactTest(rb.GetBody(), cb);
+		ContactTest(rb.GetBody(), cb);
+		ContactTest(rb.GetBody(), cb);
+		ContactTest(rb.GetBody(), cb);
 	}
 
 	void PhysicsWorld::ContactTest(

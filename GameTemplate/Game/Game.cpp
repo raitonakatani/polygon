@@ -13,7 +13,7 @@
 
 namespace
 {
-	const Vector3 PLAYER_SET_POSITION = { 0.0f,350.0f,-500.0f };	//プレイヤーのセットポジション
+	const Vector3 PLAYER_SET_POSITION = { 0.0f,250.0f,-500.0f };	//プレイヤーのセットポジション
 	const Vector3 FLOOR_SET_POSITION = { 00.0f,0.0f,00.0f };		//床のセットポジション
 
 
@@ -44,7 +44,7 @@ bool Game::Start()
 	m_player = NewGO<Player>(0, "player");
 	m_player->SetPosition(PLAYER_SET_POSITION);
 
-//	Enemy* enemy = NewGO<Enemy>(0, "enemy");
+	Enemy* enemy = NewGO<Enemy>(0, "enemy");
 
 	// カメラのオブジェクトを生成する。
 	m_gameCamera = NewGO<GameCamera>(0, "gameCamera");

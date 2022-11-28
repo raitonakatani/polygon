@@ -156,6 +156,7 @@ private:
 	Vector3					m_targetPointPosition;
 
 	Vector3 m_diff;
+	float timer = 0.0f;
 //	bool m_isAttack = false;
 };
 

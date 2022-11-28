@@ -76,7 +76,7 @@ namespace nsK2EngineLow {
 		Texture m_texture[enSkyCubeType_Num];
 		const wchar_t* m_textureFilePaths[enSkyCubeType_Num];
 		Vector3 m_position = g_vec3Zero;
-		Vector3 m_scale = g_vec3One * 500.0f;
+		Vector3 m_scale = g_vec3One * 2000.0f;
 		float m_luminance = 1.0f;
 		bool m_isDirty = false;
 		EnSkyCubeType m_type = enSkyCubeType_Day;
