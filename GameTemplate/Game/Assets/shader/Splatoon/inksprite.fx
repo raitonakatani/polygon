@@ -52,7 +52,7 @@ float4 PSMain(SPSIn psIn) : SV_Target0
 {
     //求めたUV座標
     float2 inkUV = uvposi;
-    float2 ink = float2(0.5, 0.5f);
+    float2 ink = float2(0.5f, 0.5f);
     float4 color;
     if (hit == 0)
     {
@@ -67,13 +67,12 @@ float4 PSMain(SPSIn psIn) : SV_Target0
 
     //インクのテクスチャ
     float4 inkTextre = g_ink.Sample(g_sampler, ink);
-//    inkTextre.xyz = (0.0f, 0.0f, 1.0f);
     
     float2 diff = inkUV - psIn.uv;
     float dist = length(diff);
     if (dist < 0.05f)
     {
-    //インクを塗る
+        //インクを塗る
         color.xyz *= inkTextre;
     }
     float4 test = color;

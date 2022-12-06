@@ -3,7 +3,7 @@
 
 bool Floor::Start()
 {
-	m_modelRender.Init("Assets/modelData/testModel/stage3.tkm", true);
+	m_modelRender.InitUVScroll("Assets/modelData/testModel/yuka.tkm");
 	//モデルの座標を設定。
 	m_modelRender.SetPosition(m_position);
 	//モデルの回転を設定。

@@ -128,7 +128,6 @@ private:
 	GameSound*				m_gameSound;								// ゲームサウンド
 	// クラス Engine
 	ModelRender				m_modelRender;								// モデルレンダー
-	ModelRender				m_testmodel;								// モデルレンダー
 	CharacterController     m_charaCon;	                                // キャラコン
 	EffectEmitter*			m_effect = nullptr;							// エフェクト
 	// 関数
@@ -139,11 +138,12 @@ private:
 	Vector3                 m_moveSpeed;                                // 移動速度
 	Vector3					m_scale = g_vec3One;		                // 拡大率
 	Quaternion				m_rotation;					                // 回転
-	Quaternion				rotation;
 	AnimationClip           m_animationClipArray[enAnimClip_Num];		// アニメーションクリップ
 	EnPlayerState           m_playerState = enPlayerState_Idle;			// プレイヤーステート
 	float					m_move = 80.0f;								// 移動速度（加速度）
 	float					m_lStick_x = 0.0f;							// Lスティックの入力量
 	float					m_lStick_y = 0.0f;							// Lスティックの入力量
+	float					y;											// Rスティックの入力量
+	float					y2;											// Rスティックの入力量
 	int                     m_gunId = -1;								//「Gun」ボーンのID。
 };

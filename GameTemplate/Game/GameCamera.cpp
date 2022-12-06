@@ -11,7 +11,7 @@ namespace
 
 	const float TARGET_YPOSITION = 150.0f;
 	const float ANGLE = 2.0f;					//回転角度
-	const float MAX_ANGLE = 0.6f;
+	const float MAX_ANGLE = 0.7f;
 	const float SET_NEAR = 1.0f;				// 近平面
 	const float SET_FAR = 40000.0f;				// 遠平面
 
@@ -47,9 +47,9 @@ void GameCamera::Update()
 {
 
 	//通常カメラ
-	Vector3 target2 = m_player->GetPosition();
+	Vector3 target = m_player->GetPosition();
 	//プレイヤの足元からちょっと上を注視点とする。
-	target2.y += TARGET_YPOSITION;
+	target.y += TARGET_YPOSITION;
 	m_toCameraPosOld = m_toCameraPos;
 
 	//パッドの入力を使ってカメラを回す。
@@ -83,13 +83,15 @@ void GameCamera::Update()
 
 	m_player->cameraforward = m_player->GetPosition() - m_pos;
 
-
 	//視点を計算する。
-	m_pos = target2 + m_toCameraPos;
+	m_pos = target + m_toCameraPos;
 
+	m_forward = target - m_pos;
+	m_forward.y = 0.0f;
+	m_forward.Normalize();
 	//メインカメラに注視点と視点を設定する。
 	g_camera3D->SetPosition(m_pos);
-	g_camera3D->SetTarget(target2);
+	g_camera3D->SetTarget(target);
 
 	//カメラの更新。
 	g_camera3D->Update();

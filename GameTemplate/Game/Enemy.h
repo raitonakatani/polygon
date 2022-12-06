@@ -45,6 +45,23 @@ public:
 		return m_position;
 	}
 
+	/// <summary>
+	/// 回転を設定。
+	/// </summary>
+	/// <param name="rotation">回転。</param>
+	void SetRotation(const Quaternion& rotation)
+	{
+		m_rotation = rotation;
+	}
+
+	/// <summary>
+	/// 大きさを設定。
+	/// </summary>
+	/// <param name="scale">大きさ。</param>
+	void SetScale(const Vector3& scale)
+	{
+		m_scale = scale;
+	}
 
 
 	/// <summary>
@@ -130,7 +147,7 @@ private:
 	GameSound*				m_gameSound;								// ゲームサウンド
 	// クラス Engine
 	ModelRender				m_modelRender;								// モデルレンダー
-	CharacterController     m_charaCon;	                                // キャラコン
+//	CharacterController     m_charaCon;	                                // キャラコン
 	EffectEmitter*			m_effect = nullptr;							// エフェクト
 	// 関数
 	Vector3					m_startVector;								// 開始線分
@@ -138,25 +155,22 @@ private:
 	Vector3                 m_forward = Vector3::AxisZ;                 // 前方向のベクトル
 	Vector3                 m_moveSpeed;                                // 移動速度
 	Vector3					m_scale = g_vec3One;		                // 拡大率
+	Vector3 scale= g_vec3One;
 	Quaternion				m_rotation;					                // 回転
-	Quaternion				rotation;
 	AnimationClip           m_animationClipArray[enAnimClip_Num];		// アニメーションクリップ
 	EnEnemyState			m_enemyState = enEnemyState_Idle;			// プレイヤーステート
 	float					m_move = 80.0f;								// 移動速度（加速度）
 	float					m_lStick_x = 0.0f;							// Lスティックの入力量
 	float					m_lStick_y = 0.0f;							// Lスティックの入力量
 	int                     m_gunId = -1;								//「Gun」ボーンのID。
+	nsAI::NaviMesh			m_nvmMesh;									// ナビメッシュ
+	nsAI::Path				m_path;										// パス
+	nsAI::PathFinding		m_pathFiding;								// パス検索
+	Vector3					m_position;									// 座標
+	Vector3					m_targetPointPosition;						// 目標地点の座標
 
-	TknFile					m_tknFile;
-	PhysicsStaticObject		m_bgObject;
-	nsAI::NaviMesh			m_nvmMesh;
-	nsAI::Path				m_path;
-	nsAI::PathFinding		m_pathFiding;
-	Vector3					m_position = {500.0f,250.0f,500.0f};
-	Vector3					m_targetPointPosition;
-
-	Vector3 m_diff;
-	float timer = 0.0f;
-//	bool m_isAttack = false;
+	Vector3					m_diff;										// エネミーの座標から目標地点に向かうベクトル
+	float					timer = 0.0f;								// タイマー
+	Vector3					m_oldPosition;								// パス更新前の座標
 };
 

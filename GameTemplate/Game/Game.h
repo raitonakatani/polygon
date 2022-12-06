@@ -11,6 +11,7 @@ class Floor;
 class Box;
 class Cylinder;
 class Triangle;
+class Enemy;
 
 
 class Game : public IGameObject
@@ -32,5 +33,5 @@ private:
 	Cylinder* m_cylinder = nullptr;			//”wŒii‰~’Œj
 	Triangle* m_triangle = nullptr;			//”wŒii‰~’Œj
 	Player* m_player = nullptr;				//ƒvƒŒƒCƒ„[
-
+	Enemy* m_enemy = nullptr;
 };

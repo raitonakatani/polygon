@@ -26,13 +26,28 @@ namespace
 
 Game::~Game()
 {
-	const auto& m_gameCameras = FindGOs<GameCamera>("gameCamera");
-	for (auto m_gameCamera : m_gameCameras)
+	const auto& m_enemys = FindGOs<Enemy>("enemy");
+	for (auto m_enemy : m_enemys)
 	{
-		DeleteGO(m_gameCamera);
+		DeleteGO(m_enemy);
+	}
+	const auto& m_boxs = FindGOs<Box>("box");
+	for (auto m_box : m_boxs)
+	{
+		DeleteGO(m_box);
+	}
+	const auto& m_triangles = FindGOs<Triangle>("triangle");
+	for (auto m_triangle : m_triangles)
+	{
+		DeleteGO(m_triangle);
+	}
+	const auto& m_cylinders = FindGOs<Cylinder>("cylinder");
+	for (auto m_cylinder : m_cylinders)
+	{
+		DeleteGO(m_cylinder);
 	}
 
-
+	DeleteGO(m_gameCamera);
 	DeleteGO(m_player);
 	DeleteGO(m_floor);
 
@@ -44,20 +59,35 @@ bool Game::Start()
 	m_player = NewGO<Player>(0, "player");
 	m_player->SetPosition(PLAYER_SET_POSITION);
 
-	Enemy* enemy = NewGO<Enemy>(0, "enemy");
-
-	// カメラのオブジェクトを生成する。
-	m_gameCamera = NewGO<GameCamera>(0, "gameCamera");
-
 	//レベルを構築する。
-	m_levelRender.Init("Assets/Level/Model.tkl", [&](LevelObjectData& objData) {
+	m_levelRender.Init("Assets/Level/testModel2.tkl", [&](LevelObjectData& objData) {
 
 		if (objData.EqualObjectName(L"stage") == true) {
+			// 床のオブジェクトを生成する。
+			m_background = NewGO<Background>(0, "background");
+			m_background->SetPosition(objData.position);
+			m_background->SetRotation(objData.rotation);
+			m_background->SetScale(objData.scale);
+			//trueにすると、レベルの方でモデルが読み込まれて配置される。
+			return true;
+		}
+
+		if (objData.EqualObjectName(L"floor") == true) {
 			// 床のオブジェクトを生成する。
 			m_floor = NewGO<Floor>(0, "floor");
 			m_floor->SetPosition(objData.position);
 			m_floor->SetRotation(objData.rotation);
 			m_floor->SetScale(objData.scale);
+			//trueにすると、レベルの方でモデルが読み込まれて配置される。
+			return true;
+		}
+
+		if (objData.EqualObjectName(L"enemy") == true) {
+			// 床のオブジェクトを生成する。
+			m_enemy = NewGO<Enemy>(0, "enemy");
+			m_enemy->SetPosition(objData.position);
+			m_enemy->SetRotation(objData.rotation);
+		//	m_enemy->SetScale(objData.scale);
 			//trueにすると、レベルの方でモデルが読み込まれて配置される。
 			return true;
 		}
@@ -105,6 +135,8 @@ bool Game::Start()
 
 	SkyCube* m_sky = NewGO<SkyCube>(0, "sky");
 
+	// カメラのオブジェクトを生成する。
+	m_gameCamera = NewGO<GameCamera>(0, "gameCamera");
 
 	return true;
 }

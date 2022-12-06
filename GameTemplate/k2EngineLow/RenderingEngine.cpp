@@ -25,6 +25,7 @@ namespace nsK2EngineLow
 	{
 		g_Light.Update();
 		m_modelRenderCB.m_light = g_Light.GetLight();
+		m_modelRenderCB.uvscroll += 0.00025f;
 		m_modelRenderCB.mlvp = GetLightCamera().GetViewProjectionMatrix();
 		// ゲームオブジェクトマネージャーの描画処理を呼び出す。
 		g_engine->ExecuteRender();
@@ -40,6 +41,7 @@ namespace nsK2EngineLow
 		m_postEffect = &g_postEffect;
 		m_shadowMapRender.Init();
 		m_modelRenderCB.m_light = g_Light.GetLight();
+		m_modelRenderCB.uvscroll = 0.0f;
 		m_modelRenderCB.mlvp = GetLightCamera().GetViewProjectionMatrix();
 	}
 
@@ -60,7 +62,7 @@ namespace nsK2EngineLow
 		//インクのテクスチャ
 		//これをモデルのテクスチャに塗りたい
 		//DDSファイル(画像データ)のファイルパスを指定する。
-		inkspriteinitdata[i].m_ddsFilePath[0] = "Assets/sprite/inku2.DDS";
+		inkspriteinitdata[i].m_ddsFilePath[0] = "Assets/sprite/blue.DDS";
 		//Sprite表示用のシェーダーのファイルパスを指定する。
 		inkspriteinitdata[i].m_fxFilePath = "Assets/shader/sprite.fx";
 		//スプライトの幅と高さを指定する。

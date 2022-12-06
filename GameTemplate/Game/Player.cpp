@@ -41,7 +41,7 @@ bool Player::Start()
 	m_animationClipArray[enAnimClip_Jump].SetLoopFlag(true);
 
 	// モデルの読み込み
-	m_modelRender.Init("Assets/modelData/testModel/player.tkm", false,m_animationClipArray,enAnimClip_Num);
+	m_modelRender.Init("Assets/modelData/testModel/player.tkm", false,false,m_animationClipArray,enAnimClip_Num);
 	m_modelRender.SetPosition(m_position);
 	m_modelRender.Update();
 
@@ -49,11 +49,6 @@ bool Player::Start()
 	m_modelRender.AddAnimationEvent([&](const wchar_t* clipName, const wchar_t* eventName) {
 		OnAnimationEvent(clipName, eventName);
 		});
-
-
-	m_testmodel.Init("Assets/modelData/unityChan.tkm", false);
-	m_testmodel.SetPosition(m_position);
-	m_testmodel.Update();
 
 	// キャラコン
 	Vector3 posi = m_position;
@@ -77,21 +72,14 @@ void Player::Update()
 		m_startVector = m_position;
 		m_startVector.y += 100.0f;
 		m_endVector = m_startVector;
-		Vector3 forward = Vector3::AxisZ;
-		rotation.Apply(m_rotation);
 		cameraforward.Normalize();
 		m_forward.y = cameraforward.y;
-		m_endVector += m_forward * 200.0f;
+		m_endVector += m_forward * 250.0f;
 	}
 	else
 	{
 		m_endVector = m_startVector = Vector3::Zero;
 	}
-	rotation = m_rotation;
-	m_testmodel.SetPosition(m_endVector);
-	m_testmodel.SetRotation(rotation);
-	m_testmodel.SetScale({ 0.2f,0.2f,0.2f });
-	m_testmodel.Update();
 
 
 	// 回転処理
@@ -210,15 +198,15 @@ void Player::Render(RenderContext& rc)
 {
 	// モデルをドロー。
 	m_modelRender.Draw(rc);
-
-	m_testmodel.Draw(rc);
-
 }
 
 void Player::ProcessCommonStateTransition()
 {
 
 	if (g_pad[0]->IsPress(enButtonA)) {
+
+		Quaternion rot;
+		rot = m_rotation;
 		Matrix matrix = m_modelRender.GetBone(m_gunId)->GetWorldMatrix();
 		m_effect = NewGO <EffectEmitter>(0);
 		Vector3 effectposi = m_position;
@@ -226,16 +214,38 @@ void Player::ProcessCommonStateTransition()
 		effectposi += m_forward * 50.0f;
 
 		Vector3 m_right = Vector3::AxisX;
-		m_rotation.Apply(m_right);
+		rot.Apply(m_right);
 		effectposi += m_right * -7.5f;
 		
+		if (g_pad[0]->GetRStickYF() >= 0.1f || g_pad[0]->GetRStickYF() <= -0.1f) {
+			//パッドの入力を使ってカメラを回す。
+			y2 = g_pad[0]->GetRStickYF();
+			y += y2 * 0.1f;
+		}
+		if (y >= 1.0f)
+		{
+			y = 1.0f;
+		}
+		if (y <= -1.0f)
+		{
+			y = -1.0f;
+		}
+
+		//X軸周りの回転。
+		Vector3 axisX2;
+		axisX2.Cross(Vector3::AxisY, m_position);
+		axisX2.Normalize();
+		rot.SetRotationDeg(axisX2, 20.0f * y);
+		rot.y = m_rotation.y;
+		rot.w = m_rotation.w;
 		m_effect->Init(0);
 		m_effect->SetPosition(effectposi);
-		m_effect->SetRotation(m_rotation);
+		m_effect->SetRotation(rot);
 		// エフェクトの大きさを設定する。
-		m_effect->SetScale(m_scale * 10.0f);
+		m_effect->SetScale(m_scale * 15.0f);
 		m_effect->Play();
 	//	m_effect->SetWorldMatrix(matrix);
+
 		//攻撃ステートに遷移
 		m_playerState = enPlayerState_Shot;
 		return;

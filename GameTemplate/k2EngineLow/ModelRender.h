@@ -12,11 +12,16 @@ namespace nsK2EngineLow {
 		void Init(
 			const char* filePath,
 			bool shadowRecieve,
+			bool uvscroll = false,
 			AnimationClip* animationClips = nullptr,
 			int numAnimationClips = 0,
 			EnModelUpAxis enModelUpAxis = enModelUpAxisZ,
 			bool isShadowReciever = true,
 			int maxInstance = 1
+			);
+
+		void InitUVScroll(
+			const char* filePath
 		);
 
 		void SetCasterShadow(const bool castershadow)
@@ -503,16 +508,16 @@ namespace nsK2EngineLow {
 		Model					m_shadowmodel;							//シャドウモデル。
 		Skeleton					m_skeleton;							// スケルトン
 		float						m_animationSpeed = 1.0f;
-		AnimationClip* m_animationClips = nullptr;			// アニメーションクリップ。
+		AnimationClip* m_animationClips = nullptr;						// アニメーションクリップ。
 		int							m_numAnimationClips = 0;			// アニメーションクリップの数。
 		Animation					m_animation;						// アニメーション。
-		Vector3 					m_position;			// 座標。
-		Quaternion	 				m_rotation;	// 回転。
-		Vector3						m_scale;				// 拡大率。
+		Vector3 					m_position;							// 座標。
+		Quaternion	 				m_rotation;							// 回転。
+		Vector3						m_scale;							// 拡大率。
 		Model						m_zprepassModel;					// ZPrepassで描画されるモデル
 		int							m_numInstance = 0;					// インスタンスの数。
 		int							m_maxInstance = 1;					// 最大インスタンス数。
-		//int							m_fixNumInstanceOnFrame = 0;		// このフレームに描画するインスタンスの数の確定数。。
+		//int						m_fixNumInstanceOnFrame = 0;		// このフレームに描画するインスタンスの数の確定数。。
 		bool						m_isEnableInstancingDraw = false;	// インスタンシング描画が有効？
 		std::unique_ptr<Matrix[]>	m_worldMatrixArray;					// ワールド行列の配列。
 		StructuredBuffer			m_worldMatrixArraySB;				// ワールド行列の配列のストラクチャードバッファ。
@@ -521,6 +526,7 @@ namespace nsK2EngineLow {
 
 		//TkmFile m_tkm;
 		//		ModelRenderCB* m_modelCB;
-
+		bool m_uvscroll = false;
+		float m_uv = 0.0f;
 	};
 }

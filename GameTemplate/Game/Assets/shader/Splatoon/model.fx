@@ -47,9 +47,10 @@ cbuffer LightCb : register(b1)
     
     float3 eyePos; //視点の位置。
 	
-    float4x4 mLVP;
+    float uvscroll;
+//    float uv;
     
- //   int isScroll;
+    float4x4 mLVP;
 };
 
 
@@ -164,7 +165,6 @@ SPSIn VSMainCore(SVSIn vsIn, uniform bool hasSkin)
     
     psIn.tangent = normalize(mul(m, vsIn.tangent));
     psIn.biNormal = normalize(mul(m, vsIn.biNormal));
-    //psIn.uv = vsIn.uv * 3.5f;
     psIn.uv = vsIn.uv;
  
       //カメラ空間の法線を求める。
@@ -244,9 +244,6 @@ float3 CalcLigFromDirectionLight(SPSIn psIn)
     // ディレクションライトによるLambert拡散反射光を計算する
     float3 diffDirection = CalcLambertDiffuse(directionlight.dirDirection, directionlight.dirColor, psIn.normal);
 
-    // ディレクションライトによるPhong鏡面反射光を計算する
- //   float3 specDirection = CalcPhongSpecular(directionlight.dirDirection, directionlight.dirColor, psIn.worldPos, psIn.normal);
-    
     //ディレクションライトによるリムライトを計算する。
     float3 rimDirection = CalcRimLight(psIn, directionlight.dirDirection, directionlight.dirColor);
     
@@ -270,14 +267,6 @@ float3 CalcLigFromPointLight(SPSIn psIn)
         pointlight.ptColor, // ライトのカラー
         psIn.normal // サーフェイスの法線
     );
-
-    //// 減衰なしのPhong鏡面反射光を計算する
-    //float3 specPoint = CalcPhongSpecular(
-    //    ligDir, // ライトの方向
-    //    pointlight.ptColor, // ライトのカラー
-    //    psIn.worldPos, // サーフェイズのワールド座標
-    //    psIn.normal     // サーフェイズの法線
-    //);
     //減衰なしのリムライトを計算する。
     float3 rimPoint = CalcRimLight(psIn, ligDir, pointlight.ptColor);
 
@@ -319,14 +308,6 @@ float3 CalcLigFromSpotLight(SPSIn psIn)
         spotlight.spColor, // ライトのカラー
         psIn.normal // サーフェイスの法線
     );
-
-    //// 減衰なしのPhong鏡面反射光を計算する
-    //float3 specPoint = CalcPhongSpecular(
-    //    ligDir, // ライトの方向
-    //    spotlight.spColor, // ライトのカラー
-    //    psIn.worldPos, // サーフェイズのワールド座標
-    //    psIn.normal     // サーフェイズの法線
-    //);
     //減衰なしのリムライトを計算する。
     float3 rimPoint = CalcRimLight(psIn, spotlight.spDirection, spotlight.spColor);
 
@@ -393,27 +374,29 @@ float3 CalcRimLight(SPSIn psIn, float3 direction, float3 color)
 
 }
 
-
-
-
 /// <summary>
 /// ピクセルシェーダーのエントリー関数。
 /// </summary>
 float4 PSMainCore(SPSIn psIn, uniform bool shadowreceive) : SV_Target0
 {
-  
-    //ディレクションライトによるライティングを計算する
-    //float3 directionLig = CalcLigFromDirectionLight(psIn);
-	
-
     // ポイントライトによるライティングを計算する
     float3 pointLig = CalcLigFromPointLight(psIn);
 
     //スポットライトによるライティングを計算する。
     float3 spotLig = CalcLigFromSpotLight(psIn);
     
-    float4 color = g_albedo.Sample(g_sampler, psIn.uv);
-   
+    
+   // アルベドマップ
+    float2 uv = psIn.uv;
+    uv.x += uvscroll;
+    uv.y -= uvscroll;
+    float4 color = g_albedo.Sample(g_sampler, uv);
+
+    uv.x -= uvscroll * 0.2f;
+    uv.y += uvscroll * 1.8f;
+    float4 color2 = g_albedo.Sample(g_sampler, uv);
+    color += color2;
+    
     float3 normal = psIn.normal;
     
     //法線マップからタンジェントスペースの法線をサンプリングする
@@ -432,69 +415,27 @@ float4 PSMainCore(SPSIn psIn, uniform bool shadowreceive) : SV_Target0
     dirLig2.xz *= -1.0f;
     specLig += CalcPhongSpecular(normal, psIn.worldPos, dirLig2);
      //スペキュラマップからスペキュラ反射の強さをサンプリング
-    float specPower = max(0.02f, g_specularMap.Sample(g_sampler, psIn.uv).r);
+    float specPower = max(0.01f, g_specularMap.Sample(g_sampler, psIn.uv).r);
 
     //鏡面反射の強さを鏡面反射光に乗算する
     specLig *= specPower;
-
-    
-       // step-6 ライトビュースクリーン空間からUV空間に座標変換
-    // 【注目】ライトビュースクリーン空間からUV座標空間に変換している
-    float2 shadowMapUV = psIn.posInLVP.xy / psIn.posInLVP.w;
-    shadowMapUV *= float2(0.5f, -0.5f);
-    shadowMapUV += 0.5f;
-    //ライトビュースクリーン空間でのZ値を計算する
-    float zInLVP = psIn.posInLVP.z / psIn.posInLVP.w;
-    
-    // step-7 UV座標を使ってシャドウマップから影情報をサンプリング
-    float3 shadowMap = 1.0f;
-    
-    if (shadowMapUV.x > 0.0f && shadowMapUV.x < 1.0f
-        && shadowMapUV.y > 0.0f && shadowMapUV.y < 1.0f)
-    {
-        // step-3 シャドウマップに描き込まれているZ値と比較する
-        // 計算したUV座標を使って、シャドウマップから深度値をサンプリング
-        float zInShadowMap = g_shadowMap.Sample(g_sampler, shadowMapUV).r;
-        if (zInLVP > zInShadowMap)
-        {
-            // 遮蔽されている
-            shadowMap.xyz *= 0.5f;
-        }
-    }
-    
-    
+   
     float3 lig = 0.0f;
     lig += max(0.0f, dot(normal, -directionlight.dirDirection)) * directionlight.dirColor;
-    lig += max(0.0f, dot(normal, -dirLig2)) * directionlight.dirColor * 0.2f;
+    lig += max(0.0f, dot(normal, -dirLig2)) * directionlight.dirColor * 0.1f;
    
-    lig += +pointLig
-           + spotLig
-           + specLig
-           + ambientLight;
-   
-	////ライティングの結果をすべて加算する。
- //   float3 lig = directionLig
- //               + pointLig
- //               + spotLig
- //               + ambientLight;
-	
+    float3 light = float3(0.05f, 0.05f, 0.05f);
+
+    
+    lig += + specLig
+           + light;
     
     float4 albedoColor = color;
     albedoColor.xyz *= lig;
-	
-    if (shadowreceive == true)
-    {
-        albedoColor.xyz *= shadowMap;
-    }
-    
     return albedoColor;
 }
 // モデル用のピクセルシェーダーのエントリーポイント
 float4 PSMain(SPSIn psIn) : SV_Target0
 {
     return PSMainCore(psIn, false);
-}
-float4 PSMainShadowReciever(SPSIn psIn) : SV_Target0
-{
-    return PSMainCore(psIn, true);
 }

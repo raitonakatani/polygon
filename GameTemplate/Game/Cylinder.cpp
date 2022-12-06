@@ -46,13 +46,16 @@ void Cylinder::Update()
 		m_renderingEngine->SpriteDraw(m_modelRender, m_number, startVector, endVector);
 	}
 
-//	m_enemy = FindGO<Enemy>("enemy");
-//	startVector = m_enemy->GetStartVector();
-//	endVector = m_enemy->GetEndVector();
-//	if (m_enemy->m_isAttack == true)
-//	{
-//		m_renderingEngine->SpriteDraw(m_modelRender, m_number, startVector, endVector);
-//	}
+	const auto& enemys = FindGOs<Enemy>("enemy");
+	for (auto enemy : enemys)
+	{
+		startVector = enemy->GetStartVector();
+		endVector = enemy->GetEndVector();
+		if (enemy->m_isAttack == true)
+		{
+			m_renderingEngine->SpriteDraw(m_modelRender, m_number, startVector, endVector);
+		}
+	}
 }
 void Cylinder::Render(RenderContext& rc)
 {

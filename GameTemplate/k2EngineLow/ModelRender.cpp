@@ -37,6 +37,7 @@ namespace nsK2EngineLow {
 	}
 	void ModelRender::Init(const char* filePath,
 		bool shadowRecieve,
+		bool uvscroll,
 		AnimationClip* animationClips,
 		int numAnimationClips,
 		EnModelUpAxis enModelUpAxis,
@@ -75,6 +76,9 @@ namespace nsK2EngineLow {
 		{
 			m_isShadowCaster = true;
 		}
+
+
+
 		//シャドウマップを拡張SRVに設定する。
 		initData.m_expandShaderResoruceView[0] = &g_renderingEngine.GetShadowMap();
 		initData.m_tkmFilePath = filePath;
@@ -86,6 +90,26 @@ namespace nsK2EngineLow {
 
 	}
 
+	void ModelRender::InitUVScroll(
+		const char* filePath
+	) 
+	{
+		m_uvscroll = true;
+		ModelInitData initData;
+
+		initData.m_tkmFilePath = filePath;
+		//シェーダーファイルのファイルパス。
+		initData.m_fxFilePath = "Assets/shader/Splatoon/model.fx";
+
+		//モデルの定数バッファ用の情報をモデルの初期化情報として渡す。
+		initData.m_expandConstantBuffer = &g_renderingEngine.GetModelRenderCB();
+		initData.m_expandConstantBufferSize = sizeof(g_renderingEngine.GetModelRenderCB());
+		//ノンスキンメッシュ用の頂点シェーダーのエントリーポイントを指定する。
+		initData.m_vsEntryPointFunc = "VSMain";
+
+
+		m_model.Init(initData);
+	}
 
 	void ModelRender::InitTestModel(const char* filePath)
 	{
@@ -156,6 +180,9 @@ namespace nsK2EngineLow {
 
 	void ModelRender::Update()
 	{
+		m_uv += 0.005f;
+	//	g_renderingEngine.IsUVScroll(m_uv);
+		
 		m_model.UpdateWorldMatrix(m_position, m_rotation, m_scale);
 		m_shadowmodel.UpdateWorldMatrix(m_position, m_rotation, m_scale);
 		if (m_skeleton.IsInited()) {

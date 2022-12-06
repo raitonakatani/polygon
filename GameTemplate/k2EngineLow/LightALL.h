@@ -39,10 +39,11 @@ namespace nsK2EngineLow {
         Spotlight spotlight; //スポットライト。
 
         Vector3 ambientLight;
-        float pad;
-        Vector3 eyePos;
         float pad2;
+        Vector3 eyePos;
+     //   float pad3;
 
+      //  int isScroll;
     };
 
     class LightALL
@@ -166,7 +167,6 @@ namespace nsK2EngineLow {
         {
             return m_light.ambientLight;
         }
-
 
     private:
         Light               m_light;  //シーンライト。

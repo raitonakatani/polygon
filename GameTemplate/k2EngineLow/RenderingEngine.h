@@ -9,6 +9,7 @@ namespace nsK2EngineLow
 	{
 	public:
 		Light m_light;          // ライト
+		float uvscroll;
 		Matrix mlvp; // ライトビュープロジェクション行列。
 		float ObjectCameraLength; //ディザリングで必要なやつ。
 
@@ -53,6 +54,11 @@ namespace nsK2EngineLow
 		ModelRenderCB& GetModelRenderCB()
 		{
 			return m_modelRenderCB;
+		}
+
+		void IsUVScroll(const float& uv)
+		{
+			m_modelRenderCB.uvscroll = uv;
 		}
 
 		RenderTarget offscreenRenderTarget[20];

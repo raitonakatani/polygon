@@ -43,7 +43,7 @@ public:
 	ModelRender					m_modelRender;					//ステージ
 private:
 	Player* m_player;						//プレイヤー
-	Enemy* m_enemy;
+//	Enemy* m_enemy;
 	PhysicsStaticObject			m_physicsStaticObject;			//静的物理オブジェクト・
 	Vector3						m_position;						//座標。
 	Quaternion					m_rotation;						//回転。

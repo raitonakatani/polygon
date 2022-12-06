@@ -71,6 +71,9 @@ namespace nsK2EngineLow {
 
 		m_light.eyePos = g_camera3D->GetPosition();
 
+
+	//	m_light.uvscroll = 0.0f;
+	//	m_light.isScroll = 0;
 	}
 
 

@@ -24,16 +24,20 @@ namespace
 
 bool Enemy::Start()
 {
-	m_animationClipArray[enAnimClip_Idle].Load("Assets/aniData/idle.tka");
+	// アニメーションを読み込む
+	m_animationClipArray[enAnimClip_Idle].Load("Assets/aniData/enemy/idle.tka");
 	m_animationClipArray[enAnimClip_Idle].SetLoopFlag(true);
-	m_animationClipArray[enAnimClip_Shot].Load("Assets/aniData/attack.tka");
+	m_animationClipArray[enAnimClip_Shot].Load("Assets/aniData/enemy/shot.tka");
 	m_animationClipArray[enAnimClip_Shot].SetLoopFlag(true);
-	m_animationClipArray[enAnimClip_Walk].Load("Assets/aniData/walk.tka");
+	m_animationClipArray[enAnimClip_Walk].Load("Assets/aniData/enemy/run.tka");
 	m_animationClipArray[enAnimClip_Walk].SetLoopFlag(true);
 
-	// モデルの読み込み
-	m_modelRender.Init("Assets/modelData/testModel/player.tkm", false, m_animationClipArray, enAnimClip_Num);
+	scale *= 8.0f;
+
+	// モデルを読み込む
+	m_modelRender.Init("Assets/enemy/enemy.tkm", false,false ,m_animationClipArray, enAnimClip_Num);
 	m_modelRender.SetPosition(m_position);
+	m_modelRender.SetScale(scale);
 	m_modelRender.Update();
 
 	// アニメーションイベント用の関数を設定する
@@ -41,18 +45,13 @@ bool Enemy::Start()
 		OnAnimationEvent(clipName, eventName);
 		});
 
-	//	m_player = FindGO<Player>("player");
-
-
 	// ナビメッシュを構築。
 	m_nvmMesh.Init("Assets/tkn/stage2.tkn");
 
-
-	// キャラコン
-	m_charaCon.Init(CHARACON_RADIUS, CHARACON_HEIGHT, m_position);
-
+	// エフェクト
 	EffectEngine::GetInstance()->ResistEffect(0, u"Assets/efk/shot.efk");
 
+	// 「銃」のボーンID
 	m_gunId = m_modelRender.FindBoneID(L"eff_muzzle");
 
 	// ゲームのクラスを探してもってくる。
@@ -63,9 +62,10 @@ bool Enemy::Start()
 
 void Enemy::Update()
 {
+	// プレイヤーのクラスを探して持ってくる
 	m_player = FindGO<Player>("player");
-	m_targetPointPosition = { -100.0f,250.0f,0.0f };
-	m_diff = m_player->GetPosition() - m_position;
+	m_targetPointPosition = { -0.0f,250.0f,0.0f };
+	m_diff = m_targetPointPosition - m_position;
 
 	// 回転処理
 	Rotation();
@@ -81,7 +81,7 @@ void Enemy::Update()
 	// 座標、回転、大きさの更新
 	m_modelRender.SetPosition(m_position);
 	m_modelRender.SetRotation(m_rotation);
-	m_modelRender.SetScale(MODEL_SCALE);
+	m_modelRender.SetScale(scale);
 	// モデルの更新
 	m_modelRender.Update();
 }
@@ -90,50 +90,47 @@ void Enemy::Move()
 {
 	timer += g_gameTime->GetFrameDeltaTime();
 	bool isEnd;
+	Vector3 diff;
 	// パス検索
-	if (m_isAttack == false && timer >= 0.3f) {
+	if (m_isAttack == false && timer >= 0.5f) {
 		timer = 0.0f;
+		m_oldPosition = m_position;
 		m_pathFiding.Execute(
 			m_path,							// 構築されたパスの格納先
 			m_nvmMesh,						// ナビメッシュ
 			m_position,						// 開始座標
-			m_player->GetPosition(),		// 移動目標座標
+			m_targetPointPosition,			// 移動目標座標
 			PhysicsWorld::GetInstance(),	// 物理エンジン	
 			25.0f,							// AIエージェントの半径
 			55.0f							// AIエージェントの高さ。
 		);
 	}
-	if (m_diff.Length() >= 200.0f && timer < 0.3f) {
+	if (m_diff.Length() >= 300.0f && timer < 0.5f) {
 		// パス上を移動する。
 		m_position = m_path.Move(
 			m_position,
-			8.0f,
+			6.0f,
 			isEnd
 		);
+		m_position* m_forward;
+		diff = m_position - m_oldPosition;
+		diff.Normalize();
+		m_moveSpeed = diff;
 	}
 
-	if (m_charaCon.IsOnGround() == false) {
-		// 重力
-		m_moveSpeed.y -= GRAVITY * g_gameTime->GetFrameDeltaTime();
-	}
-	Vector3 diff2 = m_position - m_charaCon.GetPosition();
-	diff2.Normalize();
-	m_moveSpeed = diff2;
+	// 重力
+	m_moveSpeed.y -= GRAVITY * g_gameTime->GetFrameDeltaTime();
 	
 	// 座標の更新
 	Vector3 modelPosition = m_position;
 	m_modelRender.SetPosition(modelPosition);
-	
-	// キャラコンを更新する
-	m_charaCon.SetPosition(m_position);
-	m_charaCon.Execute(m_moveSpeed, 0.0f);
 }
 
 void Enemy::Rotation()
 {
 	if (m_isAttack == true)
 	{
-		timer = 0.0f;
+		//timer = 0.0f;
 		auto diff = m_diff;
 		diff.Normalize();
 		m_moveSpeed = diff;
@@ -158,16 +155,16 @@ void Enemy::Rotation()
 void Enemy::Attack()
 {
 	yup += 0.5f;
-	if (m_diff.Length() <= 200.0f) {
+	if (m_diff.Length() <= 300.0f) {
 		m_isAttack = true;
 		m_startVector = m_position;
-		m_startVector.y += 100.0f;
+		m_startVector.y += 50.0f;
 		m_endVector = m_startVector;
 		m_forward.Normalize();
-		m_endVector += m_forward * 200.0f;
-		m_endVector.y += yup;
+		m_endVector += m_forward * 300.0f;
+		//m_endVector.y += yup;
 	}
-	else
+	else	if (m_diff.Length() >= 350.0f) 
 	{
 		m_isAttack = false;
 		m_endVector = m_startVector = Vector3::Zero;
@@ -176,8 +173,11 @@ void Enemy::Attack()
 
 void Enemy::ProcessCommonStateTransition()
 {
-
-	if (m_isAttack == true) {
+	if (timer >= 4.0f)
+	{
+		timer = 0.0f;
+	}
+	if (m_isAttack == true && timer <= 1.0f) {
 		Matrix matrix = m_modelRender.GetBone(m_gunId)->GetWorldMatrix();
 		m_effect = NewGO <EffectEmitter>(0);
 		Vector3 effectposi = m_position;
@@ -193,10 +193,14 @@ void Enemy::ProcessCommonStateTransition()
 		m_effect->SetRotation(m_rotation);
 		// エフェクトの大きさを設定する。
 		m_effect->SetScale(m_scale * 10.0f);
-//		m_effect->SetWorldMatrix(matrix);
+		//m_effect->SetWorldMatrix(matrix);
 		m_effect->Play();
-			//攻撃ステートに遷移
+		//攻撃ステートに遷移
 		m_enemyState = enEnemyState_Shot;
+		return;
+	}
+	else if (m_isAttack == true && timer > 1.0f) {
+		m_enemyState = enEnemyState_Idle;
 		return;
 	}
 
@@ -208,11 +212,9 @@ void Enemy::ProcessCommonStateTransition()
 		return;
 	}
 	else {
-		if (m_charaCon.IsOnGround() == true) {
-			//待機ステートに遷移
-			m_enemyState = enEnemyState_Idle;
-			return;
-		}
+		//待機ステートに遷移
+		m_enemyState = enEnemyState_Idle;
+		return;
 	}
 }
 
@@ -280,18 +282,18 @@ void Enemy::ManageState()
 
 void Enemy::OnAnimationEvent(const wchar_t* clipName, const wchar_t* eventName)
 {
-	(void)clipName;
-	if (wcscmp(eventName, L"Run_step") == 0 && m_charaCon.IsOnGround() == true) {
-		// 足音。
-		// 効果音を再生する。
-		m_gameSound->PlayerStepSE(0.4f);
-	}
+	//(void)clipName;
+	//if (wcscmp(eventName, L"Run_step") == 0) {
+	//	// 足音。
+	//	// 効果音を再生する。
+	//	m_gameSound->PlayerStepSE(0.4f);
+	//}
 
-	if (wcscmp(eventName, L"attack") == 0) {
-		// 足音。
-		// 効果音を再生する。
-		m_gameSound->PlayerAttackSE(0.3f);
-	}
+	//if (wcscmp(eventName, L"attack") == 0) {
+	//	// 足音。
+	//	// 効果音を再生する。
+	//	m_gameSound->PlayerAttackSE(0.3f);
+	//}
 }
 
 void Enemy::Render(RenderContext& rc)
