@@ -10,7 +10,7 @@ namespace
 bool Cylinder::Start()
 {
 	// 通常モデル
-	m_modelRender.Init("Assets/modelData/Cylinder.tkm", false);
+	m_modelRender.Init("Assets/modelData/testModel/cylinder.tkm", false);
 	// モデルの座標を設定。
 	m_modelRender.SetPosition(m_position);
 	// モデルの回転を設定。
@@ -43,7 +43,7 @@ void Cylinder::Update()
 	endVector = m_player->GetEndVector();
 	if (g_pad[0]->IsPress(enButtonA) == true)
 	{
-		m_renderingEngine->SpriteDraw(m_modelRender, m_number, startVector, endVector);
+		m_renderingEngine->SpriteDraw(m_modelRender, m_number,reset, startVector, endVector);
 	}
 
 	const auto& enemys = FindGOs<Enemy>("enemy");
@@ -53,7 +53,7 @@ void Cylinder::Update()
 		endVector = enemy->GetEndVector();
 		if (enemy->m_isAttack == true)
 		{
-			m_renderingEngine->SpriteDraw(m_modelRender, m_number, startVector, endVector);
+	//		m_renderingEngine->SpriteDraw(m_modelRender, m_number,reset, startVector, endVector);
 		}
 	}
 }

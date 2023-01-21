@@ -70,7 +70,7 @@ float4 PSMain(SPSIn psIn) : SV_Target0
     
     float2 diff = inkUV - psIn.uv;
     float dist = length(diff);
-    if (dist < 0.05f)
+    if (dist < 0.06f)
     {
         //インクを塗る
         color.xyz *= inkTextre;

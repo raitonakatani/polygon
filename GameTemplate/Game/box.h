@@ -64,5 +64,5 @@ private:
 	Vector3 endVector;
 
 	int m_number = 0;
-
+	int reset = 0;
 };

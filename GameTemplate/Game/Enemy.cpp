@@ -3,6 +3,7 @@
 #include "Player.h"
 #include "Game.h"
 #include "GameSound.h"
+#include "Cylinder.h"
 
 // EffectEmitterを使用するために、ファイルをインクルードする。
 #include "graphics/effect/EffectEmitter.h"
@@ -22,6 +23,10 @@ namespace
 	const float START_MOVE = 0.0f;								// 初期設定のスピード
 }
 
+Enemy::~Enemy()
+{
+	//DeleteGO(this);
+}
 bool Enemy::Start()
 {
 	// アニメーションを読み込む
@@ -32,10 +37,18 @@ bool Enemy::Start()
 	m_animationClipArray[enAnimClip_Walk].Load("Assets/aniData/enemy/run.tka");
 	m_animationClipArray[enAnimClip_Walk].SetLoopFlag(true);
 
-	scale *= 8.0f;
+	// アニメーションを読み込む
+//	m_animationClipArray[enAnimClip_Idle].Load("Assets/aniData/idle.tka");
+//	m_animationClipArray[enAnimClip_Idle].SetLoopFlag(true);
+//	m_animationClipArray[enAnimClip_Shot].Load("Assets/aniData/attack.tka");
+//	m_animationClipArray[enAnimClip_Shot].SetLoopFlag(true);
+//	m_animationClipArray[enAnimClip_Walk].Load("Assets/aniData/walk.tka");
+//	m_animationClipArray[enAnimClip_Walk].SetLoopFlag(true);
+
+	scale *= 6.0f;
 
 	// モデルを読み込む
-	m_modelRender.Init("Assets/enemy/enemy.tkm", false,false ,m_animationClipArray, enAnimClip_Num);
+	m_modelRender.Init("Assets/enemy/enemy.tkm", false, false, m_animationClipArray, enAnimClip_Num);
 	m_modelRender.SetPosition(m_position);
 	m_modelRender.SetScale(scale);
 	m_modelRender.Update();
@@ -46,7 +59,7 @@ bool Enemy::Start()
 		});
 
 	// ナビメッシュを構築。
-	m_nvmMesh.Init("Assets/tkn/stage2.tkn");
+	m_nvmMesh.Init("Assets/tkn/teststage.tkn");
 
 	// エフェクト
 	EffectEngine::GetInstance()->ResistEffect(0, u"Assets/efk/shot.efk");
@@ -57,16 +70,57 @@ bool Enemy::Start()
 	// ゲームのクラスを探してもってくる。
 	m_gameSound = FindGO<GameSound>("gamesound");
 
+	m_charaCon.Init(20.0f, 55.0f, m_position);
+
+	//スフィアコライダーを初期化。
+	m_sphereCollider.Create(1.0f);
+
+	m_enemypath.Init("Assets/path/path.tkl");
+
 	return true;
 }
 
 void Enemy::Update()
 {
+	m_timer += g_gameTime->GetFrameDeltaTime();
+	if (m_timer <= 12.0f) {
+		return;
+	}
+	if (m_hp <= 0) {
+		m_player->m_enemynumber += 1;
+		DeleteGO(this);
+	}
 	// プレイヤーのクラスを探して持ってくる
 	m_player = FindGO<Player>("player");
-	m_targetPointPosition = { -0.0f,250.0f,0.0f };
-	m_diff = m_targetPointPosition - m_position;
+	if (m_isSearchPlayer == false) {
+		m_targetPointPosition = m_targetposi;
+		if (m_timer >= 15.0f) {
 
+			//塗る場所（立つ場所）をランダムに設定
+	/*		Quaternion rot;
+			float ram = rand() % 360;
+			rot.SetRotationY(ram);
+			rot.Apply(m_forward);
+			m_targetposi = m_forward * 400.0f;
+			if (m_targetposi.x <= 300.0f && m_targetposi.x >= -300.0f) {
+				m_targetposi.x = 300.0f;
+			}
+			if (m_targetposi.z <= 300.0f && m_targetposi.z >= -300.0f) {
+				m_targetposi.z = 300.0f;
+			}
+			m_targetposi.y = 150.0f;*/
+			int ram = rand() % 8;
+			int ram2 = rand() % 4;
+			m_targetposi = m_enemypath.m_pointlist[ram].s_position;
+			paintposi = m_enemypath.m_pointlist[ram].s_paintposi[ram2];
+			m_timer = 13.0f;
+		}
+	}
+	else {
+		m_timer = 13.0f;
+		m_targetPointPosition = m_player->GetPosition();
+	}
+		m_diff = m_targetPointPosition - m_position;
 	// 回転処理
 	Rotation();
 	// 移動処理
@@ -77,6 +131,10 @@ void Enemy::Update()
 	PlayAnimation();
 	// 各ステートの遷移処理
 	ManageState();
+	// サーチ
+	SearchPlayer();
+	// 当たり判定
+	Collision();
 
 	// 座標、回転、大きさの更新
 	m_modelRender.SetPosition(m_position);
@@ -84,6 +142,8 @@ void Enemy::Update()
 	m_modelRender.SetScale(scale);
 	// モデルの更新
 	m_modelRender.Update();
+
+	m_cylinder = FindGO<Cylinder>("cylinder");
 }
 
 void Enemy::Move()
@@ -92,7 +152,7 @@ void Enemy::Move()
 	bool isEnd;
 	Vector3 diff;
 	// パス検索
-	if (m_isAttack == false && timer >= 0.5f) {
+	if (m_isAttack == false && timer >= 0.3f) {
 		timer = 0.0f;
 		m_oldPosition = m_position;
 		m_pathFiding.Execute(
@@ -105,22 +165,25 @@ void Enemy::Move()
 			55.0f							// AIエージェントの高さ。
 		);
 	}
-	if (m_diff.Length() >= 300.0f && timer < 0.5f) {
+	if (m_diff.Length() >= 100.0f && timer < 0.3f) {
 		// パス上を移動する。
 		m_position = m_path.Move(
 			m_position,
-			6.0f,
+			4.0f,
 			isEnd
 		);
 		m_position* m_forward;
 		diff = m_position - m_oldPosition;
 		diff.Normalize();
 		m_moveSpeed = diff;
+		m_timer = 13.0f;
 	}
 
 	// 重力
 	m_moveSpeed.y -= GRAVITY * g_gameTime->GetFrameDeltaTime();
-	
+	m_charaCon.SetPosition(m_position);
+	m_charaCon.Execute(m_moveSpeed, g_gameTime->GetFrameDeltaTime());
+
 	// 座標の更新
 	Vector3 modelPosition = m_position;
 	m_modelRender.SetPosition(modelPosition);
@@ -132,6 +195,9 @@ void Enemy::Rotation()
 	{
 		//timer = 0.0f;
 		auto diff = m_diff;
+		if (m_isSearchPlayer == false) {
+			diff = Vector3{0.0f,150.0f,0.0f} - m_position;
+		}
 		diff.Normalize();
 		m_moveSpeed = diff;
 	}
@@ -154,20 +220,112 @@ void Enemy::Rotation()
 
 void Enemy::Attack()
 {
-	yup += 0.5f;
-	if (m_diff.Length() <= 300.0f) {
+	//float ram = rand() % 200;
+	//yup = ram;
+	if (m_diff.Length() <= 100.0f && m_timer >= 14.0f) {
 		m_isAttack = true;
 		m_startVector = m_position;
 		m_startVector.y += 50.0f;
 		m_endVector = m_startVector;
-		m_forward.Normalize();
-		m_endVector += m_forward * 300.0f;
-		//m_endVector.y += yup;
+		Vector3 paint = paintposi - m_startVector;
+		paint.Normalize();
+		m_endVector += paint * 300.0f;
+	//	m_endVector.y += yup;
+
+		m_renderingEngine->SpriteDraw(m_cylinder->m_modelRender, m_cylinder->m_number,0, m_startVector, m_endVector);
 	}
-	else	if (m_diff.Length() >= 350.0f) 
+	else if (m_diff.Length() <= 100.0f && m_timer < 14.0f)
 	{
+		//yup = 0.0f;
+		m_enemyState = enEnemyState_Idle;
+		return;
+	}
+	if (m_diff.Length() >= 100.0f)
+	{
+	//	yup = 0.0f;
 		m_isAttack = false;
 		m_endVector = m_startVector = Vector3::Zero;
+	}
+}
+
+//衝突したときに呼ばれる関数オブジェクト(壁用)
+struct SweepResultWall :public btCollisionWorld::ConvexResultCallback
+{
+	bool isHit = false;						//衝突フラグ。
+
+	virtual	btScalar	addSingleResult(btCollisionWorld::LocalConvexResult& convexResult, bool normalInWorldSpace)
+	{
+		//壁とぶつかってなかったら。
+		if (convexResult.m_hitCollisionObject->getUserIndex() != enCollisionAttr_Wall) {
+			//衝突したのは壁ではない。
+			return 0.0f;
+		}
+
+		//壁とぶつかったら。
+		//フラグをtrueに。
+		isHit = true;
+		return 0.0f;
+	}
+};
+
+void Enemy::SearchPlayer()
+{
+	m_isSearchPlayer = false;
+
+	m_forward = Vector3::AxisZ;
+	m_rotation.Apply(m_forward);
+
+	Vector3 playerPosition = m_player->GetPosition();
+	Vector3 diff = playerPosition - m_position;
+
+	diff.Normalize();
+	float angle = acosf(diff.Dot(m_forward));
+
+
+	//プレイヤーが視界内に居なかったら。
+	if (Math::PI * 0.35f <= fabsf(angle) && diff.Length() <= 500.0f)
+	{
+		//プレイヤーは見つかっていない。
+		return;
+	}
+
+	btTransform start, end;
+	start.setIdentity();
+	end.setIdentity();
+	//始点はエネミーの座標。
+	start.setOrigin(btVector3(m_position.x, m_position.y + 70.0f, m_position.z));
+	//終点はプレイヤーの座標。
+	end.setOrigin(btVector3(playerPosition.x, playerPosition.y + 70.0f, playerPosition.z));
+
+	SweepResultWall callback;
+	//コライダーを始点から終点まで動かして。
+	//衝突するかどうかを調べる。
+	PhysicsWorld::GetInstance()->ConvexSweepTest((const btConvexShape*)m_sphereCollider.GetBody(), start, end, callback);
+	//壁と衝突した！
+	if (callback.isHit == true)
+	{
+		//プレイヤーは見つかっていない。
+		return;
+	}
+
+	//壁と衝突してない！！
+	//プレイヤー見つけたフラグをtrueに。
+	m_isSearchPlayer = false;
+}
+
+void Enemy::Collision()
+{
+	// エネミー（タンク）の攻撃用のコリジョンを取得する。
+	const auto& collisions = g_collisionObjectManager->FindCollisionObjects("player");
+	// コリジョンの配列をfor文で回す。
+	for (auto collision : collisions)
+	{
+		// コリジョンとキャラコンが衝突したら。
+		if (collision->IsHit(m_charaCon))
+		{
+			m_hp -= 1;
+			return;
+		}
 	}
 }
 
@@ -177,30 +335,31 @@ void Enemy::ProcessCommonStateTransition()
 	{
 		timer = 0.0f;
 	}
-	if (m_isAttack == true && timer <= 1.0f) {
-		Matrix matrix = m_modelRender.GetBone(m_gunId)->GetWorldMatrix();
+	if (m_isAttack == true && m_timer >= 14.0f) {
+	//	Matrix matrix = m_modelRender.GetBone(m_gunId)->GetWorldMatrix();
 		m_effect = NewGO <EffectEmitter>(0);
 		Vector3 effectposi = m_position;
-		effectposi.y += 35.0f;
-		effectposi += m_forward * 50.0f;
+		effectposi.y += 50.0f;
+		//effectposi += m_forward * 100.0f;
 
-		Vector3 m_right = Vector3::AxisX;
-		m_rotation.Apply(m_right);
-		effectposi += m_right * -7.5f;
-
+		//Vector3 m_right = Vector3::AxisX;
+		//m_rotation.Apply(m_right);
+		//effectposi += m_right * -7.5f;
+		Vector3 effectDir = m_endVector - m_startVector;
+		effectDir.Normalize();
+		Quaternion effectRot;
+		effectRot.SetRotation(Vector3::AxisZ, effectDir);
+	//	m_rotation = effectRot;
 		m_effect->Init(0);
 		m_effect->SetPosition(effectposi);
 		m_effect->SetRotation(m_rotation);
 		// エフェクトの大きさを設定する。
-		m_effect->SetScale(m_scale * 10.0f);
+		Vector3 sca = Vector3{ 10.0f,10.0f,10.0f };
+		m_effect->SetScale(sca);
 		//m_effect->SetWorldMatrix(matrix);
 		m_effect->Play();
 		//攻撃ステートに遷移
 		m_enemyState = enEnemyState_Shot;
-		return;
-	}
-	else if (m_isAttack == true && timer > 1.0f) {
-		m_enemyState = enEnemyState_Idle;
 		return;
 	}
 
@@ -298,6 +457,9 @@ void Enemy::OnAnimationEvent(const wchar_t* clipName, const wchar_t* eventName)
 
 void Enemy::Render(RenderContext& rc)
 {
-	// モデルをドロー。
-	m_modelRender.Draw(rc);
+	if (m_timer <= 11.5f) {
+		return;
+	}
+		// モデルをドロー。
+		m_modelRender.Draw(rc);
 }

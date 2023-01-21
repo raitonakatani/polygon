@@ -9,6 +9,10 @@
 #include "Player.h"
 #include "Enemy.h"
 
+#include "Fade.h"
+#include "GameUI.h"
+#include "Result.h"
+
 #include "SkyCube.h"
 
 namespace
@@ -47,20 +51,56 @@ Game::~Game()
 		DeleteGO(m_cylinder);
 	}
 
+	const auto& m_skys = FindGOs<SkyCube>("sky");
+	for (auto m_sky: m_skys)
+	{
+		DeleteGO(m_sky);
+	}
+
 	DeleteGO(m_gameCamera);
 	DeleteGO(m_player);
 	DeleteGO(m_floor);
+	DeleteGO(m_background);
 
 }
 bool Game::Start()
 {
 	int i = 1;
-	// プレイヤーのオブジェクトを生成する
-	m_player = NewGO<Player>(0, "player");
-	m_player->SetPosition(PLAYER_SET_POSITION);
+
+
+	for (int i = 1;i < 5;i++) {
+		//パス
+		std::string number;
+		//文字列に変換
+		number = std::to_string(i);
+		FILE[i] = "Assets/Level/testStage.phase";
+		FILE[i] += number;
+		FILE[i] += ".tkl";
+	}
+
 
 	//レベルを構築する。
-	m_levelRender.Init("Assets/Level/testModel2.tkl", [&](LevelObjectData& objData) {
+	m_levelRender[phase].Init(FILE[phase].c_str(), [&](LevelObjectData& objData) {
+		
+		if (objData.EqualObjectName(L"player") == true) {
+			// プレイヤーのオブジェクトを生成する。
+			m_player = NewGO<Player>(0, "player");
+			m_player->SetPosition(objData.position);
+			//m_player->SetRotation(objData.rotation);
+			//m_player->SetScale(objData.scale);
+			//trueにすると、レベルの方でモデルが読み込まれて配置される。
+			return true;
+		}
+
+		//if (objData.EqualObjectName(L"floor") == true) {
+		//	// 床のオブジェクトを生成する。
+		//	m_floor = NewGO<Floor>(0, "floor");
+		//	m_floor->SetPosition(objData.position);
+		//	m_floor->SetRotation(objData.rotation);
+		//	m_floor->SetScale(objData.scale);
+		//	//trueにすると、レベルの方でモデルが読み込まれて配置される。
+		//	return true;
+		//}
 
 		if (objData.EqualObjectName(L"stage") == true) {
 			// 床のオブジェクトを生成する。
@@ -72,21 +112,13 @@ bool Game::Start()
 			return true;
 		}
 
-		if (objData.EqualObjectName(L"floor") == true) {
-			// 床のオブジェクトを生成する。
-			m_floor = NewGO<Floor>(0, "floor");
-			m_floor->SetPosition(objData.position);
-			m_floor->SetRotation(objData.rotation);
-			m_floor->SetScale(objData.scale);
-			//trueにすると、レベルの方でモデルが読み込まれて配置される。
-			return true;
-		}
-
 		if (objData.EqualObjectName(L"enemy") == true) {
 			// 床のオブジェクトを生成する。
 			m_enemy = NewGO<Enemy>(0, "enemy");
 			m_enemy->SetPosition(objData.position);
 			m_enemy->SetRotation(objData.rotation);
+			m_number++;
+			m_enemy->phase = 0;
 		//	m_enemy->SetScale(objData.scale);
 			//trueにすると、レベルの方でモデルが読み込まれて配置される。
 			return true;
@@ -125,10 +157,12 @@ bool Game::Start()
 			//trueにすると、レベルの方でモデルが読み込まれて配置される。
 			return true;
 		}
-
-
 		return true;
 		});
+
+	m_ui = NewGO<GameUI>(0, "gameui");
+
+	m_floor = NewGO<Floor>(0, "floor");
 
 	// 当たり判定の描画
 	PhysicsWorld::GetInstance()->EnableDrawDebugWireFrame();
@@ -137,12 +171,39 @@ bool Game::Start()
 
 	// カメラのオブジェクトを生成する。
 	m_gameCamera = NewGO<GameCamera>(0, "gameCamera");
-
+	m_fade = FindGO<Fade>("fade");
+	m_fade->StartFadeIn();
 	return true;
 }
 
 void Game::Update()
 {
+
+	m_player = FindGO<Player>("player");
+	if (m_number == m_player->m_enemynumber) {
+		m_ui->m_number += 1;
+		phase += 1;
+		if (phase == 5) {
+			NewGO<Result>(0, "result");
+			DeleteGO(this);
+			return;
+		}
+		m_levelRender[phase].Init(FILE[phase].c_str(), [&](LevelObjectData& objData) {
+			if (objData.EqualObjectName(L"enemy") == true) {
+				// 床のオブジェクトを生成する。
+				m_enemy = NewGO<Enemy>(0, "enemy");
+				m_enemy->SetPosition(objData.position);
+				m_enemy->SetRotation(objData.rotation);
+				m_number++;
+				m_enemy->phase = 1;
+				//	m_enemy->SetScale(objData.scale);
+					//trueにすると、レベルの方でモデルが読み込まれて配置される。
+				return true;
+			}
+			//phase += 1;
+			return true;
+			});
+	}
 }
 
 void Game::Render(RenderContext& rc)

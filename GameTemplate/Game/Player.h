@@ -75,6 +75,7 @@ public:
 		enAnimClip_Num,				//アニメーションの数
 	};
 
+	int m_enemynumber = 0;
 	Vector3 cameraforward;
 private:
 	/// <summary>
@@ -121,6 +122,7 @@ private:
 	/// </summary>
 	void ProcessAttackStateTransition();
 
+	void Search();
 
 
 	// クラス IGameObject
@@ -129,6 +131,7 @@ private:
 	// クラス Engine
 	ModelRender				m_modelRender;								// モデルレンダー
 	CharacterController     m_charaCon;	                                // キャラコン
+	CollisionObject*		m_collision;
 	EffectEmitter*			m_effect = nullptr;							// エフェクト
 	// 関数
 	Vector3					m_startVector;								// 開始線分
@@ -146,4 +149,7 @@ private:
 	float					y;											// Rスティックの入力量
 	float					y2;											// Rスティックの入力量
 	int                     m_gunId = -1;								//「Gun」ボーンのID。
+
+	float lStick_x = 0.0f;
+	float lStick_y = 0.0f;
 };

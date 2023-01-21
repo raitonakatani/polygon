@@ -26,6 +26,7 @@ namespace nsK2EngineLow
 		void SpriteDraw(
 			ModelRender& Model,
 			int i,
+			int reset,
 			Vector3& A,		//線分始点
 			Vector3& B		//線分終点
 		);
@@ -60,6 +61,13 @@ namespace nsK2EngineLow
 		{
 			m_modelRenderCB.uvscroll = uv;
 		}
+
+		void IsHitEnemy(
+			ModelRender& Model,
+			Vector3& startVector,		//線分始点
+			Vector3& endVector,		//線分終点
+			bool& hit
+		);
 
 		RenderTarget offscreenRenderTarget[20];
 	private:

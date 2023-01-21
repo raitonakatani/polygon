@@ -22,6 +22,11 @@
     <ClCompile Include="Triangle.cpp" />
     <ClCompile Include="GameSound.cpp" />
     <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="GameUI.cpp" />
+    <ClCompile Include="Result.cpp" />
+    <ClCompile Include="Fade.cpp" />
+    <ClCompile Include="Title.cpp" />
+    <ClCompile Include="EnemyPath.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -39,5 +44,10 @@
     <ClInclude Include="Triangle.h" />
     <ClInclude Include="GameSound.h" />
     <ClInclude Include="Enemy.h" />
+    <ClInclude Include="GameUI.h" />
+    <ClInclude Include="Result.h" />
+    <ClInclude Include="Fade.h" />
+    <ClInclude Include="Title.h" />
+    <ClInclude Include="EnemyPath.h" />
   </ItemGroup>
 </Project>

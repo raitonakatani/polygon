@@ -9,7 +9,7 @@ namespace
 bool Triangle::Start()
 {
 	// 通常モデル
-	m_modelRender.Init("Assets/modelData/triangle.tkm", false);
+	m_modelRender.Init("Assets/modelData/testModel/triangle.tkm", false);
 	// モデルの座標を設定。
 	m_modelRender.SetPosition(m_position);
 	// モデルの回転を設定。
@@ -28,20 +28,8 @@ bool Triangle::Start()
 }
 void Triangle::Update()
 {
-	//三角形の座標が入っているリストを持ってくる。
-	std::vector<nsK2EngineLow::TkmFile::VectorBuffer> bufferList = m_modelRender.GetTkm()->GetBuffer();
 
-
-	Vector3 startVector;
-	Vector3 endVector;
-	m_player = FindGO<Player>("player");
-	startVector = m_player->GetStartVector();
-	endVector = m_player->GetEndVector();
-
-	//平面と線分の交点を求める。　POS（交点の座標）、vector3d(線分始点)、vector3dend(線分終点)、ポリゴンの3頂点
-	m_modelRender.IntersectPlaneAndLine(POS, m_uv, startVector, endVector, bufferList);
-	auto Vector = POS;
-	auto Vector2 = POS;
+	m_modelRender.Update();
 
 }
 void Triangle::Render(RenderContext& rc)

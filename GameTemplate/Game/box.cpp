@@ -43,7 +43,7 @@ void Box::Update()
 
 	if (g_pad[0]->IsPress(enButtonA) == true)
 	{
-		m_renderingEngine->SpriteDraw(m_modelRender, m_number, startVector, endVector);
+		m_renderingEngine->SpriteDraw(m_modelRender, m_number, reset,startVector, endVector);
 	}
 }
 void Box::Render(RenderContext& rc)

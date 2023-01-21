@@ -47,14 +47,14 @@ namespace nsK2EngineLow
 
 	void RenderingEngine::InitTextureTarget(int i)
 	{
-			offscreenRenderTarget[i].Create(
-				FRAME_BUFFER_W,
-				FRAME_BUFFER_H,
-				1,
-				1,
-				DXGI_FORMAT_R8G8B8A8_UNORM,
-				DXGI_FORMAT_D32_FLOAT
-			);
+		offscreenRenderTarget[i].Create(
+			FRAME_BUFFER_W,
+			FRAME_BUFFER_H,
+			1,
+			1,
+			DXGI_FORMAT_R8G8B8A8_UNORM,
+			DXGI_FORMAT_D32_FLOAT
+		);
 	}
 
 	void RenderingEngine::SpriteInit(const char* albedoMap,int i)
@@ -89,6 +89,7 @@ namespace nsK2EngineLow
 	void RenderingEngine::SpriteDraw(
 		ModelRender& Model,
 		int i,
+		int reset,
 		Vector3& startVector,		//線分始点
 		Vector3& endVector		//線分終点
 	)
@@ -124,6 +125,27 @@ namespace nsK2EngineLow
 			);
 
 			sprite[i].IsHit(1);
+		}
+	}
+
+	void RenderingEngine::IsHitEnemy(
+		ModelRender& Model,
+		Vector3& startVector,		//線分始点
+		Vector3& endVector,		//線分終点
+		bool& hit
+	)
+	{
+		auto& renderContext = g_graphicsEngine->GetRenderContext();
+
+		//三角形の座標が入っているリストを持ってくる。
+		std::vector<nsK2EngineLow::TkmFile::VectorBuffer> bufferList = Model.GetTkm()->GetBuffer();
+
+		Vector3 pos;
+		Vector2 uv;
+		//平面と線分の交点を求める。　POS（交点の座標）、vector3d(線分始点)、vector3dend(線分終点)、ポリゴンの3頂点
+		if (Model.IntersectPlaneAndLine(pos, uv, startVector, endVector, bufferList) == true) 
+		{
+			hit = true;
 		}
 	}
 }

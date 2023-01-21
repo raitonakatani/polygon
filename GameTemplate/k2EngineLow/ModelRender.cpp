@@ -106,7 +106,7 @@ namespace nsK2EngineLow {
 		initData.m_expandConstantBufferSize = sizeof(g_renderingEngine.GetModelRenderCB());
 		//ノンスキンメッシュ用の頂点シェーダーのエントリーポイントを指定する。
 		initData.m_vsEntryPointFunc = "VSMain";
-
+		initData.m_alphaBlendMode = AlphaBlendMode_Trans;
 
 		m_model.Init(initData);
 	}

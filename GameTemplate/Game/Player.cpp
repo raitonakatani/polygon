@@ -41,7 +41,7 @@ bool Player::Start()
 	m_animationClipArray[enAnimClip_Jump].SetLoopFlag(true);
 
 	// モデルの読み込み
-	m_modelRender.Init("Assets/modelData/testModel/player.tkm", false,false,m_animationClipArray,enAnimClip_Num);
+	m_modelRender.Init("Assets/player/player2.tkm", false,false,m_animationClipArray,enAnimClip_Num);
 	m_modelRender.SetPosition(m_position);
 	m_modelRender.Update();
 
@@ -68,20 +68,37 @@ bool Player::Start()
 
 void Player::Update()
 {
+	auto a = m_enemynumber;
 	if (g_pad[0]->IsPress(enButtonA)) {
 		m_startVector = m_position;
 		m_startVector.y += 100.0f;
 		m_endVector = m_startVector;
 		cameraforward.Normalize();
-		m_forward.y = cameraforward.y;
+		m_forward = g_camera3D->GetForward();
 		m_endVector += m_forward * 250.0f;
+		m_collision = NewGO<CollisionObject>(0, "collision");
+		// コリジョンオブジェクトを作成する。
+		Vector3 collisionPosition = m_position;
+		collisionPosition += m_forward * 200.0f;
+		collisionPosition.y += 50.0f;
+		Quaternion rot;
+		rot = m_rotation;
+		Vector3 m_right = Vector3::AxisX;
+		rot.Apply(m_right);
+		collisionPosition += m_right * -7.5f;
+		// ボックス状のコリジョンを作成する。
+		m_collision->CreateBox(collisionPosition,		 // 座標。
+			m_rotation,                                      // 回転。
+			Vector3(40.0f, 20.0f, 350.0f)                    // 大きさ。
+		);
+		m_collision->SetName("player");
 	}
 	else
 	{
 		m_endVector = m_startVector = Vector3::Zero;
 	}
 
-
+	Search();
 	// 回転処理
 	Rotation();
 	// 移動処理
@@ -102,14 +119,18 @@ void Player::Update()
 
 }
 
+void Player::Search()
+{
+}
+
 void Player::Move()
 {
 	// 移動速度
 	m_moveSpeed.x = START_MOVE;
 	m_moveSpeed.z = START_MOVE;
 	// ステックの入力量を取得
-	float lStick_x = g_pad[0]->GetLStickXF();
-	float lStick_y = g_pad[0]->GetLStickYF();
+	lStick_x = g_pad[0]->GetLStickXF();
+	lStick_y = g_pad[0]->GetLStickYF();
 	// cameraの前方向と右方向を取得
 	Vector3 cameraForward = g_camera3D->GetForward();
 	Vector3 cameraRight = g_camera3D->GetRight();
@@ -156,14 +177,13 @@ void Player::Move()
 	// キャラコンを使用して、座標を更新する
 	m_position = m_charaCon.Execute(m_moveSpeed, g_gameTime->GetFrameDeltaTime());
 
-	if (m_position.y <= -45.0f) {
+	if (m_position.y <= -55.0f) {
 		m_position = { 0.0f,350.0f,-500.0f };
 		m_charaCon.SetPosition(m_position);
 	}
 
 	// 座標の更新
 	Vector3 modelPosition = m_position;
-//	modelPosition.y += 5.0f;
 	m_modelRender.SetPosition(modelPosition);
 }
 
@@ -171,11 +191,7 @@ void Player::Rotation()
 {
 	if (g_pad[0]->IsPress(enButtonA) == true)
 	{
-	/*	if (m_moveSpeed.x >= 0.001f|| m_moveSpeed.x <= -0.001f||
-			m_moveSpeed.z >= 0.001f || m_moveSpeed.z <= -0.001f) {
-			return;
-		}*/
-		m_moveSpeed += g_camera3D->GetForward();
+		m_moveSpeed = g_camera3D->GetForward();
 	}
 
 	if (fabsf(m_moveSpeed.x) < MOVE_SPEED_MINIMUMVALUE
@@ -203,6 +219,8 @@ void Player::Render(RenderContext& rc)
 void Player::ProcessCommonStateTransition()
 {
 
+
+
 	if (g_pad[0]->IsPress(enButtonA)) {
 
 		Quaternion rot;
@@ -211,41 +229,44 @@ void Player::ProcessCommonStateTransition()
 		m_effect = NewGO <EffectEmitter>(0);
 		Vector3 effectposi = m_position;
 		effectposi.y += 35.0f;
+		m_forward=g_camera3D->GetForward();
 		effectposi += m_forward * 50.0f;
 
 		Vector3 m_right = Vector3::AxisX;
 		rot.Apply(m_right);
 		effectposi += m_right * -7.5f;
-		
-		if (g_pad[0]->GetRStickYF() >= 0.1f || g_pad[0]->GetRStickYF() <= -0.1f) {
-			//パッドの入力を使ってカメラを回す。
-			y2 = g_pad[0]->GetRStickYF();
-			y += y2 * 0.1f;
-		}
-		if (y >= 1.0f)
-		{
-			y = 1.0f;
-		}
-		if (y <= -1.0f)
-		{
-			y = -1.0f;
-		}
 
-		//X軸周りの回転。
-		Vector3 axisX2;
-		axisX2.Cross(Vector3::AxisY, m_position);
-		axisX2.Normalize();
-		rot.SetRotationDeg(axisX2, 20.0f * y);
-		rot.y = m_rotation.y;
-		rot.w = m_rotation.w;
+		Vector3 effectDir = m_endVector - m_startVector;
+		effectDir.Normalize();
+		Quaternion effectRot;
+		effectRot.SetRotation(Vector3::AxisZ, effectDir);
 		m_effect->Init(0);
 		m_effect->SetPosition(effectposi);
-		m_effect->SetRotation(rot);
+		m_effect->SetRotation(effectRot);
 		// エフェクトの大きさを設定する。
 		m_effect->SetScale(m_scale * 15.0f);
 		m_effect->Play();
-	//	m_effect->SetWorldMatrix(matrix);
+		//	m_effect->SetWorldMatrix(matrix);
 
+		if (lStick_x <= -0.1f) {
+			m_playerState = enPlayerState_LeftShot;
+			return;
+		}
+		else if (lStick_x >= 0.1f)
+		{
+			m_playerState = enPlayerState_RightShot;
+			return;
+		}
+		else if (lStick_y >= 0.1f)
+		{
+			m_playerState = enPlayerState_ForwardShot;
+			return;
+		}
+		else if (lStick_y <= -0.1f)
+		{
+			m_playerState = enPlayerState_BackShot;
+			return;
+		}
 		//攻撃ステートに遷移
 		m_playerState = enPlayerState_Shot;
 		return;
@@ -257,35 +278,13 @@ void Player::ProcessCommonStateTransition()
 		return;
 	}
 
+
 	// xかzの移動速度があったら
 	if (fabsf(m_moveSpeed.x) >= 0.001f || fabsf(m_moveSpeed.z) >= 0.001f)
 	{
-	/*	if (g_pad[0]->IsPress(enButtonA)==true) {
-			if (Lstick_x<= -0.1f) {
-				m_playerState = enPlayerState_LeftShot;
-				return;
-			}
-			else if (Lstick_x >= 0.1f)
-			{
-				m_playerState = enPlayerState_RightShot;
-				return;
-			}
-			else if (Lstick_y >= 0.1f)
-			{
-				m_playerState = enPlayerState_ForwardShot;
-				return;
-			}
-			else if (Lstick_y <= -0.1f)
-			{
-				m_playerState = enPlayerState_BackShot;
-				return;
-			}
-		}
-		else {*/
 			//走りステートに遷移
 			m_playerState = enPlayerState_Walk;
 			return;
-	//	}
 	}
 	else {
 

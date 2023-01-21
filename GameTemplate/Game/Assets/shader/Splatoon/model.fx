@@ -421,14 +421,14 @@ float4 PSMainCore(SPSIn psIn, uniform bool shadowreceive) : SV_Target0
     specLig *= specPower;
    
     float3 lig = 0.0f;
-    lig += max(0.0f, dot(normal, -directionlight.dirDirection)) * directionlight.dirColor;
-    lig += max(0.0f, dot(normal, -dirLig2)) * directionlight.dirColor * 0.1f;
+    lig += max(0.0f, dot(normal, -directionlight.dirDirection)) * directionlight.dirColor * 0.8f;
+    lig += max(0.0f, dot(normal, -dirLig2)) * directionlight.dirColor * 0.01f;
    
-    float3 light = float3(0.05f, 0.05f, 0.05f);
+    float3 light = float3(0.07f, 0.07f, 0.07f);
 
     
-    lig += + specLig
-           + light;
+    //lig += + specLig
+    //       + light;
     
     float4 albedoColor = color;
     albedoColor.xyz *= lig;

@@ -40,6 +40,7 @@ public:
 		m_number = number;
 	}
 
+	int m_number = 0;
 	ModelRender					m_modelRender;					//ステージ
 private:
 	Player* m_player;						//プレイヤー
@@ -65,6 +66,5 @@ private:
 	Vector3 startVector;
 	Vector3 endVector;
 
-	int m_number = 0;
-
+	int reset = 0;
 };

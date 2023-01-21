@@ -4,6 +4,7 @@
 bool Floor::Start()
 {
 	m_modelRender.InitUVScroll("Assets/modelData/testModel/yuka.tkm");
+	m_position.y += 22.0f;
 	//モデルの座標を設定。
 	m_modelRender.SetPosition(m_position);
 	//モデルの回転を設定。
@@ -13,8 +14,8 @@ bool Floor::Start()
 	//モデルの更新処理。
 	m_modelRender.Update();
 	//静的物理オブジェクトの初期化処理。
-	m_physicsStaticObject.CreateFromModel(m_modelRender.GetModel(), m_modelRender.GetModel().GetWorldMatrix());
-	m_physicsStaticObject.GetbtCollisionObject()->setUserIndex(enCollisionAttr_Ground);
+//	m_physicsStaticObject.CreateFromModel(m_modelRender.GetModel(), m_modelRender.GetModel().GetWorldMatrix());
+//	m_physicsStaticObject.GetbtCollisionObject()->setUserIndex(enCollisionAttr_Ground);
 
 
 
