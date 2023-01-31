@@ -104,6 +104,12 @@ namespace nsK2EngineLow {
 		//モデルの定数バッファ用の情報をモデルの初期化情報として渡す。
 		initData.m_expandConstantBuffer = &g_renderingEngine.GetModelRenderCB();
 		initData.m_expandConstantBufferSize = sizeof(g_renderingEngine.GetModelRenderCB());
+
+		SkyCube skycube;
+		initData.m_expandShaderResoruceView[0] = &skycube.GetSkyCubeTexture();
+
+
+		//		initData.m_expandShaderResoruceView[0] =
 		//ノンスキンメッシュ用の頂点シェーダーのエントリーポイントを指定する。
 		initData.m_vsEntryPointFunc = "VSMain";
 		initData.m_alphaBlendMode = AlphaBlendMode_Trans;

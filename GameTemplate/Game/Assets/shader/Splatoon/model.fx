@@ -108,7 +108,8 @@ Texture2D<float4> g_albedo : register(t0); //アルベドマップ
 Texture2D<float4> g_normalMap : register(t1);
 Texture2D<float4> g_specularMap : register(t2);
 StructuredBuffer<float4x4> g_boneMatrix : register(t3); //ボーン行列。
-Texture2D<float4> g_shadowMap : register(t10); // シャドウマップ
+//Texture2D<float4> g_shadowMap : register(t10); // シャドウマップ
+TextureCube<float4> g_skyCubeMap : register(t10);
 sampler g_sampler : register(s0); //サンプラステート。
 static const int pattern[4][4] =
 {
@@ -384,55 +385,57 @@ float4 PSMainCore(SPSIn psIn, uniform bool shadowreceive) : SV_Target0
 
     //スポットライトによるライティングを計算する。
     float3 spotLig = CalcLigFromSpotLight(psIn);
-    
+   
     
    // アルベドマップ
     float2 uv = psIn.uv;
     uv.x += uvscroll;
     uv.y -= uvscroll;
-    float4 color = g_albedo.Sample(g_sampler, uv);
+    
+    
+ //   float4 color = g_albedo.Sample(g_sampler, uv);
+    
+    float3 localNormal = g_normalMap.Sample(g_sampler, uv).xyz;
 
     uv.x -= uvscroll * 0.2f;
     uv.y += uvscroll * 1.8f;
-    float4 color2 = g_albedo.Sample(g_sampler, uv);
-    color += color2;
     
     float3 normal = psIn.normal;
     
     //法線マップからタンジェントスペースの法線をサンプリングする
-    float3 localNormal = g_normalMap.Sample(g_sampler, psIn.uv).xyz;
-  
+    float3 localNormal2 = g_normalMap.Sample(g_sampler, uv).xyz;
+    
+    
     //タンジェントスペースの法線を0～1の範囲から-1～1の範囲に復元する
     localNormal = (localNormal - 0.5f) * 2.0f;
+    localNormal2 = (localNormal2 - 0.5f) * 2.0f;
+
+    localNormal += localNormal2;
+    localNormal = normalize(localNormal);
 
     //タンジェントスペースの法線をワールドスペースに変換する
     normal = psIn.tangent * localNormal.x + psIn.biNormal * localNormal.y + normal * localNormal.z;
-
-    // Phong鏡面反射を計算
-    // このサンプルでは鏡面反射の効果を分かりやすくするために10倍にしている
-    float3 specLig = CalcPhongSpecular(normal, psIn.worldPos, directionlight.dirDirection);
-    float3 dirLig2 = directionlight.dirDirection;
-    dirLig2.xz *= -1.0f;
-    specLig += CalcPhongSpecular(normal, psIn.worldPos, dirLig2);
-     //スペキュラマップからスペキュラ反射の強さをサンプリング
-    float specPower = max(0.01f, g_specularMap.Sample(g_sampler, psIn.uv).r);
-
-    //鏡面反射の強さを鏡面反射光に乗算する
-    specLig *= specPower;
-   
-    float3 lig = 0.0f;
-    lig += max(0.0f, dot(normal, -directionlight.dirDirection)) * directionlight.dirColor * 0.8f;
-    lig += max(0.0f, dot(normal, -dirLig2)) * directionlight.dirColor * 0.01f;
-   
-    float3 light = float3(0.07f, 0.07f, 0.07f);
-
+    float3 skyColor = float3(0.6f, 0.850980f, 0.917647f);
+    //(153.0f/255.0f, 217.0f/255.0f, 234.0f/255.0f);0.6,0.8509803921568627,0.9176470588235294
+    float3 waterColor = float3(0.5f, 0.5f, 0.5f);
+    float3 toEye = eyePos - psIn.worldPos;
+    toEye = normalize(toEye);
+    float t = dot(toEye, normal);
+    float3 finalColor = lerp(skyColor, waterColor, t);
     
-    //lig += + specLig
-    //       + light;
+    float alpha = 1.0f;
+    if (t > 0.4f)
+    {
+        alpha = 0.7f;
+    }
     
-    float4 albedoColor = color;
-    albedoColor.xyz *= lig;
-    return albedoColor;
+    // フォグで空となじませる
+    t = min(1, length(psIn.worldPos) / 12000.0f);
+    float3 fogColor = float3(0.976470f, 0.952941f, 0.894117f);
+    //(249.0f / 255.0f, 243.0f / 255.0f, 228.0f / 255.0f);0.9764705882352941,0.9529411764705882,0.8941176470588235
+    finalColor = lerp(finalColor, fogColor, pow(t, 0.5f));
+
+    return float4(finalColor, alpha);
 }
 // モデル用のピクセルシェーダーのエントリーポイント
 float4 PSMain(SPSIn psIn) : SV_Target0

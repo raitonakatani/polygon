@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "Cylinder.h"
-#include "Player.h"
-#include "Enemy.h"
+#include "Game.h"
 
 namespace
 {
@@ -28,34 +27,28 @@ bool Cylinder::Start()
 	m_renderingEngine->InitTextureTarget(m_number);
 	m_renderingEngine->SpriteInit(m_modelRender.GetTkm()->m_albedo, m_number);
 
-	m_player = FindGO<Player>("player");
+	m_game = FindGO<Game>("game");
 
 	return true;
 }
 void Cylinder::Update()
 {
+	if (m_game->m_paintnumber == 40 && m_position.y >= -150.0f)
+	{
+		int ramx = -3 - rand() % 7;
+		int ramy = -3 - rand() % 7;
+
+		m_position.x = ramx;
+		m_position.z = ramy;
+		m_position.y -= 0.5f;
+
+		m_physicsStaticObject.SetRotation(m_position, m_rotation);
+	}
+
+
 	m_modelRender.SetPosition(m_position);
 	m_modelRender.SetScale(m_scale);
 	m_modelRender.Update();
-
-	m_player = FindGO<Player>("player");
-	startVector = m_player->GetStartVector();
-	endVector = m_player->GetEndVector();
-	if (g_pad[0]->IsPress(enButtonA) == true)
-	{
-		m_renderingEngine->SpriteDraw(m_modelRender, m_number,reset, startVector, endVector);
-	}
-
-	const auto& enemys = FindGOs<Enemy>("enemy");
-	for (auto enemy : enemys)
-	{
-		startVector = enemy->GetStartVector();
-		endVector = enemy->GetEndVector();
-		if (enemy->m_isAttack == true)
-		{
-	//		m_renderingEngine->SpriteDraw(m_modelRender, m_number,reset, startVector, endVector);
-		}
-	}
 }
 void Cylinder::Render(RenderContext& rc)
 {

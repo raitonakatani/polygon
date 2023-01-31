@@ -90,30 +90,67 @@ void Enemy::Update()
 		m_player->m_enemynumber += 1;
 		DeleteGO(this);
 	}
+	m_game = FindGO<Game>("game");
+	if (m_game->m_paintnumber >= 40) {
+		m_game->m_paintnumber=40;
+		//	return;
+	}
+	m_cylinder = FindGO<Cylinder>("cylinder");
+
 	// プレイヤーのクラスを探して持ってくる
 	m_player = FindGO<Player>("player");
 	if (m_isSearchPlayer == false) {
-		m_targetPointPosition = m_targetposi;
-		if (m_timer >= 15.0f) {
+		if (m_timer >= 16.0f) {
+			ramtime = rand() % 10 +1;
+			ramtime *= 0.2f;
+			ramtime += 17.0f;
+			if (m_timer >= ramtime) {
 
-			//塗る場所（立つ場所）をランダムに設定
-	/*		Quaternion rot;
-			float ram = rand() % 360;
-			rot.SetRotationY(ram);
-			rot.Apply(m_forward);
-			m_targetposi = m_forward * 400.0f;
-			if (m_targetposi.x <= 300.0f && m_targetposi.x >= -300.0f) {
-				m_targetposi.x = 300.0f;
+				//塗る場所（立つ場所）をランダムに設定
+		/*		Quaternion rot;
+				float ram = rand() % 360;
+				rot.SetRotationY(ram);
+				rot.Apply(m_forward);
+				m_targetposi = m_forward * 400.0f;
+				if (m_targetposi.x <= 300.0f && m_targetposi.x >= -300.0f) {
+					m_targetposi.x = 300.0f;
+				}
+				if (m_targetposi.z <= 300.0f && m_targetposi.z >= -300.0f) {
+					m_targetposi.z = 300.0f;
+				}
+				m_targetposi.y = 150.0f;*/
+				int ram = rand() % 8;
+				int ram2 = rand() % 5;
+				m_targetposi = m_enemypath.m_pointlist[ram].s_position;
+				if (m_game->m_paintlist[ram].m_paint[ram2] == false) {
+					yposi = m_enemypath.m_pointlist[ram].s_paintposi[ram2].y;
+					paintposi = m_enemypath.m_pointlist[ram].s_paintposi[ram2];
+					a = ram;
+					b = ram2;
+				}
+				else {
+					for (int i = 0;i < 8;i++)
+					{
+						for (int y = 0;y < 5;y++) {
+							if (m_game->m_paintlist[i].m_paint[y] == true)
+							{
+							/*	yposi = m_enemypath.m_pointlist[i].s_paintposi[y].y;
+								paintposi = m_enemypath.m_pointlist[i].s_paintposi[y];
+								a = i;
+								b = y;
+								if (i == 7 && y == 4) {
+									return;
+								}*/
+								return;
+							}
+						}
+					}
+					return;
+						//gameover = true;
+				}
+				m_targetPointPosition = m_targetposi;
+				m_timer = 13.0f;
 			}
-			if (m_targetposi.z <= 300.0f && m_targetposi.z >= -300.0f) {
-				m_targetposi.z = 300.0f;
-			}
-			m_targetposi.y = 150.0f;*/
-			int ram = rand() % 8;
-			int ram2 = rand() % 4;
-			m_targetposi = m_enemypath.m_pointlist[ram].s_position;
-			paintposi = m_enemypath.m_pointlist[ram].s_paintposi[ram2];
-			m_timer = 13.0f;
 		}
 	}
 	else {
@@ -142,8 +179,6 @@ void Enemy::Update()
 	m_modelRender.SetScale(scale);
 	// モデルの更新
 	m_modelRender.Update();
-
-	m_cylinder = FindGO<Cylinder>("cylinder");
 }
 
 void Enemy::Move()
@@ -165,7 +200,7 @@ void Enemy::Move()
 			55.0f							// AIエージェントの高さ。
 		);
 	}
-	if (m_diff.Length() >= 100.0f && timer < 0.3f) {
+	if (m_diff.Length() >= 10.0f && timer < 0.3f) {
 		// パス上を移動する。
 		m_position = m_path.Move(
 			m_position,
@@ -176,7 +211,6 @@ void Enemy::Move()
 		diff = m_position - m_oldPosition;
 		diff.Normalize();
 		m_moveSpeed = diff;
-		m_timer = 13.0f;
 	}
 
 	// 重力
@@ -191,12 +225,10 @@ void Enemy::Move()
 
 void Enemy::Rotation()
 {
-	if (m_isAttack == true)
-	{
-		//timer = 0.0f;
+	if (m_diff.Length() <= 10.0f && m_timer >= 14.0f) {
 		auto diff = m_diff;
 		if (m_isSearchPlayer == false) {
-			diff = Vector3{0.0f,150.0f,0.0f} - m_position;
+			diff = Vector3{ 0.0f,150.0f,0.0f } - m_position;
 		}
 		diff.Normalize();
 		m_moveSpeed = diff;
@@ -210,7 +242,6 @@ void Enemy::Rotation()
 	float angle = atan2(-m_moveSpeed.x, m_moveSpeed.z);
 	m_rotation.SetRotationY(-angle);
 
-
 	// 回転を設定する
 	m_modelRender.SetRotation(m_rotation);
 	// プレイヤーの正面ベクトルを計算する
@@ -220,31 +251,54 @@ void Enemy::Rotation()
 
 void Enemy::Attack()
 {
-	//float ram = rand() % 200;
-	//yup = ram;
-	if (m_diff.Length() <= 100.0f && m_timer >= 14.0f) {
-		m_isAttack = true;
-		m_startVector = m_position;
-		m_startVector.y += 50.0f;
-		m_endVector = m_startVector;
-		Vector3 paint = paintposi - m_startVector;
-		paint.Normalize();
-		m_endVector += paint * 300.0f;
-	//	m_endVector.y += yup;
+	if (m_diff.Length() <= 10.0f && m_timer >= 15.0f && m_timer <= 15.3f||
+		m_diff.Length() <= 10.0f && m_timer >= 16.3f && m_timer <= 16.6f) {
+		if (m_game->m_paintlist[a].m_paint[b] == false) {
+			m_startVector = m_position;
+			m_startVector.y = yposi;
+			m_endVector = m_startVector;
+			Vector3 paint = paintposi - m_startVector;
+			paint.Normalize();
+			m_endVector += paint * 300.0f;
+			m_renderingEngine->SpriteDraw(m_cylinder->m_modelRender, m_cylinder->m_number, 0, m_startVector, m_endVector);
+			m_game->m_paintlist[a].m_paint[b] = true;
+			m_game->m_paintnumber += 1;
+			
+			if (m_game->m_paintnumber == 40)
+			{
+				m_game->enemyposi = m_startVector + paint * -200.0f;
+				m_game->enemyposi.y += 350.0f;
+				m_game->enemypaint = paintposi;
+				m_game->enemypaint.y = 300.0f;
 
-		m_renderingEngine->SpriteDraw(m_cylinder->m_modelRender, m_cylinder->m_number,0, m_startVector, m_endVector);
+			}
+
+			m_isAttack = true;
+			//攻撃ステートに遷移
+			m_enemyState = enEnemyState_Shot;
+			return;
+		}
 	}
-	else if (m_diff.Length() <= 100.0f && m_timer < 14.0f)
+
+//	if (m_diff.Length() <= 10.0f && m_timer >= 14.0f) {
+//		m_startVector = m_position;
+//		m_startVector.y = yposi;
+//		m_endVector = m_startVector;
+//		Vector3 paint = paintposi - m_startVector;
+//		paint.Normalize();
+////		m_endVector += paint * 300.0f;
+//		m_endVector = paintposi;
+//		m_isAttack = true;
+//		return;
+//	}
+	else if (m_diff.Length() <= 10.0f && m_timer < 14.0f)
 	{
-		//yup = 0.0f;
 		m_enemyState = enEnemyState_Idle;
 		return;
 	}
-	if (m_diff.Length() >= 100.0f)
+	if (m_diff.Length() >= 10.0f)
 	{
-	//	yup = 0.0f;
 		m_isAttack = false;
-		m_endVector = m_startVector = Vector3::Zero;
 	}
 }
 
@@ -331,32 +385,24 @@ void Enemy::Collision()
 
 void Enemy::ProcessCommonStateTransition()
 {
-	if (timer >= 4.0f)
-	{
-		timer = 0.0f;
-	}
-	if (m_isAttack == true && m_timer >= 14.0f) {
-	//	Matrix matrix = m_modelRender.GetBone(m_gunId)->GetWorldMatrix();
+
+	if (m_isAttack == true) {
 		m_effect = NewGO <EffectEmitter>(0);
 		Vector3 effectposi = m_position;
 		effectposi.y += 50.0f;
-		//effectposi += m_forward * 100.0f;
 
-		//Vector3 m_right = Vector3::AxisX;
-		//m_rotation.Apply(m_right);
-		//effectposi += m_right * -7.5f;
-		Vector3 effectDir = m_endVector - m_startVector;
+		Vector3 startposi = m_position;
+		startposi.y += 50.0f;
+		Vector3 effectDir = m_endVector - startposi;
 		effectDir.Normalize();
 		Quaternion effectRot;
 		effectRot.SetRotation(Vector3::AxisZ, effectDir);
-	//	m_rotation = effectRot;
 		m_effect->Init(0);
 		m_effect->SetPosition(effectposi);
-		m_effect->SetRotation(m_rotation);
+		m_effect->SetRotation(effectRot);
 		// エフェクトの大きさを設定する。
 		Vector3 sca = Vector3{ 10.0f,10.0f,10.0f };
 		m_effect->SetScale(sca);
-		//m_effect->SetWorldMatrix(matrix);
 		m_effect->Play();
 		//攻撃ステートに遷移
 		m_enemyState = enEnemyState_Shot;

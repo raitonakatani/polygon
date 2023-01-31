@@ -4,13 +4,13 @@
 bool Floor::Start()
 {
 	m_modelRender.InitUVScroll("Assets/modelData/testModel/yuka.tkm");
-	m_position.y += 22.0f;
+	m_position.y += 42.0f;
 	//モデルの座標を設定。
 	m_modelRender.SetPosition(m_position);
 	//モデルの回転を設定。
 	m_modelRender.SetRotation(m_rotation);
 	//モデルの大きさを設定。
-	m_modelRender.SetScale(Vector3::One);
+	m_modelRender.SetScale(Vector3::One*1.5f);
 	//モデルの更新処理。
 	m_modelRender.Update();
 	//静的物理オブジェクトの初期化処理。

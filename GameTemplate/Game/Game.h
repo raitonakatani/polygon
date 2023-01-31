@@ -26,6 +26,16 @@ public:
 	void Render(RenderContext& rc);
 
 	int m_number = 0;
+	struct PaintList {
+		bool m_paint[5];
+	};
+	PaintList m_paintlist[8];
+	int m_paintnumber = 0;
+
+	Vector3 enemyposi;
+	Vector3 enemypaint;
+
+
 private:
 	LevelRender			m_levelRender[5];				//レベルレンダー。 
 	GameCamera*			m_gameCamera = nullptr;			//カメラ
@@ -39,6 +49,8 @@ private:
 	Fade*				m_fade = nullptr;				//フェード
 	GameUI*				m_ui = nullptr;					//UI
 	float				m_timer = 0.0f;					//タイマー
+
+
 
 	int phase=1;
 	std::string FILE[5];

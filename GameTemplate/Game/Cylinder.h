@@ -1,7 +1,6 @@
 #pragma once
 
-class Player;
-class Enemy;
+class Game;
 
 class Cylinder : public IGameObject
 {
@@ -41,30 +40,13 @@ public:
 	}
 
 	int m_number = 0;
-	ModelRender					m_modelRender;					//ステージ
+	ModelRender					m_modelRender;								//ステージ
 private:
-	Player* m_player;						//プレイヤー
-//	Enemy* m_enemy;
-	PhysicsStaticObject			m_physicsStaticObject;			//静的物理オブジェクト・
-	Vector3						m_position;						//座標。
-	Quaternion					m_rotation;						//回転。
+	Game* m_game;
+	PhysicsStaticObject			m_physicsStaticObject;						//静的物理オブジェクト・
+	Vector3						m_position;									//座標。
+	Quaternion					m_rotation;									//回転。
 	Vector3						m_scale = g_vec3One;						//大きさ。
 
-
-	Vector3 POS;
-	Vector2 UV;
-
-
-	SpriteInitData inkspriteinitdata;
-	Sprite inksprite;
-	SpriteInitData spriteinitdata;
-	Sprite sprite;
-
-	RenderingEngine* m_renderingEngine = &g_renderingEngine;
-
-
-	Vector3 startVector;
-	Vector3 endVector;
-
-	int reset = 0;
+	RenderingEngine*			m_renderingEngine = &g_renderingEngine;
 };

@@ -1,7 +1,8 @@
 #include "stdafx.h"
 #include "GameCamera.h"
 #include "Player.h"
-
+#include "Game.h"
+#include "Enemy.h"
 
 namespace
 {
@@ -39,12 +40,24 @@ bool GameCamera::Start()
 	g_camera3D->SetNear(SET_NEAR);
 	g_camera3D->SetFar(SET_FAR);
 
-
+	m_game = FindGO<Game>("game");
 
 	return true;
 }
 void GameCamera::Update()
 {
+
+	if (m_game->m_paintnumber >= 40)
+	{
+		//メインカメラに注視点と視点を設定する。
+		g_camera3D->SetPosition(m_game->enemyposi);
+		g_camera3D->SetTarget(m_game->enemypaint);
+
+		g_camera3D->Update();
+
+		return;
+	}
+
 
 	//通常カメラ
 	Vector3 target = m_player->GetPosition();
@@ -86,9 +99,6 @@ void GameCamera::Update()
 	//視点を計算する。
 	m_pos = target + m_toCameraPos;
 
-	m_forward = target - m_pos;
-	m_forward.y = 0.0f;
-	m_forward.Normalize();
 	//メインカメラに注視点と視点を設定する。
 	g_camera3D->SetPosition(m_pos);
 	g_camera3D->SetTarget(target);

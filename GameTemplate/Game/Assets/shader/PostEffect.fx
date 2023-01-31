@@ -52,6 +52,13 @@ float4 PSSamplingLuminance(PSInput In) : SV_Target0
     // なので、マイナスになるとピクセルカラーは出力されない
     // 今回の実装はカラーの明るさが1以下ならピクセルキルする
     clip(t - 1.0f);
+   
+    if (isinf(t) || isnan(t))
+    {
+        discard;
+
+        return float4(500.0f, 0.0f, 0.0f, 1.0f);
+    };
 
     return color;
 }

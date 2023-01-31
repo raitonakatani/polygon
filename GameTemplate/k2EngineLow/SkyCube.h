@@ -70,7 +70,12 @@ namespace nsK2EngineLow {
 		{
 			return m_textureFilePaths[m_type];
 		}
-	private:
+
+		Texture& GetSkyCubeTexture()
+		{
+			return m_texture[m_type];
+		}
+	//private:
 		Model m_modelRender;
 
 		Texture m_texture[enSkyCubeType_Num];

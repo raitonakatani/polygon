@@ -5,7 +5,8 @@
 struct Point {
 	Vector3 s_position;
 	int     s_number;
-	Vector3	s_paintposi[3];
+	Vector3	s_paintposi[5];
+	bool paint[5];
 };
 
 class  EnemyPath

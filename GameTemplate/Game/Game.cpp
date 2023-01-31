@@ -78,6 +78,8 @@ bool Game::Start()
 		FILE[i] += ".tkl";
 	}
 
+	SkyCube* m_sky = NewGO<SkyCube>(0, "sky");
+
 
 	//レベルを構築する。
 	m_levelRender[phase].Init(FILE[phase].c_str(), [&](LevelObjectData& objData) {
@@ -167,7 +169,6 @@ bool Game::Start()
 	// 当たり判定の描画
 	PhysicsWorld::GetInstance()->EnableDrawDebugWireFrame();
 
-	SkyCube* m_sky = NewGO<SkyCube>(0, "sky");
 
 	// カメラのオブジェクトを生成する。
 	m_gameCamera = NewGO<GameCamera>(0, "gameCamera");
@@ -178,6 +179,16 @@ bool Game::Start()
 
 void Game::Update()
 {
+	const auto& enemys = FindGOs<Enemy>("enemy");
+	for (auto enemy : enemys)
+	{
+		if (enemy->gameover == true)
+		{
+			NewGO<Result>(0, "result");
+			DeleteGO(this);
+			return;
+		}
+	}
 
 	m_player = FindGO<Player>("player");
 	if (m_number == m_player->m_enemynumber) {

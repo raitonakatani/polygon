@@ -89,6 +89,10 @@ float4 PSMain(SPSIn psIn) : SV_Target0
 	float4 albedoColor;
 	float3 normal = normalize(psIn.normal);
 	//albedoColor = g_skyCubeMap.Sample(g_sampler, psIn.normal);
-	albedoColor = g_skyCubeMap.Sample(g_sampler, normal * -1.0f) * luminance;
-	return albedoColor;
+	albedoColor = g_skyCubeMap.Sample(g_sampler, normal * -1.0f) * luminance * 1.03f;
+    float3 fogColor = float3(0.976470f, 0.952941f, 0.894117f);
+    //(249.0f / 255.0f, 243.0f / 255.0f, 228.0f / 255.0f);0.9764705882352941,0.9529411764705882,0.8941176470588235
+    float t = 1 - saturate(psIn.worldPos.y / 1200.0f);
+    float3 finalColor = lerp(albedoColor.xyz, fogColor, pow(t, 0.5f));
+    return float4(finalColor, 1.0f);
 }

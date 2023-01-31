@@ -5,6 +5,7 @@
 #include "AI/PathFinding/PathFinding.h"
 #include "EnemyPath.h"
 
+class Game;
 class Player;
 class GameSound;
 class EnemyPath;
@@ -103,6 +104,7 @@ public:
 	//{
 	//	m_number = number;
 	//}
+	bool gameover = false;
 
 private:
 	/// <summary>
@@ -159,6 +161,7 @@ private:
 
 
 	// クラス IGameObject
+	Game* m_game;
 	Player*					m_player;									// プレイヤー
 	GameSound*				m_gameSound;								// ゲームサウンド
 	Cylinder*				m_cylinder;
@@ -176,7 +179,7 @@ private:
 	Vector3                 m_moveSpeed;                                // 移動速度
 	Vector3					m_scale = g_vec3One;		                // 拡大率
 	Vector3					scale= g_vec3One;
-	Vector3					paintposi;
+	Vector3					paintposi = Vector3{ 0.0f,200.0f,0.0f };
 	Quaternion				m_rotation;					                // 回転
 	AnimationClip           m_animationClipArray[enAnimClip_Num];		// アニメーションクリップ
 	EnEnemyState			m_enemyState = enEnemyState_Idle;			// プレイヤーステート
@@ -188,7 +191,7 @@ private:
 	nsAI::Path				m_path;										// パス
 	nsAI::PathFinding		m_pathFiding;								// パス検索
 	Vector3					m_position;									// 座標
-	Vector3					m_targetPointPosition;						// 目標地点の座標
+	Vector3					m_targetPointPosition = Vector3{ 0.0f,150.0f,200.0f };		// 目標地点の座標
 
 	Vector3					m_diff;										// エネミーの座標から目標地点に向かうベクトル
 	float					timer = 0.0f;								// タイマー
@@ -199,8 +202,14 @@ private:
 	Vector3 m_targetposi = Vector3(0.0f, 150.0f, 200.0f);
 	float m_timer = 0.0f;
 	//int m_number = 0;
-
+	float yposi = 0.0f;
 	RenderingEngine* m_renderingEngine = &g_renderingEngine;
 
+	int a = 0;
+	int b = 0;
+
+	float ramtime = 0.0f;
+
+	int m_paintnaumber = 0;
 };
 

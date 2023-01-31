@@ -8,6 +8,7 @@ namespace
 
 bool Triangle::Start()
 {
+	m_position.y -= 30.0f;
 	// 通常モデル
 	m_modelRender.Init("Assets/modelData/testModel/triangle.tkm", false);
 	// モデルの座標を設定。

@@ -13,7 +13,7 @@ namespace
 	const Vector3 COLLISION_SCALE = { 20.0f, 20.0f, 120.0f };				//コリジョンの大きさ
 	const Vector3 COLLISION_PORK_SCALE = { 40.0f, 30.0f, 140.0f };			//コリジョン（ポーク）の大きさ
 	// float													
-	const float CHARACON_RADIUS = 20.0f;						// キャラコンの半径
+	const float CHARACON_RADIUS = 18.0f;						// キャラコンの半径
 	const float CHARACON_HEIGHT = 55.0f;						// キャラコンの高さ
 	const float MOVE_SPEED_MINIMUMVALUE = 0.001f;				// 移動速度の最低値
 	const float WALK_MOVESPEED = 300.0f;						// 歩きステートの移動速度
@@ -52,7 +52,7 @@ bool Player::Start()
 
 	// キャラコン
 	Vector3 posi = m_position;
-//	posi.y += 10.0f;
+	posi.y += 5.0f;
 	m_charaCon.Init(CHARACON_RADIUS, CHARACON_HEIGHT, m_position);
 
 	EffectEngine::GetInstance()->ResistEffect(0, u"Assets/efk/shot.efk");
@@ -71,7 +71,7 @@ void Player::Update()
 	auto a = m_enemynumber;
 	if (g_pad[0]->IsPress(enButtonA)) {
 		m_startVector = m_position;
-		m_startVector.y += 100.0f;
+		m_startVector.y += 70.0f;
 		m_endVector = m_startVector;
 		cameraforward.Normalize();
 		m_forward = g_camera3D->GetForward();
@@ -179,7 +179,9 @@ void Player::Move()
 
 	if (m_position.y <= -55.0f) {
 		m_position = { 0.0f,350.0f,-500.0f };
-		m_charaCon.SetPosition(m_position);
+		Vector3 posi = m_position;
+		posi.y += 5.0f;
+		m_charaCon.SetPosition(posi);
 	}
 
 	// 座標の更新
