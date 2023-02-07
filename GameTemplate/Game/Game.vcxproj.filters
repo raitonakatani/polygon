@@ -27,6 +27,7 @@
     <ClCompile Include="Fade.cpp" />
     <ClCompile Include="Title.cpp" />
     <ClCompile Include="EnemyPath.cpp" />
+    <ClCompile Include="Stairs.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -49,5 +50,6 @@
     <ClInclude Include="Fade.h" />
     <ClInclude Include="Title.h" />
     <ClInclude Include="EnemyPath.h" />
+    <ClInclude Include="Stairs.h" />
   </ItemGroup>
 </Project>

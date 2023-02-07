@@ -98,7 +98,7 @@ public:
 	bool m_isAttack = false;
 	float yup = 0.0f;
 	int phase = 0;
-	int m_hp = 100;
+	int m_hp = 200;
 	int m_phaseNumber = 0;
 	//void SetNumber(const int& number)
 	//{
@@ -170,6 +170,7 @@ private:
 	CharacterController     m_charaCon;	                                // キャラコン
 	SphereCollider			m_sphereCollider;							//スフィアコライダー
 	EffectEmitter*			m_effect = nullptr;							// エフェクト
+	CollisionObject*		m_collision;
 	// パス
 	EnemyPath				m_enemypath;								//パス
 	// 関数
@@ -208,8 +209,11 @@ private:
 	int a = 0;
 	int b = 0;
 
-	float ramtime = 0.0f;
-
-	int m_paintnaumber = 0;
+	float			ramtime = 0.0f;
+	float			m_nowy;
+	int				m_paintnaumber = 0;
+	int				m_searchNumber = 0;
+	bool			m_damage = false;
+	float			m_damageTimer = 0.0f;
 };
 

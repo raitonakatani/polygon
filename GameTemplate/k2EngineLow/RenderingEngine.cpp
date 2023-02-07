@@ -62,12 +62,12 @@ namespace nsK2EngineLow
 		//インクのテクスチャ
 		//これをモデルのテクスチャに塗りたい
 		//DDSファイル(画像データ)のファイルパスを指定する。
-		inkspriteinitdata[i].m_ddsFilePath[0] = "Assets/sprite/blue.DDS";
+		inkspriteinitdata[i].m_ddsFilePath[0] = "Assets/sprite/inku2.DDS";
 		//Sprite表示用のシェーダーのファイルパスを指定する。
 		inkspriteinitdata[i].m_fxFilePath = "Assets/shader/sprite.fx";
 		//スプライトの幅と高さを指定する。
-		inkspriteinitdata[i].m_width = FRAME_BUFFER_W;
-		inkspriteinitdata[i].m_height = FRAME_BUFFER_W;
+		inkspriteinitdata[i].m_width = 256;
+		inkspriteinitdata[i].m_height = 256;
 		//Sprite初期化オブジェクトを使用して、Spriteを初期化する。
 		inksprite[i].Init(inkspriteinitdata[i]);
 
@@ -87,6 +87,8 @@ namespace nsK2EngineLow
 
 
 	void RenderingEngine::SpriteDraw(
+		Vector3& position,
+		int target,
 		ModelRender& Model,
 		int i,
 		int reset,
@@ -114,6 +116,10 @@ namespace nsK2EngineLow
 //			renderContext.ClearRenderTargetViews(1, rtArray);
 
 			// step-5 offscreenRenderTargetに背景、プレイヤーを描画する
+			//Vector3 diff = position - startVector;
+			//if (diff.Length() <= 10.0f) {
+			//}
+				sprite[i].IsPlayer(target);
 				sprite[i].InitUVPosition(uv);
 				sprite[i].Draw(renderContext);
 			
@@ -125,27 +131,6 @@ namespace nsK2EngineLow
 			);
 
 			sprite[i].IsHit(1);
-		}
-	}
-
-	void RenderingEngine::IsHitEnemy(
-		ModelRender& Model,
-		Vector3& startVector,		//線分始点
-		Vector3& endVector,		//線分終点
-		bool& hit
-	)
-	{
-		auto& renderContext = g_graphicsEngine->GetRenderContext();
-
-		//三角形の座標が入っているリストを持ってくる。
-		std::vector<nsK2EngineLow::TkmFile::VectorBuffer> bufferList = Model.GetTkm()->GetBuffer();
-
-		Vector3 pos;
-		Vector2 uv;
-		//平面と線分の交点を求める。　POS（交点の座標）、vector3d(線分始点)、vector3dend(線分終点)、ポリゴンの3頂点
-		if (Model.IntersectPlaneAndLine(pos, uv, startVector, endVector, bufferList) == true) 
-		{
-			hit = true;
 		}
 	}
 }

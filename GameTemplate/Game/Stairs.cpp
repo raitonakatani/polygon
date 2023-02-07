@@ -1,14 +1,15 @@
 #include "stdafx.h"
-#include "Background.h"
+#include "Stairs.h"
 #include "Player.h"
 
-bool Background::Start()
+
+bool Stairs::Start()
 {
-	m_modelRender.Init("Assets/modelData/testModel/floor.tkm", true);
+	m_modelRender.Init("Assets/modelData/testModel/stairs.tkm", true);
 	//モデルの座標を設定。
 	m_modelRender.SetPosition(m_position);
 	//モデルの回転を設定。
-	m_modelRender.SetRotation(m_rotation);
+//	m_modelRender.SetRotation(m_rotation);
 	//モデルの大きさを設定。
 	m_modelRender.SetScale(m_scale);
 	//モデルの更新処理。
@@ -25,9 +26,10 @@ bool Background::Start()
 
 	m_player = FindGO<Player>("player");
 
+
 	return true;
 }
-void Background::Update()
+void Stairs::Update()
 {
 	m_modelRender.SetPosition(m_position);
 	m_modelRender.SetScale(m_scale);
@@ -42,9 +44,8 @@ void Background::Update()
 		Vector3 posi = m_player->GetPosition();
 		m_renderingEngine->SpriteDraw(posi,1, m_modelRender, m_number, reset, startVector, endVector);
 	}
-	return;
 }
-void Background::Render(RenderContext& rc)
+void Stairs::Render(RenderContext& rc)
 {
 	// モデルを描画する。
 	m_modelRender.Draw(rc);

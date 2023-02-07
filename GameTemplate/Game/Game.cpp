@@ -2,6 +2,7 @@
 #include "Game.h"
 #include "GameCamera.h"
 #include "Background.h"
+#include "Stairs.h"
 #include "Floor.h"
 #include "Box.h"
 #include "Cylinder.h"
@@ -11,6 +12,7 @@
 
 #include "Fade.h"
 #include "GameUI.h"
+#include "Title.h"
 #include "Result.h"
 
 #include "SkyCube.h"
@@ -56,11 +58,21 @@ Game::~Game()
 	{
 		DeleteGO(m_sky);
 	}
+	const auto& m_backgrounds = FindGOs<Background>("background");
+	for (auto m_background: m_backgrounds)
+	{
+		DeleteGO(m_background);
+	}
+	const auto& m_stairss = FindGOs<Stairs>("stairs");
+	for (auto m_stairs : m_stairss)
+	{
+		DeleteGO(m_stairs);
+	}
 
 	DeleteGO(m_gameCamera);
 	DeleteGO(m_player);
 	DeleteGO(m_floor);
-	DeleteGO(m_background);
+	DeleteGO(m_ui);
 
 }
 bool Game::Start()
@@ -84,22 +96,12 @@ bool Game::Start()
 	//レベルを構築する。
 	m_levelRender[phase].Init(FILE[phase].c_str(), [&](LevelObjectData& objData) {
 		
-		if (objData.EqualObjectName(L"player") == true) {
-			// プレイヤーのオブジェクトを生成する。
-			m_player = NewGO<Player>(0, "player");
-			m_player->SetPosition(objData.position);
-			//m_player->SetRotation(objData.rotation);
-			//m_player->SetScale(objData.scale);
-			//trueにすると、レベルの方でモデルが読み込まれて配置される。
-			return true;
-		}
-
-		//if (objData.EqualObjectName(L"floor") == true) {
-		//	// 床のオブジェクトを生成する。
-		//	m_floor = NewGO<Floor>(0, "floor");
-		//	m_floor->SetPosition(objData.position);
-		//	m_floor->SetRotation(objData.rotation);
-		//	m_floor->SetScale(objData.scale);
+		//if (objData.EqualObjectName(L"player") == true) {
+		//	// プレイヤーのオブジェクトを生成する。
+		//	m_player = NewGO<Player>(0, "player");
+		//	m_player->SetPosition(objData.position);
+		//	//m_player->SetRotation(objData.rotation);
+		//	//m_player->SetScale(objData.scale);
 		//	//trueにすると、レベルの方でモデルが読み込まれて配置される。
 		//	return true;
 		//}
@@ -110,6 +112,19 @@ bool Game::Start()
 			m_background->SetPosition(objData.position);
 			m_background->SetRotation(objData.rotation);
 			m_background->SetScale(objData.scale);
+			m_background->SetNumber(i);
+			i++;
+			//trueにすると、レベルの方でモデルが読み込まれて配置される。
+			return true;
+		}
+		if (objData.EqualObjectName(L"stairs") == true) {
+			// 床のオブジェクトを生成する。
+			m_stairs = NewGO<Stairs>(0, "stairs");
+			m_stairs->SetPosition(objData.position);
+			m_stairs->SetRotation(objData.rotation);
+			m_stairs->SetScale(objData.scale);
+			m_stairs->SetNumber(i);
+			i++;
 			//trueにすると、レベルの方でモデルが読み込まれて配置される。
 			return true;
 		}
@@ -166,6 +181,9 @@ bool Game::Start()
 
 	m_floor = NewGO<Floor>(0, "floor");
 
+	m_player = NewGO<Player>(0, "player");
+	m_player->SetPosition({ 0.0f,150.0f,-300.0f });
+
 	// 当たり判定の描画
 	PhysicsWorld::GetInstance()->EnableDrawDebugWireFrame();
 
@@ -179,6 +197,28 @@ bool Game::Start()
 
 void Game::Update()
 {
+
+	if (m_paintnumber == 42)
+	{
+		m_timer += g_gameTime->GetFrameDeltaTime();
+	}
+
+	if (m_isWaitFadeout) {
+		if (!m_fade->IsFade()) {
+			NewGO<Title>(0, "title");
+			//自身を削除する。
+			DeleteGO(this);
+		}
+	}
+	else {
+		//Aボタンを押したら。
+		if (m_paintnumber >= 42 && m_timer >= 3.0f) {
+			m_isWaitFadeout = true;
+			m_fade->StartFadeOut();
+		}
+	}
+
+
 	const auto& enemys = FindGOs<Enemy>("enemy");
 	for (auto enemy : enemys)
 	{
@@ -213,7 +253,7 @@ void Game::Update()
 			}
 			//phase += 1;
 			return true;
-			});
+		});
 	}
 }
 

@@ -30,25 +30,26 @@ Enemy::~Enemy()
 bool Enemy::Start()
 {
 	// アニメーションを読み込む
-	m_animationClipArray[enAnimClip_Idle].Load("Assets/aniData/enemy/idle.tka");
-	m_animationClipArray[enAnimClip_Idle].SetLoopFlag(true);
-	m_animationClipArray[enAnimClip_Shot].Load("Assets/aniData/enemy/shot.tka");
-	m_animationClipArray[enAnimClip_Shot].SetLoopFlag(true);
-	m_animationClipArray[enAnimClip_Walk].Load("Assets/aniData/enemy/run.tka");
-	m_animationClipArray[enAnimClip_Walk].SetLoopFlag(true);
-
-	// アニメーションを読み込む
-//	m_animationClipArray[enAnimClip_Idle].Load("Assets/aniData/idle.tka");
+//	m_animationClipArray[enAnimClip_Idle].Load("Assets/aniData/enemy/idle.tka");
 //	m_animationClipArray[enAnimClip_Idle].SetLoopFlag(true);
-//	m_animationClipArray[enAnimClip_Shot].Load("Assets/aniData/attack.tka");
+//	m_animationClipArray[enAnimClip_Shot].Load("Assets/aniData/enemy/shot.tka");
 //	m_animationClipArray[enAnimClip_Shot].SetLoopFlag(true);
-//	m_animationClipArray[enAnimClip_Walk].Load("Assets/aniData/walk.tka");
+//	m_animationClipArray[enAnimClip_Walk].Load("Assets/aniData/enemy/run.tka");
 //	m_animationClipArray[enAnimClip_Walk].SetLoopFlag(true);
 
-	scale *= 6.0f;
+	// アニメーションを読み込む
+	m_animationClipArray[enAnimClip_Idle].Load("Assets/aniData/idle.tka");
+	m_animationClipArray[enAnimClip_Idle].SetLoopFlag(true);
+	m_animationClipArray[enAnimClip_Shot].Load("Assets/aniData/attack.tka");
+	m_animationClipArray[enAnimClip_Shot].SetLoopFlag(true);
+	m_animationClipArray[enAnimClip_Walk].Load("Assets/aniData/walk.tka");
+	m_animationClipArray[enAnimClip_Walk].SetLoopFlag(true);
+
+	//scale *= 6.0f;
 
 	// モデルを読み込む
-	m_modelRender.Init("Assets/enemy/enemy.tkm", false, false, m_animationClipArray, enAnimClip_Num);
+	m_modelRender.Init("Assets/player/player2.tkm", false, false, m_animationClipArray, enAnimClip_Num);
+//	m_modelRender.Init("Assets/enemy/enemy.tkm", false, false, m_animationClipArray, enAnimClip_Num);
 	m_modelRender.SetPosition(m_position);
 	m_modelRender.SetScale(scale);
 	m_modelRender.Update();
@@ -91,38 +92,25 @@ void Enemy::Update()
 		DeleteGO(this);
 	}
 	m_game = FindGO<Game>("game");
-	if (m_game->m_paintnumber >= 40) {
-		m_game->m_paintnumber=40;
-		//	return;
-	}
 	m_cylinder = FindGO<Cylinder>("cylinder");
+
+	if (m_game->m_paintnumber >= 40) {
+		m_enemyState = enEnemyState_Idle;
+		return;
+	}
 
 	// プレイヤーのクラスを探して持ってくる
 	m_player = FindGO<Player>("player");
 	if (m_isSearchPlayer == false) {
 		if (m_timer >= 16.0f) {
-			ramtime = rand() % 10 +1;
+			ramtime = rand() % 10 + 1;
 			ramtime *= 0.2f;
 			ramtime += 17.0f;
 			if (m_timer >= ramtime) {
-
-				//塗る場所（立つ場所）をランダムに設定
-		/*		Quaternion rot;
-				float ram = rand() % 360;
-				rot.SetRotationY(ram);
-				rot.Apply(m_forward);
-				m_targetposi = m_forward * 400.0f;
-				if (m_targetposi.x <= 300.0f && m_targetposi.x >= -300.0f) {
-					m_targetposi.x = 300.0f;
-				}
-				if (m_targetposi.z <= 300.0f && m_targetposi.z >= -300.0f) {
-					m_targetposi.z = 300.0f;
-				}
-				m_targetposi.y = 150.0f;*/
 				int ram = rand() % 8;
 				int ram2 = rand() % 5;
-				m_targetposi = m_enemypath.m_pointlist[ram].s_position;
 				if (m_game->m_paintlist[ram].m_paint[ram2] == false) {
+				m_targetposi = m_enemypath.m_pointlist[ram].s_position;
 					yposi = m_enemypath.m_pointlist[ram].s_paintposi[ram2].y;
 					paintposi = m_enemypath.m_pointlist[ram].s_paintposi[ram2];
 					a = ram;
@@ -132,21 +120,20 @@ void Enemy::Update()
 					for (int i = 0;i < 8;i++)
 					{
 						for (int y = 0;y < 5;y++) {
-							if (m_game->m_paintlist[i].m_paint[y] == true)
+							if (m_game->m_paintlist[i].m_paint[y] == false)
 							{
-							/*	yposi = m_enemypath.m_pointlist[i].s_paintposi[y].y;
-								paintposi = m_enemypath.m_pointlist[i].s_paintposi[y];
-								a = i;
-								b = y;
-								if (i == 7 && y == 4) {
-									return;
-								}*/
-								return;
+								ram = i;
+								ram2 = y;
+								m_targetposi = m_enemypath.m_pointlist[ram].s_position;
+								yposi = m_enemypath.m_pointlist[ram].s_paintposi[ram2].y;
+								paintposi = m_enemypath.m_pointlist[ram].s_paintposi[ram2];
+								a = ram;
+								b = ram2;
 							}
 						}
 					}
 					return;
-						//gameover = true;
+					//gameover = true;
 				}
 				m_targetPointPosition = m_targetposi;
 				m_timer = 13.0f;
@@ -154,10 +141,9 @@ void Enemy::Update()
 		}
 	}
 	else {
-		m_timer = 13.0f;
 		m_targetPointPosition = m_player->GetPosition();
 	}
-		m_diff = m_targetPointPosition - m_position;
+	m_diff = m_targetPointPosition - m_position;
 	// 回転処理
 	Rotation();
 	// 移動処理
@@ -168,11 +154,10 @@ void Enemy::Update()
 	PlayAnimation();
 	// 各ステートの遷移処理
 	ManageState();
-	// サーチ
-	SearchPlayer();
 	// 当たり判定
 	Collision();
-
+	// サーチ
+	SearchPlayer();
 	// 座標、回転、大きさの更新
 	m_modelRender.SetPosition(m_position);
 	m_modelRender.SetRotation(m_rotation);
@@ -183,6 +168,13 @@ void Enemy::Update()
 
 void Enemy::Move()
 {
+	float range = 0.0f;
+	if (m_isSearchPlayer == false) {
+		range = 10.0f;
+	}
+	else {
+		range = 150.0f;
+	}
 	timer += g_gameTime->GetFrameDeltaTime();
 	bool isEnd;
 	Vector3 diff;
@@ -200,7 +192,7 @@ void Enemy::Move()
 			55.0f							// AIエージェントの高さ。
 		);
 	}
-	if (m_diff.Length() >= 10.0f && timer < 0.3f) {
+	if (m_diff.Length() >= range && timer < 0.3f) {
 		// パス上を移動する。
 		m_position = m_path.Move(
 			m_position,
@@ -251,8 +243,39 @@ void Enemy::Rotation()
 
 void Enemy::Attack()
 {
-	if (m_diff.Length() <= 10.0f && m_timer >= 15.0f && m_timer <= 15.3f||
-		m_diff.Length() <= 10.0f && m_timer >= 16.3f && m_timer <= 16.6f) {
+	if (m_isSearchPlayer == true && m_diff.Length() < 150.0f) {
+
+		m_collision = NewGO<CollisionObject>(0, "collision");
+		// コリジョンオブジェクトを作成する。
+		Vector3 collisionPosition = m_position;
+		collisionPosition += m_forward * 200.0f;
+		collisionPosition.y += 50.0f;
+		Quaternion rot;
+		rot = m_rotation;
+		Vector3 m_right = Vector3::AxisX;
+		rot.Apply(m_right);
+		collisionPosition += m_right * -7.5f;
+		// ボックス状のコリジョンを作成する。
+		m_collision->CreateBox(collisionPosition,		 // 座標。
+			m_rotation,                                      // 回転。
+			Vector3(40.0f, 20.0f, 350.0f)                    // 大きさ。
+		);
+		m_collision->SetName("enemy");
+
+
+
+		m_startVector = m_position;
+		m_startVector.y += 50.0f;
+		m_endVector = m_startVector;
+		m_endVector += m_forward * 300.0f;
+
+		m_isAttack = true;
+		//攻撃ステートに遷移
+		m_enemyState = enEnemyState_Shot;
+		return;
+	}
+	if (m_diff.Length() <= 10.0f && m_timer >= 15.0f && m_timer <= 15.2f||
+		m_diff.Length() <= 10.0f && m_timer >= 16.3f && m_timer <= 16.5f) {
 		if (m_game->m_paintlist[a].m_paint[b] == false) {
 			m_startVector = m_position;
 			m_startVector.y = yposi;
@@ -260,37 +283,25 @@ void Enemy::Attack()
 			Vector3 paint = paintposi - m_startVector;
 			paint.Normalize();
 			m_endVector += paint * 300.0f;
-			m_renderingEngine->SpriteDraw(m_cylinder->m_modelRender, m_cylinder->m_number, 0, m_startVector, m_endVector);
 			m_game->m_paintlist[a].m_paint[b] = true;
 			m_game->m_paintnumber += 1;
 			
 			if (m_game->m_paintnumber == 40)
 			{
-				m_game->enemyposi = m_startVector + paint * -200.0f;
-				m_game->enemyposi.y += 350.0f;
+				m_game->enemyposi = m_startVector + paint * -400.0f;
+				m_game->enemyposi.y = 550.0f;
 				m_game->enemypaint = paintposi;
 				m_game->enemypaint.y = 300.0f;
-
 			}
 
+			Vector3 playerposi = m_player->GetPosition();
+			m_renderingEngine->SpriteDraw(playerposi,0,m_cylinder->m_modelRender, m_cylinder->m_number, 0, m_startVector, m_endVector);
 			m_isAttack = true;
 			//攻撃ステートに遷移
 			m_enemyState = enEnemyState_Shot;
 			return;
 		}
 	}
-
-//	if (m_diff.Length() <= 10.0f && m_timer >= 14.0f) {
-//		m_startVector = m_position;
-//		m_startVector.y = yposi;
-//		m_endVector = m_startVector;
-//		Vector3 paint = paintposi - m_startVector;
-//		paint.Normalize();
-////		m_endVector += paint * 300.0f;
-//		m_endVector = paintposi;
-//		m_isAttack = true;
-//		return;
-//	}
 	else if (m_diff.Length() <= 10.0f && m_timer < 14.0f)
 	{
 		m_enemyState = enEnemyState_Idle;
@@ -331,13 +342,14 @@ void Enemy::SearchPlayer()
 
 	Vector3 playerPosition = m_player->GetPosition();
 	Vector3 diff = playerPosition - m_position;
+	Vector3 diff2 = playerPosition - m_position;
 
 	diff.Normalize();
 	float angle = acosf(diff.Dot(m_forward));
 
 
 	//プレイヤーが視界内に居なかったら。
-	if (Math::PI * 0.35f <= fabsf(angle) && diff.Length() <= 500.0f)
+	if (Math::PI * 0.30f <= fabsf(angle) && diff2.Length() <= 300.0f)
 	{
 		//プレイヤーは見つかっていない。
 		return;
@@ -347,9 +359,9 @@ void Enemy::SearchPlayer()
 	start.setIdentity();
 	end.setIdentity();
 	//始点はエネミーの座標。
-	start.setOrigin(btVector3(m_position.x, m_position.y + 70.0f, m_position.z));
+	start.setOrigin(btVector3(m_position.x, m_position.y + 35.0f, m_position.z));
 	//終点はプレイヤーの座標。
-	end.setOrigin(btVector3(playerPosition.x, playerPosition.y + 70.0f, playerPosition.z));
+	end.setOrigin(btVector3(playerPosition.x, playerPosition.y + 35.0f, playerPosition.z));
 
 	SweepResultWall callback;
 	//コライダーを始点から終点まで動かして。
@@ -362,9 +374,10 @@ void Enemy::SearchPlayer()
 		return;
 	}
 
-	//壁と衝突してない！！
-	//プレイヤー見つけたフラグをtrueに。
-	m_isSearchPlayer = false;
+	if (m_hp >= 100) {
+		return;
+	}
+	m_isSearchPlayer = true;
 }
 
 void Enemy::Collision()
@@ -375,10 +388,17 @@ void Enemy::Collision()
 	for (auto collision : collisions)
 	{
 		// コリジョンとキャラコンが衝突したら。
-		if (collision->IsHit(m_charaCon))
+		if (collision->IsHit(m_charaCon) ==true)
 		{
+			if (m_hp <= 50) {
+				m_isSearchPlayer = true;
+			}
+			m_damage = true;
 			m_hp -= 1;
 			return;
+		}
+		else {
+			m_damage = false;
 		}
 	}
 }
@@ -506,6 +526,16 @@ void Enemy::Render(RenderContext& rc)
 	if (m_timer <= 11.5f) {
 		return;
 	}
+	if (m_damage == true) {
+		m_damageTimer += g_gameTime->GetFrameDeltaTime();
+		if (m_damageTimer >= 0.1f) {
+			m_damageTimer = 0.0f;
+			// モデルをドロー。
+			m_modelRender.Draw(rc);
+		}
+	}
+	else {
 		// モデルをドロー。
 		m_modelRender.Draw(rc);
+	}
 }

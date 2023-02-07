@@ -2,6 +2,10 @@
 #include "Cylinder.h"
 #include "Game.h"
 
+// EffectEmitterを使用するために、ファイルをインクルードする。
+#include "graphics/effect/EffectEmitter.h"
+
+
 namespace
 {
 }
@@ -27,22 +31,33 @@ bool Cylinder::Start()
 	m_renderingEngine->InitTextureTarget(m_number);
 	m_renderingEngine->SpriteInit(m_modelRender.GetTkm()->m_albedo, m_number);
 
+	EffectEngine::GetInstance()->ResistEffect(1, u"Assets/efk/smoke.efk");
+
 	m_game = FindGO<Game>("game");
 
 	return true;
 }
 void Cylinder::Update()
 {
-	if (m_game->m_paintnumber == 40 && m_position.y >= -150.0f)
+	if (m_game->m_paintnumber == 40)
 	{
-		int ramx = -3 - rand() % 7;
-		int ramy = -3 - rand() % 7;
-
-		m_position.x = ramx;
-		m_position.z = ramy;
-		m_position.y -= 0.5f;
-
-		m_physicsStaticObject.SetRotation(m_position, m_rotation);
+		m_timer += g_gameTime->GetFrameDeltaTime();
+		m_falltimer += g_gameTime->GetFrameDeltaTime();
+		if (m_position.y >= 0.0f && m_timer >= 0.05f) {
+			m_effect = NewGO <EffectEmitter>(0);
+			Vector3 effectposi = m_position;
+			effectposi.y = 110.0f;
+			m_effect->Init(1);
+			m_effect->SetPosition(effectposi);
+			// エフェクトの大きさを設定する。
+			m_effect->SetScale(m_scale * 10.0f);
+			m_effect->Play();
+			m_timer = 0.0f;
+		}
+		if (m_position.y >= -150.0f && m_falltimer >= 2.5f) {
+			m_position.y -= 0.65f;
+			m_physicsStaticObject.SetRotation(m_position, m_rotation);
+		}
 	}
 
 

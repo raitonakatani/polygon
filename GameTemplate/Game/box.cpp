@@ -41,9 +41,10 @@ void Box::Update()
 	startVector = m_player->GetStartVector();
 	endVector = m_player->GetEndVector();
 
-	if (g_pad[0]->IsPress(enButtonA) == true)
+	if (g_pad[0]->IsPress(enButtonRB1) == true)
 	{
-		m_renderingEngine->SpriteDraw(m_modelRender, m_number, reset,startVector, endVector);
+		Vector3 posi = m_player->GetPosition();
+		m_renderingEngine->SpriteDraw(posi,1, m_modelRender, m_number, reset, startVector, endVector);
 	}
 }
 void Box::Render(RenderContext& rc)

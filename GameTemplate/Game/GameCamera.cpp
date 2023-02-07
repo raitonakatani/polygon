@@ -47,15 +47,37 @@ bool GameCamera::Start()
 void GameCamera::Update()
 {
 
-	if (m_game->m_paintnumber >= 40)
+	if (m_game->m_paintnumber == 40 && m_timer <= 15.0f)
 	{
+		m_timer += g_gameTime->GetFrameDeltaTime();
+		m_pos = m_game->enemyposi;
+		Vector3 target = m_game->enemypaint;
+		if (m_timer <= 13.0f) {
+			int ramx = -5 - rand() % 11;
+			int ramz = -5 - rand() % 11;
+			int ramy = -3 - rand() % 7;
+			m_pos.x += ramx;
+			m_pos.z += ramz;
+			m_pos.y += ramz;
+
+			int targetx = -5 - rand() % 11;
+			int targetz = -5 - rand() % 11;
+			int targety = -3 - rand() % 7;
+			target.x += targetx;
+			target.z += targetz;
+			target.y += targety;
+		}
+
 		//メインカメラに注視点と視点を設定する。
-		g_camera3D->SetPosition(m_game->enemyposi);
-		g_camera3D->SetTarget(m_game->enemypaint);
+		g_camera3D->SetPosition(m_pos);
+		g_camera3D->SetTarget(target);
 
 		g_camera3D->Update();
 
 		return;
+	}
+	else if (m_game->m_paintnumber == 40 && m_timer >= 15.0f) {
+		m_game->m_paintnumber = 41;
 	}
 
 

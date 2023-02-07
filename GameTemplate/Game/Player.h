@@ -39,8 +39,6 @@ public:
 	{
 		return m_position;
 	}
-
-
 	
 	/// <summary>
 	/// 始点の座標を取得する。
@@ -50,7 +48,6 @@ public:
 	{
 		return m_startVector;
 	}
-
 
 	/// <summary>
 	/// 終点の座標を取得する。
@@ -86,6 +83,10 @@ private:
 	/// 回転処理
 	/// </summary>
 	void Rotation();
+	/// <summary>
+	/// 当たり判定処理。
+	/// </summary>
+	void Collision();
 	/// <summary>
 	/// アニメーションの再生
 	/// </summary>
@@ -150,6 +151,10 @@ private:
 	float					y2;											// Rスティックの入力量
 	int                     m_gunId = -1;								//「Gun」ボーンのID。
 
+	int m_hp = 50;
 	float lStick_x = 0.0f;
 	float lStick_y = 0.0f;
+	bool m_damage = false;
+	float m_damageTimer = 0.0f;
+
 };

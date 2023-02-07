@@ -24,16 +24,6 @@ bool Floor::Start()
 }
 void Floor::Update()
 {
-	Vector3 BufferPosition[3];
-
-	//三角形の座標持ってくる。
-	const auto& bufferList = m_modelRender.GetTkm()->GetBuffer();
-
-	BufferPosition[0] = bufferList[0].buffer[0];
-	BufferPosition[1] = bufferList[0].buffer[1];
-	BufferPosition[2] = bufferList[0].buffer[2];
-
-
 	return;
 }
 void Floor::Render(RenderContext& rc)

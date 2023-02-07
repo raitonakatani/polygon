@@ -100,6 +100,13 @@ namespace nsK2EngineLow {
 			m_hit = hit;
 		};
 		/// <summary>
+		/// プレイヤーかどうかを設定する。
+		/// </summary>
+		void IsPlayer(int player)
+		{
+			m_player = player;
+		};
+		/// <summary>
 		/// 描画。
 		/// </summary>
 		/// <param name="renderContext">レンダリングコンテキスト</param>
@@ -189,6 +196,7 @@ namespace nsK2EngineLow {
 			Vector4 screenParam;
 			Vector2 uvposi;
 			int hit;
+			int player;
 		};
 		LocalConstantBuffer m_constantBufferCPU;	//CPU側の定数バッファ。
 		ConstantBuffer		m_constantBufferGPU;	//GPU側の定数バッファ。
@@ -202,5 +210,6 @@ namespace nsK2EngineLow {
 		Vector4				m_mulColor = Vector4::White;	//乗算カラー。
 		Vector2				m_uv;
 		int					m_hit = 0;
+		int					m_player = 0;
 	};
 }

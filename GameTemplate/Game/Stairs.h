@@ -1,10 +1,9 @@
 #pragma once
 
-class Game;
+class Player;
 
-class Cylinder : public IGameObject
+class Stairs : public IGameObject
 {
-
 public:
 	bool Start();
 	void Update();
@@ -39,18 +38,30 @@ public:
 		m_number = number;
 	}
 
-	int m_number = 0;
-	ModelRender					m_modelRender;								//ステージ
+	ModelRender					m_modelRender;					//ステージ
 private:
-	Game* m_game;
-	EffectEmitter* m_effect = nullptr;							// エフェクト
-	PhysicsStaticObject			m_physicsStaticObject;						//静的物理オブジェクト・
-	Vector3						m_position;									//座標。
-	Quaternion					m_rotation;									//回転。
+	Player* m_player;						//プレイヤー
+	PhysicsStaticObject			m_physicsStaticObject;			//静的物理オブジェクト・
+	Vector3						m_position;						//座標。
+	Quaternion					m_rotation;						//回転。
 	Vector3						m_scale = g_vec3One;						//大きさ。
 
-	RenderingEngine*			m_renderingEngine = &g_renderingEngine;
 
-	float m_timer = 0.0f;
-	float m_falltimer = 0.0f;
+	Vector3 POS;
+	Vector2 UV;
+
+
+	SpriteInitData inkspriteinitdata;
+	Sprite inksprite;
+	SpriteInitData spriteinitdata;
+	Sprite sprite;
+
+	RenderingEngine* m_renderingEngine = &g_renderingEngine;
+
+
+	Vector3 startVector;
+	Vector3 endVector;
+
+	int m_number = 0;
+	int reset = 0;
 };

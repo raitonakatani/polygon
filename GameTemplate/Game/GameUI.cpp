@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "GameUI.h"
-
+#include "Game.h"
+#include "Fade.h"
 
 bool GameUI::Start()
 {
@@ -9,6 +10,9 @@ bool GameUI::Start()
 	//指針の画像を読み込む
 	m_compassguideline.Init("Assets/sprite/guideline.DDS", 256, 256);
 
+	m_yposi = 800.0f;
+	m_gameover.Init("Assets/sprite/GameOver.DDS", 1024, 128);
+	m_gameover.SetPosition({ 0.0f,m_yposi,1.0f });
 
 	//フェーズの画像を読み込む
 	m_directionPhase[0].Init("Assets/sprite/east.DDS", 1024, 128);
@@ -26,13 +30,19 @@ bool GameUI::Start()
 		m_phase[i].Init(FILE.c_str(),512,128);
 	}
 
-
+	m_game = FindGO<Game>("game");
+	m_fade = FindGO<Fade>("fade");
 
 	return true;
 }
 
 void GameUI::Update()
 {
+	m_gameover.SetPosition({ 0.0f,m_yposi,0.0f });
+	m_gameover.SetScale({ 1.5f,1.5f,1.5f });
+	m_gameover.Update();
+
+
 	//カメラの回転量をもとにコンパスを回す
 	m_forward = g_camera3D->GetForward();
 	m_rot = atan2f(m_forward.x, m_forward.z);
@@ -74,6 +84,14 @@ void GameUI::Update()
 	m_directionPhase[m_number-1].SetPosition({ m_x, m_y2, 0.0f });
 	m_directionPhase[m_number-1].SetScale(m_scale);
 	m_directionPhase[m_number-1].Update();
+
+	float alpha = 1.0f - (m_fade->m_currentAlpha * 2.0f);
+
+	m_directionPhase[m_number - 1].SetMulColor({ 1.0f,1.0f,1.0f,alpha });
+	m_phase[m_number].SetMulColor({ 1.0f,1.0f,1.0f,alpha });
+	m_compass.SetMulColor({ 1.0f,1.0f,1.0f,alpha });
+	m_compassguideline.SetMulColor({ 1.0f,1.0f,1.0f,alpha });
+	m_gameover.SetMulColor({ 1.0f,1.0f,1.0f,alpha });
 }
 
 void GameUI::Render(RenderContext& rc)
@@ -84,5 +102,15 @@ void GameUI::Render(RenderContext& rc)
 	m_compassguideline.Draw(rc);
 
 	m_phase[m_number].Draw(rc);
-	m_directionPhase[m_number-1].Draw(rc);
+	m_directionPhase[m_number - 1].Draw(rc);
+
+	if (m_game->m_paintnumber >= 41) {
+		m_yposi -= 5.0f;
+		if (m_yposi <= 0.0f)
+		{
+			m_yposi = 0.0f;
+			m_game->m_paintnumber = 42;
+		}
+		m_gameover.Draw(rc);
+	}
 }

@@ -1,7 +1,9 @@
 #pragma once
+
+class Player;
+
 class Background : public IGameObject
 {
-
 public:
 	bool Start();
 	void Update();
@@ -30,10 +32,36 @@ public:
 	{
 		m_scale = scale;
 	}
+
+	void SetNumber(const int& number)
+	{
+		m_number = number;
+	}
+
+	ModelRender					m_modelRender;					//ステージ
 private:
-	ModelRender					m_modelRender;							//モデル。
-	PhysicsStaticObject			m_physicsStaticObject;					//静的物理オブジェクト。
-	Vector3						m_position;								//座標。
-	Quaternion					m_rotation = Quaternion::Identity;		//回転。
-	Vector3						m_scale = Vector3::One;					//大きさ。
+	Player* m_player;						//プレイヤー
+	PhysicsStaticObject			m_physicsStaticObject;			//静的物理オブジェクト・
+	Vector3						m_position;						//座標。
+	Quaternion					m_rotation;						//回転。
+	Vector3						m_scale = g_vec3One;						//大きさ。
+
+
+	Vector3 POS;
+	Vector2 UV;
+
+
+	SpriteInitData inkspriteinitdata;
+	Sprite inksprite;
+	SpriteInitData spriteinitdata;
+	Sprite sprite;
+
+	RenderingEngine* m_renderingEngine = &g_renderingEngine;
+
+
+	Vector3 startVector;
+	Vector3 endVector;
+
+	int m_number = 0;
+	int reset = 0;
 };

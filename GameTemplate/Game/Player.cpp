@@ -17,7 +17,7 @@ namespace
 	const float CHARACON_HEIGHT = 55.0f;						// キャラコンの高さ
 	const float MOVE_SPEED_MINIMUMVALUE = 0.001f;				// 移動速度の最低値
 	const float WALK_MOVESPEED = 300.0f;						// 歩きステートの移動速度
-	const float GRAVITY = 1000.0f;								// 重力
+	const float GRAVITY = 100.0f;								// 重力
 	const float START_MOVE = 0.0f;								// 初期設定のスピード
 }
 
@@ -68,8 +68,12 @@ bool Player::Start()
 
 void Player::Update()
 {
+	if (m_game->m_paintnumber >= 40) {
+		m_playerState = enPlayerState_Idle;
+		return;
+	}
 	auto a = m_enemynumber;
-	if (g_pad[0]->IsPress(enButtonA)) {
+	if (g_pad[0]->IsPress(enButtonRB1)) {
 		m_startVector = m_position;
 		m_startVector.y += 70.0f;
 		m_endVector = m_startVector;
@@ -89,7 +93,7 @@ void Player::Update()
 		// ボックス状のコリジョンを作成する。
 		m_collision->CreateBox(collisionPosition,		 // 座標。
 			m_rotation,                                      // 回転。
-			Vector3(40.0f, 20.0f, 350.0f)                    // 大きさ。
+			Vector3(40.0f, 20.0f, 250.0f)                    // 大きさ。
 		);
 		m_collision->SetName("player");
 	}
@@ -107,6 +111,8 @@ void Player::Update()
 	PlayAnimation();
 	// 各ステートの遷移処理
 	ManageState();
+	// 当たり判定処理
+	Collision();
 
 	// 座標、回転、大きさの更新
 	m_modelRender.SetPosition(m_position);
@@ -160,25 +166,21 @@ void Player::Move()
 	}
 
 
-	if (g_pad[0]->IsTrigger(enButtonB)) {
+	/*if (g_pad[0]->IsTrigger(enButtonB)) {
 		m_moveSpeed.y += 500.0f;
-	}
+	}*/
 
-	if (g_pad[0]->IsPress(enButtonY)) {
-		m_moveSpeed.y -= 50.0f;
-	}
 
-	if (m_charaCon.IsOnGround() == false) {
-		// 重力
-		m_moveSpeed.y -= GRAVITY * g_gameTime->GetFrameDeltaTime();
-	}
+	// 重力
+	m_moveSpeed.y -= GRAVITY;
 
 
 	// キャラコンを使用して、座標を更新する
 	m_position = m_charaCon.Execute(m_moveSpeed, g_gameTime->GetFrameDeltaTime());
 
-	if (m_position.y <= -55.0f) {
-		m_position = { 0.0f,350.0f,-500.0f };
+	if (m_position.y <= -55.0f || m_hp <= 0) {
+		m_position = { 0.0f,200.0f,-500.0f };
+		m_hp = 50;
 		Vector3 posi = m_position;
 		posi.y += 5.0f;
 		m_charaCon.SetPosition(posi);
@@ -191,7 +193,7 @@ void Player::Move()
 
 void Player::Rotation()
 {
-	if (g_pad[0]->IsPress(enButtonA) == true)
+	if (g_pad[0]->IsPress(enButtonRB1) == true)
 	{
 		m_moveSpeed = g_camera3D->GetForward();
 	}
@@ -212,18 +214,45 @@ void Player::Rotation()
 	m_rotation.Apply(m_forward);
 }
 
+void Player::Collision()
+{
+	// エネミー（タンク）の攻撃用のコリジョンを取得する。
+	const auto& collisions = g_collisionObjectManager->FindCollisionObjects("enemy");
+	// コリジョンの配列をfor文で回す。
+	for (auto collision : collisions)
+	{
+		// コリジョンとキャラコンが衝突したら。
+		if (collision->IsHit(m_charaCon) == true)
+		{
+			m_damage = true;
+			m_hp -= 1;
+			return;
+		}
+		else {
+			m_damage = false;
+		}
+	}
+}
+
 void Player::Render(RenderContext& rc)
 {
-	// モデルをドロー。
-	m_modelRender.Draw(rc);
+	if (m_damage == true) {
+		m_damageTimer += g_gameTime->GetFrameDeltaTime();
+		if (m_damageTimer >= 0.1f) {
+			m_damageTimer = 0.0f;
+			// モデルをドロー。
+			m_modelRender.Draw(rc);
+		}
+	}
+	else {
+		// モデルをドロー。
+		m_modelRender.Draw(rc);
+	}
 }
 
 void Player::ProcessCommonStateTransition()
 {
-
-
-
-	if (g_pad[0]->IsPress(enButtonA)) {
+	if (g_pad[0]->IsPress(enButtonRB1)) {
 
 		Quaternion rot;
 		rot = m_rotation;
@@ -246,7 +275,7 @@ void Player::ProcessCommonStateTransition()
 		m_effect->SetPosition(effectposi);
 		m_effect->SetRotation(effectRot);
 		// エフェクトの大きさを設定する。
-		m_effect->SetScale(m_scale * 15.0f);
+		m_effect->SetScale(m_scale * 12.0f);
 		m_effect->Play();
 		//	m_effect->SetWorldMatrix(matrix);
 
@@ -274,11 +303,11 @@ void Player::ProcessCommonStateTransition()
 		return;
 	}
 
-	if (g_pad[0]->IsTrigger(enButtonB)) {
-		//ジャンプステートに遷移
-		m_playerState = enPlayerState_Jump;
-		return;
-	}
+	//if (g_pad[0]->IsTrigger(enButtonB)) {
+	//	//ジャンプステートに遷移
+	//	m_playerState = enPlayerState_Jump;
+	//	return;
+	//}
 
 
 	// xかzの移動速度があったら

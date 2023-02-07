@@ -24,6 +24,8 @@ namespace nsK2EngineLow
 		void SpriteInit(const char* albedoMap,int i);
 
 		void SpriteDraw(
+			Vector3& position,
+			int target,
 			ModelRender& Model,
 			int i,
 			int reset,
@@ -62,14 +64,7 @@ namespace nsK2EngineLow
 			m_modelRenderCB.uvscroll = uv;
 		}
 
-		void IsHitEnemy(
-			ModelRender& Model,
-			Vector3& startVector,		//線分始点
-			Vector3& endVector,		//線分終点
-			bool& hit
-		);
-
-		RenderTarget offscreenRenderTarget[20];
+		RenderTarget offscreenRenderTarget[70];
 	private:
 		std::vector<IRenderer*> m_renderobject;
 		ShadowMapRender m_shadowMapRender;
@@ -77,10 +72,10 @@ namespace nsK2EngineLow
 		ModelRenderCB m_modelRenderCB;
 		RenderTarget m_mainRenderTarget;
 
-		SpriteInitData inkspriteinitdata[20];
-		Sprite inksprite[20];
-		SpriteInitData spriteinitdata[20];
-		Sprite sprite[20];
+		SpriteInitData inkspriteinitdata[70];
+		Sprite inksprite[70];
+		SpriteInitData spriteinitdata[70];
+		Sprite sprite[70];
 
 	};
 

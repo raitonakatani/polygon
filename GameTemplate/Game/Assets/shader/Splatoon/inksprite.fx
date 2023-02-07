@@ -6,6 +6,7 @@ cbuffer cb : register(b0)
     float4 screenParam;
     float2 uvposi;
     int hit;
+    int player;
 };
 
 
@@ -65,16 +66,51 @@ float4 PSMain(SPSIn psIn) : SV_Target0
         color = g_offscreen.Sample(g_sampler, psIn.uv);
     }
 
-    //インクのテクスチャ
-    float4 inkTextre = g_ink.Sample(g_sampler, ink);
+    float2 syoutotu = inkUV;
     
-    float2 diff = inkUV - psIn.uv;
-    float dist = length(diff);
-    if (dist < 0.065f)
+    syoutotu.x *= 1600.0f;
+    syoutotu.y *= 900.0f;
+    
+    float2 LeftUP = syoutotu;
+    LeftUP.x -= 120.0f;
+    LeftUP.y -= 67.5f;
+    
+    float2 RightDown = syoutotu;
+    RightDown.x += 120.0f;
+    RightDown.y += 67.5f;
+    
+    float2 pixelposi = psIn.uv;
+    pixelposi.x *= 1600.0f;
+    pixelposi.y *= 900.0f;
+    
+    if (pixelposi.x > LeftUP.x && pixelposi.x < RightDown.x &&
+        pixelposi.y > LeftUP.y && pixelposi.y < RightDown.y)
     {
-        //インクを塗る
-        color.xyz *= inkTextre;
+        ink.x = pixelposi.x - LeftUP.x;
+        ink.y = pixelposi.y - LeftUP.y;
+        ink.x /= 240.0f;
+        ink.y /= 135.0f;
+        //インクのテクスチャ
+        float3 paint = g_ink.Sample(g_sampler, ink);
+        color.xyz *= paint;
+        if (paint.x <= 0.1f && paint.y <= 0.1f)
+        {
+            if (player == 1)
+            {
+                color.x = 0.8f;
+                color.z = 0.0f;
+            }
+        }
     }
+   
+    
+    //float2 diff = inkUV - psIn.uv;
+    //float dist = length(diff);
+    //if (dist < 0.067f)
+    //{
+    //    //インクを塗る
+    //    color.xyz *= inkTextre;
+    //}
     float4 test = color;
     return test;
 }

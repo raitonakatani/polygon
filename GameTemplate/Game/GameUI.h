@@ -1,5 +1,8 @@
 #pragma once
 
+class Game;
+class Fade;
+
 class GameUI : public IGameObject
 {
 public:
@@ -14,11 +17,13 @@ public:
 	int		m_reset = 2;
 private:
 
+	Game* m_game;
+
 	SpriteRender			m_compass;					// コンパスの画像
 	SpriteRender			m_compassguideline;			// 指針の画像
-	SpriteRender			m_phase[10];					// フェーズの画像
-	SpriteRender			m_directionPhase[10];				// 
-//	SpriteRender			m_Render;					//	
+	SpriteRender			m_phase[5];					// フェーズの画像
+	SpriteRender			m_directionPhase[5];		// 方向の画像
+	SpriteRender			m_gameover;					//	
 
 	Vector3					m_forward;					// 前方向のベクトル
 	Quaternion				m_rotation;					// 回転
@@ -28,6 +33,11 @@ private:
 	float m_y = 675.0f;
 	float m_y2 = 550.0f;
 	Vector3 m_scale = Vector3::One;
+
+	float m_yposi = 800.0f;
+
+//	bool				m_isWaitFadeout = false;		//フェード。
+	Fade* m_fade = nullptr;				//フェード
 
 };
 
