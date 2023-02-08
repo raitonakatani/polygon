@@ -57,7 +57,7 @@ namespace nsK2EngineLow
 		);
 	}
 
-	void RenderingEngine::SpriteInit(const char* albedoMap,int i)
+	void RenderingEngine::SpriteInit(const char* albedoMap, int i)
 	{
 		//インクのテクスチャ
 		//これをモデルのテクスチャに塗りたい
@@ -104,7 +104,7 @@ namespace nsK2EngineLow
 		Vector3 pos;
 		Vector2 uv;
 		//平面と線分の交点を求める。　POS（交点の座標）、vector3d(線分始点)、vector3dend(線分終点)、ポリゴンの3頂点
-		if (Model.IntersectPlaneAndLine(pos, uv, startVector, endVector, bufferList) == true) {		
+		if (Model.IntersectPlaneAndLine(pos, uv, startVector, endVector, bufferList) == true || reset == 41) {
 			Model.Change(
 				"",
 				offscreenRenderTarget[i].GetRenderTargetTexture()
@@ -113,16 +113,14 @@ namespace nsK2EngineLow
 			RenderTarget* rtArray[] = { &offscreenRenderTarget[i] };
 			renderContext.WaitUntilToPossibleSetRenderTargets(1, rtArray);
 			renderContext.SetRenderTargets(1, rtArray);
-//			renderContext.ClearRenderTargetViews(1, rtArray);
-
-			// step-5 offscreenRenderTargetに背景、プレイヤーを描画する
-			//Vector3 diff = position - startVector;
-			//if (diff.Length() <= 10.0f) {
-			//}
+			if (reset == 41) {
+				renderContext.ClearRenderTargetViews(1, rtArray);
+			}
+			else {
 				sprite[i].IsPlayer(target);
 				sprite[i].InitUVPosition(uv);
 				sprite[i].Draw(renderContext);
-			
+			}
 			renderContext.WaitUntilFinishDrawingToRenderTargets(1, rtArray);
 			// step-6 画面に表示されるレンダリングターゲットに戻す
 			renderContext.SetRenderTarget(
@@ -132,5 +130,29 @@ namespace nsK2EngineLow
 
 			sprite[i].IsHit(1);
 		}
+	}
+
+	void RenderingEngine::ClearRenderTarget(
+		int i,
+		ModelRender& Model)
+	{
+		auto& renderContext = g_graphicsEngine->GetRenderContext();
+		Model.Change(
+			"",
+			offscreenRenderTarget[i].GetRenderTargetTexture()
+		);
+		// step-4 レンダリングターゲットをoffscreenRenderTargetに変更する
+		RenderTarget* rtArray[] = { &offscreenRenderTarget[i] };
+		renderContext.WaitUntilToPossibleSetRenderTargets(1, rtArray);
+		renderContext.SetRenderTargets(1, rtArray);
+		renderContext.ClearRenderTargetViews(1, rtArray);
+
+		renderContext.WaitUntilFinishDrawingToRenderTargets(1, rtArray);
+		// step-6 画面に表示されるレンダリングターゲットに戻す
+		renderContext.SetRenderTarget(
+			g_graphicsEngine->GetCurrentFrameBuffuerRTV(),
+			g_graphicsEngine->GetCurrentFrameBuffuerDSV()
+		);
+
 	}
 }

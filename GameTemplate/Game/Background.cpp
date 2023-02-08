@@ -1,6 +1,11 @@
 #include "stdafx.h"
 #include "Background.h"
 #include "Player.h"
+#include "Game.h"
+
+Background::~Background()
+{
+}
 
 bool Background::Start()
 {
@@ -24,6 +29,7 @@ bool Background::Start()
 	m_renderingEngine->SpriteInit(m_modelRender.GetTkm()->m_albedo, m_number);
 
 	m_player = FindGO<Player>("player");
+	m_game = FindGO<Game>("game");
 
 	return true;
 }
@@ -34,14 +40,17 @@ void Background::Update()
 	m_modelRender.Update();
 
 	m_player = FindGO<Player>("player");
+	m_game = FindGO<Game>("game");
 	startVector = m_player->GetStartVector();
 	endVector = m_player->GetEndVector();
 
-	if (g_pad[0]->IsPress(enButtonRB1) == true)
+	if (g_pad[0]->IsPress(enButtonRB1) == true || m_game->m_paintnumber >= 41)
 	{
 		Vector3 posi = m_player->GetPosition();
-		m_renderingEngine->SpriteDraw(posi,1, m_modelRender, m_number, reset, startVector, endVector);
+		m_renderingEngine->SpriteDraw(posi, 1, m_modelRender, m_number, m_game->m_paintnumber, startVector, endVector);
 	}
+
+	
 	return;
 }
 void Background::Render(RenderContext& rc)

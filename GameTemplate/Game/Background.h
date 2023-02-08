@@ -1,10 +1,14 @@
 #pragma once
 
 class Player;
+class Game;
 
 class Background : public IGameObject
 {
 public:
+	Background() {}
+	~Background();
+
 	bool Start();
 	void Update();
 	void Render(RenderContext& rc);
@@ -41,6 +45,7 @@ public:
 	ModelRender					m_modelRender;					//ステージ
 private:
 	Player* m_player;						//プレイヤー
+	Game* m_game;						//ゲーム
 	PhysicsStaticObject			m_physicsStaticObject;			//静的物理オブジェクト・
 	Vector3						m_position;						//座標。
 	Quaternion					m_rotation;						//回転。

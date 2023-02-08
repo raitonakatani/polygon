@@ -262,7 +262,7 @@ namespace nsK2EngineLow {
         m_constantBufferCPU.screenParam.w = FRAME_BUFFER_H;
         m_constantBufferCPU.uvposi = m_uv;
         m_constantBufferCPU.hit = m_hit;
-        m_constantBufferCPU.player = m_hit;
+        m_constantBufferCPU.player = m_player;
 
 
           //定数バッファを更新。

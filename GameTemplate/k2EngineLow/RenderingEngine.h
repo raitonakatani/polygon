@@ -33,6 +33,11 @@ namespace nsK2EngineLow
 			Vector3& B		//ü•ªI“_
 		);
 
+		void ClearRenderTarget(
+			int i,
+			ModelRender& Model
+		);
+
 		void AddRenderObject(IRenderer* renderobj)
 		{
 			m_renderobject.push_back(renderobj);

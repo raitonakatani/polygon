@@ -31,7 +31,7 @@ public:
 		bool m_paint[5];
 	};
 	PaintList m_paintlist[8];
-	int m_paintnumber = 0;
+	int m_paintnumber = 30;
 
 	Vector3 enemyposi;
 	Vector3 enemypaint;
