@@ -81,6 +81,7 @@ void GameCamera::Update()
 	}
 
 
+
 	//通常カメラ
 	Vector3 target = m_player->GetPosition();
 	//プレイヤの足元からちょっと上を注視点とする。
@@ -116,10 +117,15 @@ void GameCamera::Update()
 		m_toCameraPos = m_toCameraPosOld;
 	}
 
-	m_player->cameraforward = m_player->GetPosition() - m_pos;
-
 	//視点を計算する。
 	m_pos = target + m_toCameraPos;
+
+	if (m_game->phase == 5) {
+		Vector3 cameraposi = m_toCameraPos;
+		cameraposi.x *= -1.0f;
+		cameraposi.z *= -1.0f;
+		m_pos = target + m_toCameraPos;
+	}
 
 	//メインカメラに注視点と視点を設定する。
 	g_camera3D->SetPosition(m_pos);

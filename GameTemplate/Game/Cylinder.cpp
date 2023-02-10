@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Cylinder.h"
 #include "Game.h"
+#include "Player.h"
 
 // EffectEmitterを使用するために、ファイルをインクルードする。
 #include "graphics/effect/EffectEmitter.h"
@@ -60,6 +61,15 @@ void Cylinder::Update()
 		}
 	}
 
+	m_player = FindGO<Player>("player");
+	m_startVector = m_player->GetStartVector();
+	m_endVector = m_player->GetEndVector();
+
+	if (g_pad[0]->IsPress(enButtonRB1) == true)
+	{
+		Vector3 posi = m_player->GetPosition();
+		m_renderingEngine->SpriteDraw(posi, 1, m_modelRender, m_number, 0, m_startVector, m_endVector);
+	}
 
 	m_modelRender.SetPosition(m_position);
 	m_modelRender.SetScale(m_scale);

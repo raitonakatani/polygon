@@ -100,6 +100,12 @@ float4 PSMain(SPSIn psIn) : SV_Target0
                 color.x = 0.8f;
                 color.z = 0.0f;
             }
+
+            if (player == 0)
+            {
+                color.x = 0.0f;
+                color.z = 0.8f;
+            }
         }
     }
    

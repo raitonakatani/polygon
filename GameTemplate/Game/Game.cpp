@@ -218,24 +218,15 @@ void Game::Update()
 		}
 	}
 
-
-	const auto& enemys = FindGOs<Enemy>("enemy");
-	for (auto enemy : enemys)
-	{
-		if (enemy->gameover == true)
-		{
-			NewGO<Result>(0, "result");
-			DeleteGO(this);
-			return;
-		}
-	}
-
 	m_player = FindGO<Player>("player");
 	if (m_number == m_player->m_enemynumber) {
 		m_ui->m_number += 1;
-		phase += 1;
+		if (phase <= 4) {
+			phase += 1;
+		}
 		if (phase == 5) {
-			NewGO<Result>(0, "result");
+			NewGO<Title>(0, "title");
+			//自身を削除する。
 			DeleteGO(this);
 			return;
 		}
@@ -247,11 +238,9 @@ void Game::Update()
 				m_enemy->SetRotation(objData.rotation);
 				m_number++;
 				m_enemy->phase = 1;
-				//	m_enemy->SetScale(objData.scale);
-					//trueにすると、レベルの方でモデルが読み込まれて配置される。
+				//trueにすると、レベルの方でモデルが読み込まれて配置される。
 				return true;
 			}
-			//phase += 1;
 			return true;
 		});
 	}

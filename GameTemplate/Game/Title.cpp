@@ -28,6 +28,8 @@ bool Title::Start()
 	m_fade = FindGO<Fade>("fade");
 	m_fade->StartFadeIn();
 
+	g_renderingEngine.SpriteRelease();
+
 	return true;
 }
 

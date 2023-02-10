@@ -69,6 +69,13 @@ namespace nsK2EngineLow
 			m_modelRenderCB.uvscroll = uv;
 		}
 
+
+		void SpriteRelease()
+		{
+			inksprite.clear();
+			sprite.clear();
+		}
+
 		RenderTarget offscreenRenderTarget[70];
 	private:
 		std::vector<IRenderer*> m_renderobject;
@@ -77,10 +84,8 @@ namespace nsK2EngineLow
 		ModelRenderCB m_modelRenderCB;
 		RenderTarget m_mainRenderTarget;
 
-		SpriteInitData inkspriteinitdata[70];
-		Sprite inksprite[70];
-		SpriteInitData spriteinitdata[70];
-		Sprite sprite[70];
+		std::unordered_map<int, std::unique_ptr<Sprite>> inksprite;
+		std::unordered_map<int, std::unique_ptr<Sprite>> sprite;
 
 	};
 

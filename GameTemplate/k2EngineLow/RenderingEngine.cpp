@@ -59,30 +59,37 @@ namespace nsK2EngineLow
 
 	void RenderingEngine::SpriteInit(const char* albedoMap, int i)
 	{
+		SpriteInitData inkspriteinitdata;
 		//インクのテクスチャ
 		//これをモデルのテクスチャに塗りたい
 		//DDSファイル(画像データ)のファイルパスを指定する。
-		inkspriteinitdata[i].m_ddsFilePath[0] = "Assets/sprite/inku2.DDS";
+		inkspriteinitdata.m_ddsFilePath[0] = "Assets/sprite/inku2.DDS";
 		//Sprite表示用のシェーダーのファイルパスを指定する。
-		inkspriteinitdata[i].m_fxFilePath = "Assets/shader/sprite.fx";
+		inkspriteinitdata.m_fxFilePath = "Assets/shader/sprite.fx";
 		//スプライトの幅と高さを指定する。
-		inkspriteinitdata[i].m_width = 256;
-		inkspriteinitdata[i].m_height = 256;
+		inkspriteinitdata.m_width = 256;
+		inkspriteinitdata.m_height = 256;
+		
 		//Sprite初期化オブジェクトを使用して、Spriteを初期化する。
-		inksprite[i].Init(inkspriteinitdata[i]);
+		inksprite[i] = std::make_unique<Sprite>();
+		inksprite[i]->Init(inkspriteinitdata);
 
+		SpriteInitData spriteinitdata;
 		//モデルのテクスチャ
 		//これにインクを塗ってテクスチャ切り替えをしたい
 		//DDSファイル(画像データ)のファイルパスを指定する。
-		spriteinitdata[i].m_ddsFilePath[0] = albedoMap;
+		spriteinitdata.m_ddsFilePath[0] = albedoMap;
 		//Sprite表示用のシェーダーのファイルパスを指定する。
-		spriteinitdata[i].m_fxFilePath = "Assets/shader/Splatoon/inksprite.fx";
+		spriteinitdata.m_fxFilePath = "Assets/shader/Splatoon/inksprite.fx";
 		//スプライトの幅と高さを指定する。
-		spriteinitdata[i].m_width = FRAME_BUFFER_W;
-		spriteinitdata[i].m_height = FRAME_BUFFER_H;
-		spriteinitdata[i].m_expandShaderResoruceView[0] = &inksprite[i].GetTexture(0);
-		spriteinitdata[i].m_expandShaderResoruceView[1] = &offscreenRenderTarget[i].GetRenderTargetTexture();
-		sprite[i].Init(spriteinitdata[i]);
+		spriteinitdata.m_width = FRAME_BUFFER_W;
+		spriteinitdata.m_height = FRAME_BUFFER_H;
+		spriteinitdata.m_expandShaderResoruceView[0] = &inksprite[i]->GetTexture(0);
+		spriteinitdata.m_expandShaderResoruceView[1] = &offscreenRenderTarget[i].GetRenderTargetTexture();
+
+		//Sprite初期化オブジェクトを使用して、Spriteを初期化する。
+		sprite[i] = std::make_unique<Sprite>();
+		sprite[i]->Init(spriteinitdata);
 	}
 
 
@@ -104,7 +111,7 @@ namespace nsK2EngineLow
 		Vector3 pos;
 		Vector2 uv;
 		//平面と線分の交点を求める。　POS（交点の座標）、vector3d(線分始点)、vector3dend(線分終点)、ポリゴンの3頂点
-		if (Model.IntersectPlaneAndLine(pos, uv, startVector, endVector, bufferList) == true || reset == 41) {
+		if (Model.IntersectPlaneAndLine(pos, uv, startVector, endVector, bufferList) == true) {
 			Model.Change(
 				"",
 				offscreenRenderTarget[i].GetRenderTargetTexture()
@@ -113,14 +120,11 @@ namespace nsK2EngineLow
 			RenderTarget* rtArray[] = { &offscreenRenderTarget[i] };
 			renderContext.WaitUntilToPossibleSetRenderTargets(1, rtArray);
 			renderContext.SetRenderTargets(1, rtArray);
-			if (reset == 41) {
-				renderContext.ClearRenderTargetViews(1, rtArray);
-			}
-			else {
-				sprite[i].IsPlayer(target);
-				sprite[i].InitUVPosition(uv);
-				sprite[i].Draw(renderContext);
-			}
+
+			sprite[i]->IsPlayer(target);
+			sprite[i]->InitUVPosition(uv);
+			sprite[i]->Draw(renderContext);
+
 			renderContext.WaitUntilFinishDrawingToRenderTargets(1, rtArray);
 			// step-6 画面に表示されるレンダリングターゲットに戻す
 			renderContext.SetRenderTarget(
@@ -128,7 +132,7 @@ namespace nsK2EngineLow
 				g_graphicsEngine->GetCurrentFrameBuffuerDSV()
 			);
 
-			sprite[i].IsHit(1);
+			sprite[i]->IsHit(1);
 		}
 	}
 

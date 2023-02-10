@@ -526,16 +526,16 @@ void Enemy::Render(RenderContext& rc)
 	if (m_timer <= 11.5f) {
 		return;
 	}
-	if (m_damage == true) {
-		m_damageTimer += g_gameTime->GetFrameDeltaTime();
-		if (m_damageTimer >= 0.1f) {
-			m_damageTimer = 0.0f;
-			// モデルをドロー。
-			m_modelRender.Draw(rc);
-		}
-	}
-	else {
+	//if (m_damage == true && m_hp > 10) {
+	//	m_damageTimer += g_gameTime->GetFrameDeltaTime();
+	//	if (m_damageTimer >= 0.1f) {
+	//		m_damageTimer = 0.0f;
+	//		// モデルをドロー。
+	//		m_modelRender.Draw(rc);
+	//	}
+	//}
+	//else {
 		// モデルをドロー。
 		m_modelRender.Draw(rc);
-	}
+	//}
 }

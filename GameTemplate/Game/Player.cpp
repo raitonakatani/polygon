@@ -77,7 +77,6 @@ void Player::Update()
 		m_startVector = m_position;
 		m_startVector.y += 70.0f;
 		m_endVector = m_startVector;
-		cameraforward.Normalize();
 		m_forward = g_camera3D->GetForward();
 		m_endVector += m_forward * 250.0f;
 		m_collision = NewGO<CollisionObject>(0, "collision");

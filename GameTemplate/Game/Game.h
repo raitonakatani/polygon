@@ -31,12 +31,13 @@ public:
 		bool m_paint[5];
 	};
 	PaintList m_paintlist[8];
-	int m_paintnumber = 30;
+	int m_paintnumber = 0;
 
 	Vector3 enemyposi;
 	Vector3 enemypaint;
 
 	bool m_searchPlayer[3];
+	int phase = 4;
 private:
 	LevelRender			m_levelRender[5];				//レベルレンダー。 
 	GameCamera*			m_gameCamera = nullptr;			//カメラ
@@ -53,8 +54,5 @@ private:
 	GameUI*				m_ui = nullptr;					//UI
 	float				m_timer = 0.0f;					//タイマー
 
-
-
-	int phase=1;
 	std::string FILE[5];
 };

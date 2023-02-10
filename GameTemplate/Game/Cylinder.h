@@ -1,6 +1,7 @@
 #pragma once
 
 class Game;
+class Player;
 
 class Cylinder : public IGameObject
 {
@@ -43,6 +44,7 @@ public:
 	ModelRender					m_modelRender;								//ステージ
 private:
 	Game* m_game;
+	Player* m_player;
 	EffectEmitter* m_effect = nullptr;							// エフェクト
 	PhysicsStaticObject			m_physicsStaticObject;						//静的物理オブジェクト・
 	Vector3						m_position;									//座標。
@@ -51,6 +53,8 @@ private:
 
 	RenderingEngine*			m_renderingEngine = &g_renderingEngine;
 
+	Vector3 m_startVector;
+	Vector3 m_endVector;
 	float m_timer = 0.0f;
 	float m_falltimer = 0.0f;
 };

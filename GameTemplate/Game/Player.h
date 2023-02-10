@@ -73,7 +73,6 @@ public:
 	};
 
 	int m_enemynumber = 0;
-	Vector3 cameraforward;
 private:
 	/// <summary>
 	/// ˆÚ“®ˆ—
