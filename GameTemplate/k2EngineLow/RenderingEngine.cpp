@@ -12,8 +12,6 @@ namespace nsK2EngineLow
 		for (auto& renderObj : m_renderobject) {
 			renderObj->OnRenderSprite2D(rc);
 		}
-
-
 	}
 
 	void RenderingEngine::ShadowMapDraw(RenderContext& rc)

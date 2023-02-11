@@ -93,30 +93,23 @@ float4 PSMain(SPSIn psIn) : SV_Target0
         //インクのテクスチャ
         float3 paint = g_ink.Sample(g_sampler, ink);
         color.xyz *= paint;
-        if (paint.x <= 0.1f && paint.y <= 0.1f)
+        if (paint.x < 1.0f && paint.y < 1.0f)
         {
             if (player == 1)
             {
-                color.x = 0.8f;
+                color.x = paint.z;
+                color.y = 0.0f;
                 color.z = 0.0f;
             }
 
             if (player == 0)
             {
                 color.x = 0.0f;
+                color.y = 0.0f;
                 color.z = 0.8f;
             }
         }
     }
-   
-    
-    //float2 diff = inkUV - psIn.uv;
-    //float dist = length(diff);
-    //if (dist < 0.067f)
-    //{
-    //    //インクを塗る
-    //    color.xyz *= inkTextre;
-    //}
     float4 test = color;
     return test;
 }

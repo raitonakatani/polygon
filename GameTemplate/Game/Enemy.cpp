@@ -51,6 +51,7 @@ bool Enemy::Start()
 	m_modelRender.Init("Assets/player/player2.tkm", false, false, m_animationClipArray, enAnimClip_Num);
 //	m_modelRender.Init("Assets/enemy/enemy.tkm", false, false, m_animationClipArray, enAnimClip_Num);
 	m_modelRender.SetPosition(m_position);
+	m_modelRender.SetRotation(m_rotation);
 	m_modelRender.SetScale(scale);
 	m_modelRender.Update();
 
@@ -84,16 +85,25 @@ bool Enemy::Start()
 void Enemy::Update()
 {
 	m_timer += g_gameTime->GetFrameDeltaTime();
-	if (m_timer <= 12.0f) {
+	if (m_timer <= 14.0f) {
 		return;
 	}
-	if (m_hp <= 0) {
-		m_player->m_enemynumber += 1;
-		DeleteGO(this);
-	}
+
 	m_game = FindGO<Game>("game");
 	m_cylinder = FindGO<Cylinder>("cylinder");
 
+	if (m_hp == 0) {
+		m_player->m_enemynumber += 1;
+		//if (m_game->phase >= 4) {
+		//	m_position.y = 0.0f;
+		//	m_modelRender.SetPosition(m_position);
+		//	m_charaCon.SetPosition(m_position);
+		//	m_hp = -10;
+		//	m_enemyState = enEnemyState_Idle;
+		//	return;
+		//}
+		DeleteGO(this);
+	}
 	if (m_game->m_paintnumber >= 40) {
 		m_enemyState = enEnemyState_Idle;
 		return;
@@ -102,10 +112,10 @@ void Enemy::Update()
 	// プレイヤーのクラスを探して持ってくる
 	m_player = FindGO<Player>("player");
 	if (m_isSearchPlayer == false) {
-		if (m_timer >= 16.0f) {
+		if (m_timer >= 18.0f) {
 			ramtime = rand() % 10 + 1;
 			ramtime *= 0.2f;
-			ramtime += 17.0f;
+			ramtime += 19.0f;
 			if (m_timer >= ramtime) {
 				int ram = rand() % 8;
 				int ram2 = rand() % 5;
@@ -136,7 +146,7 @@ void Enemy::Update()
 					//gameover = true;
 				}
 				m_targetPointPosition = m_targetposi;
-				m_timer = 13.0f;
+				m_timer = 15.0f;
 			}
 		}
 	}
@@ -217,7 +227,7 @@ void Enemy::Move()
 
 void Enemy::Rotation()
 {
-	if (m_diff.Length() <= 10.0f && m_timer >= 14.0f) {
+	if (m_diff.Length() <= 10.0f && m_timer >= 16.0f) {
 		auto diff = m_diff;
 		if (m_isSearchPlayer == false) {
 			diff = Vector3{ 0.0f,150.0f,0.0f } - m_position;
@@ -274,8 +284,8 @@ void Enemy::Attack()
 		m_enemyState = enEnemyState_Shot;
 		return;
 	}
-	if (m_diff.Length() <= 10.0f && m_timer >= 15.0f && m_timer <= 15.2f||
-		m_diff.Length() <= 10.0f && m_timer >= 16.3f && m_timer <= 16.5f) {
+	if (m_diff.Length() <= 10.0f && m_timer >= 17.0f && m_timer <= 17.2f||
+		m_diff.Length() <= 10.0f && m_timer >= 18.3f && m_timer <= 18.5f) {
 		if (m_game->m_paintlist[a].m_paint[b] == false) {
 			m_startVector = m_position;
 			m_startVector.y = yposi;
@@ -302,7 +312,7 @@ void Enemy::Attack()
 			return;
 		}
 	}
-	else if (m_diff.Length() <= 10.0f && m_timer < 14.0f)
+	else if (m_diff.Length() <= 10.0f && m_timer < 16.0f)
 	{
 		m_enemyState = enEnemyState_Idle;
 		return;
@@ -523,19 +533,19 @@ void Enemy::OnAnimationEvent(const wchar_t* clipName, const wchar_t* eventName)
 
 void Enemy::Render(RenderContext& rc)
 {
-	if (m_timer <= 11.5f) {
+	if (m_timer <= 13.5f) {
 		return;
 	}
-	//if (m_damage == true && m_hp > 10) {
-	//	m_damageTimer += g_gameTime->GetFrameDeltaTime();
-	//	if (m_damageTimer >= 0.1f) {
-	//		m_damageTimer = 0.0f;
-	//		// モデルをドロー。
-	//		m_modelRender.Draw(rc);
-	//	}
-	//}
-	//else {
+	if (m_damage == true && m_hp > 10) {
+		m_damageTimer += g_gameTime->GetFrameDeltaTime();
+		if (m_damageTimer >= 0.1f) {
+			m_damageTimer = 0.0f;
+			// モデルをドロー。
+			m_modelRender.Draw(rc);
+		}
+	}
+	else{
 		// モデルをドロー。
 		m_modelRender.Draw(rc);
-	//}
+	}
 }

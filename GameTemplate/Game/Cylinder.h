@@ -2,6 +2,7 @@
 
 class Game;
 class Player;
+class Enemy;
 
 class Cylinder : public IGameObject
 {
@@ -45,6 +46,7 @@ public:
 private:
 	Game* m_game;
 	Player* m_player;
+	Enemy* m_enemy;
 	EffectEmitter* m_effect = nullptr;							// エフェクト
 	PhysicsStaticObject			m_physicsStaticObject;						//静的物理オブジェクト・
 	Vector3						m_position;									//座標。

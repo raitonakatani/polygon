@@ -21,6 +21,7 @@ namespace
 {
 	const Vector3 PLAYER_SET_POSITION = { 0.0f,250.0f,-500.0f };	//プレイヤーのセットポジション
 	const Vector3 FLOOR_SET_POSITION = { 00.0f,0.0f,00.0f };		//床のセットポジション
+	const Vector3 CYLINDER_SET_POSI = { 0.0f,-200.0f,0.0f };		//床のセットポジション
 
 
 	const int PRIORITY_ZERO = 0;								//プライオリティ 優先権
@@ -156,7 +157,7 @@ bool Game::Start()
 		if (objData.EqualObjectName(L"cylinder") == true) {
 			// 床のオブジェクトを生成する。
 			m_cylinder = NewGO<Cylinder>(0, "cylinder");
-			m_cylinder->SetPosition(objData.position);
+			m_cylinder->SetPosition(CYLINDER_SET_POSI);
 			m_cylinder->SetRotation(objData.rotation);
 			m_cylinder->SetScale(objData.scale);
 			m_cylinder->SetNumber(i);
@@ -198,7 +199,7 @@ bool Game::Start()
 void Game::Update()
 {
 
-	if (m_paintnumber == 42)
+	if (m_paintnumber == 42 || phase >= 5)
 	{
 		m_timer += g_gameTime->GetFrameDeltaTime();
 	}
@@ -212,7 +213,8 @@ void Game::Update()
 	}
 	else {
 		//Aボタンを押したら。
-		if (m_paintnumber >= 42 && m_timer >= 3.0f) {
+		if (m_paintnumber >= 42 && m_timer >= 3.0f ||
+			phase >= 5 && m_timer >= 3.0f) {
 			m_isWaitFadeout = true;
 			m_fade->StartFadeOut();
 		}
@@ -225,24 +227,27 @@ void Game::Update()
 			phase += 1;
 		}
 		if (phase == 5) {
-			NewGO<Title>(0, "title");
-			//自身を削除する。
-			DeleteGO(this);
+			//phase += 1;
+			//NewGO<Title>(0, "title");
+			////自身を削除する。
+			//DeleteGO(this);
 			return;
 		}
-		m_levelRender[phase].Init(FILE[phase].c_str(), [&](LevelObjectData& objData) {
-			if (objData.EqualObjectName(L"enemy") == true) {
-				// 床のオブジェクトを生成する。
-				m_enemy = NewGO<Enemy>(0, "enemy");
-				m_enemy->SetPosition(objData.position);
-				m_enemy->SetRotation(objData.rotation);
-				m_number++;
-				m_enemy->phase = 1;
-				//trueにすると、レベルの方でモデルが読み込まれて配置される。
+		if (phase < 4) {
+			m_levelRender[phase].Init(FILE[phase].c_str(), [&](LevelObjectData& objData) {
+				if (objData.EqualObjectName(L"enemy") == true) {
+					// 床のオブジェクトを生成する。
+					m_enemy = NewGO<Enemy>(0, "enemy");
+					m_enemy->SetPosition(objData.position);
+					m_enemy->SetRotation(objData.rotation);
+					m_number++;
+					m_enemy->phase = 1;
+					//trueにすると、レベルの方でモデルが読み込まれて配置される。
+					return true;
+				}
 				return true;
-			}
-			return true;
-		});
+				});
+		}
 	}
 }
 

@@ -68,17 +68,17 @@ bool Player::Start()
 
 void Player::Update()
 {
-	if (m_game->m_paintnumber >= 40) {
+	if (m_game->m_paintnumber >= 40 || m_game->phase >= 5) {
 		m_playerState = enPlayerState_Idle;
 		return;
 	}
-	auto a = m_enemynumber;
 	if (g_pad[0]->IsPress(enButtonRB1)) {
 		m_startVector = m_position;
 		m_startVector.y += 70.0f;
 		m_endVector = m_startVector;
 		m_forward = g_camera3D->GetForward();
 		m_endVector += m_forward * 250.0f;
+		if (m_endVector.y <= -200.0f) { m_endVector.y = -200.0f; }
 		m_collision = NewGO<CollisionObject>(0, "collision");
 		// コリジョンオブジェクトを作成する。
 		Vector3 collisionPosition = m_position;

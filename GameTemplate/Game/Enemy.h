@@ -98,8 +98,10 @@ public:
 	bool m_isAttack = false;
 	float yup = 0.0f;
 	int phase = 0;
-	int m_hp = 200;
+	int m_hp = 50;
 	int m_phaseNumber = 0;
+	float m_timer = 0.0f;
+
 	//void SetNumber(const int& number)
 	//{
 	//	m_number = number;
@@ -201,7 +203,6 @@ private:
 	bool					m_death = false;
 	float aaa;
 	Vector3 m_targetposi = Vector3(0.0f, 150.0f, 200.0f);
-	float m_timer = 0.0f;
 	//int m_number = 0;
 	float yposi = 0.0f;
 	RenderingEngine* m_renderingEngine = &g_renderingEngine;

@@ -52,7 +52,7 @@ void GameCamera::Update()
 		m_timer += g_gameTime->GetFrameDeltaTime();
 		m_pos = m_game->enemyposi;
 		Vector3 target = m_game->enemypaint;
-		if (m_timer <= 13.0f) {
+		if (m_timer <= 13.5f) {
 			int ramx = -5 - rand() % 11;
 			int ramz = -5 - rand() % 11;
 			int ramy = -3 - rand() % 7;
