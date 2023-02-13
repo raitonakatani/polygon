@@ -59,4 +59,5 @@ private:
 	Vector3 m_endVector;
 	float m_timer = 0.0f;
 	float m_falltimer = 0.0f;
+	bool m_towerUP = false;
 };

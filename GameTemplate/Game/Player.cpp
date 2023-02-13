@@ -68,7 +68,11 @@ bool Player::Start()
 
 void Player::Update()
 {
-	if (m_game->m_paintnumber >= 40 || m_game->phase >= 5) {
+	if (m_game->phase >= 5)
+	{
+		return;
+	}
+	if (m_game->m_paintnumber >= 40) {
 		m_playerState = enPlayerState_Idle;
 		return;
 	}
@@ -235,6 +239,10 @@ void Player::Collision()
 
 void Player::Render(RenderContext& rc)
 {
+	if (m_game->phase >= 5)
+	{
+		return;
+	}
 	if (m_damage == true) {
 		m_damageTimer += g_gameTime->GetFrameDeltaTime();
 		if (m_damageTimer >= 0.1f) {

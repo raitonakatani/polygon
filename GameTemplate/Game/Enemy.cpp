@@ -92,16 +92,8 @@ void Enemy::Update()
 	m_game = FindGO<Game>("game");
 	m_cylinder = FindGO<Cylinder>("cylinder");
 
-	if (m_hp == 0) {
+	if (m_hp <= 0) {
 		m_player->m_enemynumber += 1;
-		//if (m_game->phase >= 4) {
-		//	m_position.y = 0.0f;
-		//	m_modelRender.SetPosition(m_position);
-		//	m_charaCon.SetPosition(m_position);
-		//	m_hp = -10;
-		//	m_enemyState = enEnemyState_Idle;
-		//	return;
-		//}
 		DeleteGO(this);
 	}
 	if (m_game->m_paintnumber >= 40) {

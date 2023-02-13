@@ -17,6 +17,7 @@ public:
 		enPlayerState_BackShot,				//撃つアニメーション
 		enPlayerState_Walk,					//歩くステート
 		enPlayerState_Jump,					//切り替えしステート
+		enPlayerState_Victory,				//勝利ステート
 	};
 public:
 	bool Start();
@@ -69,6 +70,7 @@ public:
 		enAnimClip_BackShot,		//撃つアニメーション
 		enAnimClip_Walk,			//歩くアニメーション
 		enAnimClip_Jump,			//切り替えしアニメーション
+		enAnimClip_Victory,			//勝利アニメーション
 		enAnimClip_Num,				//アニメーションの数
 	};
 
@@ -130,6 +132,7 @@ private:
 	GameSound*				m_gameSound;								// ゲームサウンド
 	// クラス Engine
 	ModelRender				m_modelRender;								// モデルレンダー
+	ModelRender				m_clearmodel;								// モデルレンダー
 	CharacterController     m_charaCon;	                                // キャラコン
 	CollisionObject*		m_collision;
 	EffectEmitter*			m_effect = nullptr;							// エフェクト

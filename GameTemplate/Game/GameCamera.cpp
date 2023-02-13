@@ -11,6 +11,7 @@ namespace
 
 
 	const float TARGET_YPOSITION = 150.0f;
+	const float CLEAR_CAMERA = 50.0f;
 	const float ANGLE = 2.0f;					//回転角度
 	const float MAX_ANGLE = 0.7f;
 	const float SET_NEAR = 1.0f;				// 近平面
@@ -46,6 +47,27 @@ bool GameCamera::Start()
 }
 void GameCamera::Update()
 {
+	if (m_game->phase >= 5) {
+		//通常カメラ
+		Vector3 tage = m_player->GetPosition();
+		//プレイヤの足元からちょっと上を注視点とする。
+		tage.y += CLEAR_CAMERA;
+		m_toCameraPosOld = m_toCameraPos;
+
+		Vector3 cameraposi = m_toCameraPos;
+		cameraposi.x *= -0.8f;
+		cameraposi.y = 0.0f;
+		cameraposi.z *= -0.8f;
+		m_pos = tage + cameraposi;
+
+		//メインカメラに注視点と視点を設定する。
+		g_camera3D->SetPosition(m_pos);
+		g_camera3D->SetTarget(tage);
+
+		//カメラの更新。
+		g_camera3D->Update();
+		return;
+	}
 
 	if (m_game->m_paintnumber == 40 && m_timer <= 15.0f)
 	{
@@ -120,11 +142,12 @@ void GameCamera::Update()
 	//視点を計算する。
 	m_pos = target + m_toCameraPos;
 
-	if (m_game->phase == 5) {
+	if (m_game->phase >= 5) {
 		Vector3 cameraposi = m_toCameraPos;
-		cameraposi.x *= -1.0f;
-		cameraposi.z *= -1.0f;
-		m_pos = target + m_toCameraPos;
+		cameraposi.x *= -0.8f;
+		cameraposi.y -= 100.0f;
+		cameraposi.z *= -0.8f;
+		m_pos = target + cameraposi;
 	}
 
 	//メインカメラに注視点と視点を設定する。

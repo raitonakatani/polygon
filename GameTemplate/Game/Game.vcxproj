@@ -225,6 +225,7 @@
   <ItemGroup>
     <ClCompile Include="Background.cpp" />
     <ClCompile Include="box.cpp" />
+    <ClCompile Include="Clearmodel.cpp" />
     <ClCompile Include="Cylinder.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="EnemyPath.cpp" />
@@ -251,6 +252,7 @@
   <ItemGroup>
     <ClInclude Include="Background.h" />
     <ClInclude Include="box.h" />
+    <ClInclude Include="Clearmodel.h" />
     <ClInclude Include="Cylinder.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="EnemyPath.h" />

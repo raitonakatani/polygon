@@ -16,6 +16,7 @@
 #include "Result.h"
 
 #include "SkyCube.h"
+#include "Clearmodel.h"
 
 namespace
 {
@@ -97,15 +98,15 @@ bool Game::Start()
 	//レベルを構築する。
 	m_levelRender[phase].Init(FILE[phase].c_str(), [&](LevelObjectData& objData) {
 		
-		//if (objData.EqualObjectName(L"player") == true) {
-		//	// プレイヤーのオブジェクトを生成する。
-		//	m_player = NewGO<Player>(0, "player");
-		//	m_player->SetPosition(objData.position);
-		//	//m_player->SetRotation(objData.rotation);
-		//	//m_player->SetScale(objData.scale);
-		//	//trueにすると、レベルの方でモデルが読み込まれて配置される。
-		//	return true;
-		//}
+		if (objData.EqualObjectName(L"player") == true) {
+			// プレイヤーのオブジェクトを生成する。
+			m_player = NewGO<Player>(0, "player");
+			m_player->SetPosition(objData.position);
+			//m_player->SetRotation(objData.rotation);
+			//m_player->SetScale(objData.scale);
+			//trueにすると、レベルの方でモデルが読み込まれて配置される。
+			return true;
+		}
 
 		if (objData.EqualObjectName(L"stage") == true) {
 			// 床のオブジェクトを生成する。
@@ -182,12 +183,14 @@ bool Game::Start()
 
 	m_floor = NewGO<Floor>(0, "floor");
 
-	m_player = NewGO<Player>(0, "player");
-	m_player->SetPosition({ 0.0f,150.0f,-300.0f });
+	//m_player = NewGO<Player>(0, "player");
+	//m_player->SetPosition({ 0.0f,150.0f,-300.0f });
 
 	// 当たり判定の描画
 	PhysicsWorld::GetInstance()->EnableDrawDebugWireFrame();
 
+	//auto clearmodel = NewGO<Clearmodel>(0, "model");
+	//clearmodel->SetPosition({ 0.0f,150.0f,-300.0f });
 
 	// カメラのオブジェクトを生成する。
 	m_gameCamera = NewGO<GameCamera>(0, "gameCamera");
@@ -222,8 +225,8 @@ void Game::Update()
 
 	m_player = FindGO<Player>("player");
 	if (m_number == m_player->m_enemynumber) {
-		m_ui->m_number += 1;
 		if (phase <= 4) {
+			m_ui->m_number += 1;
 			phase += 1;
 		}
 		if (phase == 5) {

@@ -10,7 +10,8 @@
 
 namespace
 {
-	float DarwTimer = 11.0f; 
+	float DARWTIMER = 11.0f; 
+	float YPOSI = 149.0f;
 }
 
 bool Cylinder::Start()
@@ -62,64 +63,73 @@ void Cylinder::Update()
 			m_physicsStaticObject.SetRotation(m_position, m_rotation);
 		}
 	}
-	if (m_game->m_paintnumber < 40) {
-		const auto& m_enemys = FindGOs<Enemy>("enemy");
-		for (auto m_enemy : m_enemys)
+
+	const auto& m_enemys = FindGOs<Enemy>("enemy");
+	for (auto m_enemy : m_enemys)
+	{
+		if (m_enemy->m_timer <= DARWTIMER)
 		{
+			m_towerUP = false;
+		}
+		else {
+			m_towerUP = true;
+		}
+	}
 
-			if (m_enemy->m_timer <= DarwTimer && m_position.y > -200.0f)
-			{
-				m_timer += g_gameTime->GetFrameDeltaTime();
-				m_falltimer += g_gameTime->GetFrameDeltaTime();
-				if (m_position.y >= -200.0f && m_timer >= 0.05f) {
-					m_effect = NewGO <EffectEmitter>(0);
-					Vector3 effectposi = m_position;
-					effectposi.y = 150.0f;
-					m_effect->Init(1);
-					m_effect->SetPosition(effectposi);
-					// エフェクトの大きさを設定する。
-					m_effect->SetScale(m_scale * 8.0f);
-					m_effect->Play();
-					m_timer = 0.0f;
-				}
-				int ramz = -10 - rand() % 21;
-				int ramx = -10 - rand() % 21;
-
-				m_position.x = ramx;
-				m_position.z = ramz;
-
-				m_position.y -= 2.0f;
-				m_physicsStaticObject.SetRotation(m_position, m_rotation);
+	if (m_game->m_paintnumber < 40) {
+		if (m_towerUP == false && m_position.y > -200.0f)
+		{
+			m_timer += g_gameTime->GetFrameDeltaTime();
+			m_falltimer += g_gameTime->GetFrameDeltaTime();
+			if (m_position.y >= -200.0f && m_timer >= 0.05f) {
+				m_effect = NewGO <EffectEmitter>(0);
+				Vector3 effectposi = m_position;
+				effectposi.y = 150.0f;
+				m_effect->Init(1);
+				m_effect->SetPosition(effectposi);
+				// エフェクトの大きさを設定する。
+				m_effect->SetScale(m_scale * 8.0f);
+				m_effect->Play();
+				m_timer = 0.0f;
 			}
-			else if (m_enemy->m_timer > DarwTimer && m_position.y <= 140.0f) {
-				m_timer += g_gameTime->GetFrameDeltaTime();
-				m_falltimer += g_gameTime->GetFrameDeltaTime();
-				if (m_position.y <= 140.0f && m_timer >= 0.05f) {
-					m_effect = NewGO <EffectEmitter>(0);
-					Vector3 effectposi = m_position;
-					effectposi.y = 150.0f;
-					m_effect->Init(1);
-					m_effect->SetPosition(effectposi);
-					// エフェクトの大きさを設定する。
-					m_effect->SetScale(m_scale * 8.0f);
-					m_effect->Play();
-					m_timer = 0.0f;
-				}
-				int ramx = -10 - rand() % 21;
-				int ramz = -10 - rand() % 21;
+			int ramz = -10 - rand() % 21;
+			int ramx = -10 - rand() % 21;
 
-				m_position.x = ramx;
-				m_position.z = ramz;
-				m_position.y += 2.0f;
-				m_physicsStaticObject.SetRotation(m_position, m_rotation);
+			m_position.x = ramx;
+			m_position.z = ramz;
+
+			m_position.y -= 2.0f;
+			m_physicsStaticObject.SetRotation(m_position, m_rotation);
+		}
+		else if (m_towerUP == true && m_position.y < 150.0f) {
+			m_timer += g_gameTime->GetFrameDeltaTime();
+			m_falltimer += g_gameTime->GetFrameDeltaTime();
+			if (m_position.y <= 140.0f && m_timer >= 0.05f) {
+				m_effect = NewGO <EffectEmitter>(0);
+				Vector3 effectposi = m_position;
+				effectposi.y = 150.0f;
+				m_effect->Init(1);
+				m_effect->SetPosition(effectposi);
+				// エフェクトの大きさを設定する。
+				m_effect->SetScale(m_scale * 8.0f);
+				m_effect->Play();
+				m_timer = 0.0f;
 			}
+			int ramx = -10 - rand() % 21;
+			int ramz = -10 - rand() % 21;
+
+			m_position.x = ramx;
+			m_position.z = ramz;
+			m_position.y += 2.0f;
+			m_physicsStaticObject.SetRotation(m_position, m_rotation);
+			if (m_position.y >= 150.0f) { m_position.y = 150.0f; }
 		}
 	}
 	m_player = FindGO<Player>("player");
 	m_startVector = m_player->GetStartVector();
 	m_endVector = m_player->GetEndVector();
 
-	if (g_pad[0]->IsPress(enButtonRB1) == true)
+	if (g_pad[0]->IsPress(enButtonRB1) == true && m_position.y >= YPOSI)
 	{
 		Vector3 posi = m_player->GetPosition();
 		m_renderingEngine->SpriteDraw(posi, 1, m_modelRender, m_number, 0, m_startVector, m_endVector);

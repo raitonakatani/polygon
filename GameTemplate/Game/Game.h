@@ -37,7 +37,7 @@ public:
 	Vector3 enemypaint;
 
 	bool m_searchPlayer[3];
-	int phase = 4;
+	int phase = 1;
 private:
 	LevelRender			m_levelRender[5];				//レベルレンダー。 
 	GameCamera*			m_gameCamera = nullptr;			//カメラ
