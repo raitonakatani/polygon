@@ -22,7 +22,7 @@ public:
 		return &m_pointlist[number + 1];
 	}
 
-	int GetPointListSize()
+	size_t GetPointListSize()
 	{
 		return m_pointlist.size();
 	}

@@ -4,6 +4,7 @@
 #include "Game.h"
 #include "GameSound.h"
 #include "Cylinder.h"
+#include "GameEffect.h"
 
 // EffectEmitterを使用するために、ファイルをインクルードする。
 #include "graphics/effect/EffectEmitter.h"
@@ -296,8 +297,7 @@ void Enemy::Attack()
 				m_game->enemypaint.y = 300.0f;
 			}
 
-			Vector3 playerposi = m_player->GetPosition();
-			m_renderingEngine->SpriteDraw(playerposi,0,m_cylinder->m_modelRender, m_cylinder->m_number, 0, m_startVector, m_endVector);
+			m_renderingEngine->SpriteDraw(0,m_cylinder->m_modelRender, m_cylinder->m_number, m_startVector, m_endVector);
 			m_isAttack = true;
 			//攻撃ステートに遷移
 			m_enemyState = enEnemyState_Shot;

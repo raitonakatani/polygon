@@ -15,6 +15,7 @@ class Triangle;
 class Enemy;
 class GameUI;
 class Fade;
+class Clearmodel;
 
 
 class Game : public IGameObject
@@ -52,6 +53,7 @@ private:
 	bool				m_isWaitFadeout = false;		//フェード。
 	Fade*				m_fade = nullptr;				//フェード
 	GameUI*				m_ui = nullptr;					//UI
+	Clearmodel*			m_clearmodel = nullptr;			//クリアモデル
 	float				m_timer = 0.0f;					//タイマー
 
 	std::string FILE[5];

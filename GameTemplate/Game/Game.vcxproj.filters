@@ -17,7 +17,6 @@
     <ClCompile Include="GameCamera.cpp" />
     <ClCompile Include="Floor.cpp" />
     <ClCompile Include="box.cpp" />
-    <ClCompile Include="Magic.cpp" />
     <ClCompile Include="Cylinder.cpp" />
     <ClCompile Include="Triangle.cpp" />
     <ClCompile Include="GameSound.cpp" />
@@ -29,6 +28,7 @@
     <ClCompile Include="EnemyPath.cpp" />
     <ClCompile Include="Stairs.cpp" />
     <ClCompile Include="Clearmodel.cpp" />
+    <ClCompile Include="GameEffect.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -41,7 +41,6 @@
     <ClInclude Include="GameCamera.h" />
     <ClInclude Include="Floor.h" />
     <ClInclude Include="box.h" />
-    <ClInclude Include="Magic.h" />
     <ClInclude Include="Cylinder.h" />
     <ClInclude Include="Triangle.h" />
     <ClInclude Include="GameSound.h" />
@@ -53,5 +52,6 @@
     <ClInclude Include="EnemyPath.h" />
     <ClInclude Include="Stairs.h" />
     <ClInclude Include="Clearmodel.h" />
+    <ClInclude Include="GameEffect.h" />
   </ItemGroup>
 </Project>

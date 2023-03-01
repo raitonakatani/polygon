@@ -72,10 +72,10 @@ Game::~Game()
 	}
 
 	DeleteGO(m_gameCamera);
+	DeleteGO(m_clearmodel);
 	DeleteGO(m_player);
 	DeleteGO(m_floor);
 	DeleteGO(m_ui);
-
 }
 bool Game::Start()
 {
@@ -98,15 +98,15 @@ bool Game::Start()
 	//レベルを構築する。
 	m_levelRender[phase].Init(FILE[phase].c_str(), [&](LevelObjectData& objData) {
 		
-		if (objData.EqualObjectName(L"player") == true) {
-			// プレイヤーのオブジェクトを生成する。
-			m_player = NewGO<Player>(0, "player");
-			m_player->SetPosition(objData.position);
-			//m_player->SetRotation(objData.rotation);
-			//m_player->SetScale(objData.scale);
-			//trueにすると、レベルの方でモデルが読み込まれて配置される。
-			return true;
-		}
+		//if (objData.EqualObjectName(L"player") == true) {
+		//	// プレイヤーのオブジェクトを生成する。
+		//	m_player = NewGO<Player>(0, "player");
+		//	m_player->SetPosition(objData.position);
+		//	//m_player->SetRotation(objData.rotation);
+		//	//m_player->SetScale(objData.scale);
+		//	//trueにすると、レベルの方でモデルが読み込まれて配置される。
+		//	return true;
+		//}
 
 		if (objData.EqualObjectName(L"stage") == true) {
 			// 床のオブジェクトを生成する。
@@ -183,14 +183,14 @@ bool Game::Start()
 
 	m_floor = NewGO<Floor>(0, "floor");
 
-	//m_player = NewGO<Player>(0, "player");
-	//m_player->SetPosition({ 0.0f,150.0f,-300.0f });
+	m_player = NewGO<Player>(0, "player");
+	m_player->SetPosition({ 0.0f,150.0f,-300.0f });
 
 	// 当たり判定の描画
 	PhysicsWorld::GetInstance()->EnableDrawDebugWireFrame();
 
-	//auto clearmodel = NewGO<Clearmodel>(0, "model");
-	//clearmodel->SetPosition({ 0.0f,150.0f,-300.0f });
+	m_clearmodel = NewGO<Clearmodel>(0, "model");
+	m_clearmodel->SetPosition({ 0.0f,150.0f,-300.0f });
 
 	// カメラのオブジェクトを生成する。
 	m_gameCamera = NewGO<GameCamera>(0, "gameCamera");
@@ -217,7 +217,7 @@ void Game::Update()
 	else {
 		//Aボタンを押したら。
 		if (m_paintnumber >= 42 && m_timer >= 3.0f ||
-			phase >= 5 && m_timer >= 3.0f) {
+			phase > 5 && m_timer >= 3.0f) {
 			m_isWaitFadeout = true;
 			m_fade->StartFadeOut();
 		}
@@ -230,13 +230,10 @@ void Game::Update()
 			phase += 1;
 		}
 		if (phase == 5) {
-			//phase += 1;
-			//NewGO<Title>(0, "title");
-			////自身を削除する。
-			//DeleteGO(this);
+			phase += 1;
 			return;
 		}
-		if (phase < 4) {
+		if (phase <= 4) {
 			m_levelRender[phase].Init(FILE[phase].c_str(), [&](LevelObjectData& objData) {
 				if (objData.EqualObjectName(L"enemy") == true) {
 					// 床のオブジェクトを生成する。

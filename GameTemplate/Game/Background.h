@@ -1,24 +1,24 @@
 #pragma once
 
 class Player;
-class Game;
 
 class Background : public IGameObject
 {
 public:
 	Background() {}
-	~Background();
+	~Background() {}
 
 	bool Start();
 	void Update();
+	// インクのレンダリング処理
+	void InkRendering();
 	void Render(RenderContext& rc);
 
-	//座標を設定。
+	// 座標を設定。
 	void SetPosition(const Vector3& position)
 	{
 		m_position = position;
 	}
-
 	/// <summary>
 	/// 回転を設定。
 	/// </summary>
@@ -27,7 +27,6 @@ public:
 	{
 		m_rotation = rotation;
 	}
-
 	/// <summary>
 	/// 大きさを設定。
 	/// </summary>
@@ -36,37 +35,24 @@ public:
 	{
 		m_scale = scale;
 	}
-
+	/// <summary>
+	/// 番号を設定。
+	/// </summary>
+	/// <param name="scale">番号。</param>
 	void SetNumber(const int& number)
 	{
 		m_number = number;
 	}
 
-	ModelRender					m_modelRender;					//ステージ
 private:
-	Player* m_player;						//プレイヤー
-	Game* m_game;						//ゲーム
-	PhysicsStaticObject			m_physicsStaticObject;			//静的物理オブジェクト・
-	Vector3						m_position;						//座標。
-	Quaternion					m_rotation;						//回転。
-	Vector3						m_scale = g_vec3One;						//大きさ。
-
-
-	Vector3 POS;
-	Vector2 UV;
-
-
-	SpriteInitData inkspriteinitdata;
-	Sprite inksprite;
-	SpriteInitData spriteinitdata;
-	Sprite sprite;
-
-	RenderingEngine* m_renderingEngine = &g_renderingEngine;
-
-
-	Vector3 startVector;
-	Vector3 endVector;
-
-	int m_number = 0;
-	int reset = 0;
+	ModelRender				m_modelRender;								// ステージ
+	Player*					m_player;									// プレイヤー
+	PhysicsStaticObject		m_physicsStaticObject;						// 静的物理オブジェクト
+	Vector3					m_position;									// 座標。
+	Quaternion				m_rotation;									// 回転。
+	Vector3					m_scale = g_vec3One;						// 大きさ。
+	RenderingEngine*		m_renderingEngine = &g_renderingEngine;		// レンダリングエンジン
+	Vector3					m_startVector;								// 開始座標
+	Vector3					m_endVector;								// 終了座標
+	int						m_number = 0;								// オブジェクトの番号
 };

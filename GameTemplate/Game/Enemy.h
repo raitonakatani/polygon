@@ -10,6 +10,7 @@ class Player;
 class GameSound;
 class EnemyPath;
 class Cylinder;
+class GameEffect;
 
 class Enemy : public IGameObject
 {
@@ -98,7 +99,7 @@ public:
 	bool m_isAttack = false;
 	float yup = 0.0f;
 	int phase = 0;
-	int m_hp = 50;
+	int m_hp = 150;
 	int m_phaseNumber = 0;
 	float m_timer = 0.0f;
 
@@ -167,6 +168,7 @@ private:
 	Player*					m_player;									// プレイヤー
 	GameSound*				m_gameSound;								// ゲームサウンド
 	Cylinder*				m_cylinder;
+	GameEffect*				m_gameEffect;
 	// クラス Engine
 	ModelRender				m_modelRender;								// モデルレンダー
 	CharacterController     m_charaCon;	                                // キャラコン

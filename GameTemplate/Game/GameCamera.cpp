@@ -18,6 +18,7 @@ namespace
 	const float SET_FAR = 40000.0f;				// 遠平面
 
 	const Vector3 NOMAL_CAMERA_POSI = { 0.0f, 80.0f, -250.0f };
+	const Vector3 CLEAR_CAMERA_POSI = { 0.0f, 0.0f, 150.0f };
 }
 
 GameCamera::GameCamera()
@@ -49,15 +50,11 @@ void GameCamera::Update()
 {
 	if (m_game->phase >= 5) {
 		//通常カメラ
-		Vector3 tage = m_player->GetPosition();
+		Vector3 tage = Vector3{ 0.0f,150.0f,400.0f };
 		//プレイヤの足元からちょっと上を注視点とする。
 		tage.y += CLEAR_CAMERA;
-		m_toCameraPosOld = m_toCameraPos;
 
-		Vector3 cameraposi = m_toCameraPos;
-		cameraposi.x *= -0.8f;
-		cameraposi.y = 0.0f;
-		cameraposi.z *= -0.8f;
+		Vector3 cameraposi = CLEAR_CAMERA_POSI;
 		m_pos = tage + cameraposi;
 
 		//メインカメラに注視点と視点を設定する。
@@ -69,12 +66,12 @@ void GameCamera::Update()
 		return;
 	}
 
-	if (m_game->m_paintnumber == 40 && m_timer <= 15.0f)
+	if (m_game->m_paintnumber == 40 && m_timer <= 13.0f)
 	{
 		m_timer += g_gameTime->GetFrameDeltaTime();
 		m_pos = m_game->enemyposi;
 		Vector3 target = m_game->enemypaint;
-		if (m_timer <= 13.5f) {
+		if (m_timer <= 12.0f) {
 			int ramx = -5 - rand() % 11;
 			int ramz = -5 - rand() % 11;
 			int ramy = -3 - rand() % 7;
@@ -98,7 +95,7 @@ void GameCamera::Update()
 
 		return;
 	}
-	else if (m_game->m_paintnumber == 40 && m_timer >= 15.0f) {
+	else if (m_game->m_paintnumber == 40 && m_timer >= 13.0f) {
 		m_game->m_paintnumber = 41;
 	}
 

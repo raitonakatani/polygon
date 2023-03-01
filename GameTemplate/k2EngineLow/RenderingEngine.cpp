@@ -92,11 +92,9 @@ namespace nsK2EngineLow
 
 
 	void RenderingEngine::SpriteDraw(
-		Vector3& position,
 		int target,
 		ModelRender& Model,
 		int i,
-		int reset,
 		Vector3& startVector,		//線分始点
 		Vector3& endVector		//線分終点
 	)

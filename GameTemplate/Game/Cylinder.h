@@ -3,6 +3,7 @@
 class Game;
 class Player;
 class Enemy;
+class GameEffect;
 
 class Cylinder : public IGameObject
 {
@@ -45,6 +46,7 @@ public:
 	ModelRender					m_modelRender;								//ステージ
 private:
 	Game* m_game;
+	GameEffect* m_gameeffect;
 	Player* m_player;
 	Enemy* m_enemy;
 	EffectEmitter* m_effect = nullptr;							// エフェクト

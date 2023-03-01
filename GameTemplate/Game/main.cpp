@@ -5,6 +5,7 @@
 #include "Player.h"
 #include "GameSound.h"
 #include "GameCamera.h"
+#include "GameEffect.h"
 #include "Fade.h"
 
 // K2EngineLowのグローバルアクセスポイント。
@@ -19,7 +20,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
 
 	// ゲームの初期化。
-	InitGame(hInstance, hPrevInstance, lpCmdLine, nCmdShow, TEXT("Paint"));
+	InitGame(hInstance, hPrevInstance, lpCmdLine, nCmdShow, TEXT("waternto"));
 
 	// k2EngineLowの初期化。
 	g_k2EngineLow = new K2EngineLow();
@@ -31,6 +32,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	g_bloom.Init();
 	g_renderingEngine.Init();
 	auto gamesound = NewGO<GameSound>(0, "gamesound");
+	auto gameeffect = NewGO<GameEffect>(0, "gameeffect");
 	auto fade = NewGO<Fade>(0, "fade");
 	auto title = NewGO<Title>(0, "title");
 

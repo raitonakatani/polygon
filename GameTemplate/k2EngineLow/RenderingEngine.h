@@ -24,11 +24,9 @@ namespace nsK2EngineLow
 		void SpriteInit(const char* albedoMap,int i);
 
 		void SpriteDraw(
-			Vector3& position,
 			int target,
 			ModelRender& Model,
 			int i,
-			int reset,
 			Vector3& A,		//線分始点
 			Vector3& B		//線分終点
 		);

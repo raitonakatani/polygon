@@ -129,7 +129,7 @@ private:
 
 	// クラス IGameObject
 	Game*					m_game = nullptr;							// ゲーム。
-	GameSound*				m_gameSound;								// ゲームサウンド
+	GameSound*				m_gameSound = nullptr;						// ゲームサウンド
 	// クラス Engine
 	ModelRender				m_modelRender;								// モデルレンダー
 	ModelRender				m_clearmodel;								// モデルレンダー
@@ -149,8 +149,8 @@ private:
 	float					m_move = 80.0f;								// 移動速度（加速度）
 	float					m_lStick_x = 0.0f;							// Lスティックの入力量
 	float					m_lStick_y = 0.0f;							// Lスティックの入力量
-	float					y;											// Rスティックの入力量
-	float					y2;											// Rスティックの入力量
+	float					y = 0;										// Rスティックの入力量
+	float					y2 = 0;										// Rスティックの入力量
 	int                     m_gunId = -1;								//「Gun」ボーンのID。
 
 	int m_hp = 50;

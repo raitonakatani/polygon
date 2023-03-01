@@ -41,8 +41,7 @@ void Stairs::Update()
 
 	if (g_pad[0]->IsPress(enButtonRB1) == true)
 	{
-		Vector3 posi = m_player->GetPosition();
-		m_renderingEngine->SpriteDraw(posi,1, m_modelRender, m_number, reset, startVector, endVector);
+		m_renderingEngine->SpriteDraw(1, m_modelRender, m_number, startVector, endVector);
 	}
 }
 void Stairs::Render(RenderContext& rc)

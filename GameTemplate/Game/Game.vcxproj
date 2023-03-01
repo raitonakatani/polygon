@@ -233,9 +233,9 @@
     <ClCompile Include="Floor.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameCamera.cpp" />
+    <ClCompile Include="GameEffect.cpp" />
     <ClCompile Include="GameSound.cpp" />
     <ClCompile Include="GameUI.cpp" />
-    <ClCompile Include="Magic.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Result.cpp" />
@@ -260,9 +260,9 @@
     <ClInclude Include="Floor.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameCamera.h" />
+    <ClInclude Include="GameEffect.h" />
     <ClInclude Include="GameSound.h" />
     <ClInclude Include="GameUI.h" />
-    <ClInclude Include="Magic.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Result.h" />
     <ClInclude Include="Stairs.h" />

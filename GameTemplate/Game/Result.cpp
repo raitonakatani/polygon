@@ -25,7 +25,7 @@ Result::~Result()
 bool Result::Start()
 {
 	//ゲームクリアの画像を読み込む。
-	m_spriteRender.Init("Assets/sprite/Result.dds");
+	m_spriteRender.Init("Assets/sprite/GameClear.dds");
 
 	m_fade = FindGO<Fade>("fade");
 	m_fade->StartFadeIn();

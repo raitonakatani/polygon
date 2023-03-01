@@ -1,7 +1,6 @@
 #pragma once
 
 class Game;
-class Player;
 
 class Clearmodel : public IGameObject
 {
@@ -13,8 +12,7 @@ public:
 public:
 
 	Clearmodel() {}
-	~Clearmodel();
-
+	~Clearmodel() {}
 
 	bool Start();
 	void Update();
@@ -36,7 +34,6 @@ public:
 	{
 		return m_position;
 	}
-
 	/// <summary>
 	/// 回転を設定。
 	/// </summary>
@@ -45,7 +42,6 @@ public:
 	{
 		m_rotation = rotation;
 	}
-
 	/// <summary>
 	/// 大きさを設定。
 	/// </summary>
@@ -60,24 +56,18 @@ public:
 		enAnimClip_Victory,				//アニメーションの数
 		enAnimClip_Num				//アニメーションの数
 	};
-	float m_timer = 0.0f;
-
-
 private:
 
 	// クラス IGameObject
-	Game* m_game;
-	Player* m_player;									// プレイヤー
+	Game*					m_game;										// ゲーム
 	// クラス Engine
 	ModelRender				m_modelRender;								// モデルレンダー
-	CharacterController     m_charaCon;	                                // キャラコン
 	Vector3                 m_forward = Vector3::AxisZ;                 // 前方向のベクトル
 	Vector3                 m_moveSpeed;                                // 移動速度
 	Vector3					m_scale = g_vec3One;		                // 拡大率
-	Vector3					m_position;
+	Vector3					m_position;									// 座標
 	Quaternion				m_rotation;					                // 回転
 	AnimationClip           m_animationClipArray[enAnimClip_Num];		// アニメーションクリップ
-	EnEnemyState			m_enemyState = enEnemyState_Victory;			// プレイヤーステート
-
+	EnEnemyState			m_enemyState = enEnemyState_Victory;		// プレイヤーステート
 };
 
