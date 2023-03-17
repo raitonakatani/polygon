@@ -9,9 +9,7 @@
 namespace
 {
 	// Vector3
-	const Vector3 MODEL_SCALE = { 1.0f, 1.0f, 1.0f };						//モデルの大きさ
-	const Vector3 COLLISION_SCALE = { 20.0f, 20.0f, 120.0f };				//コリジョンの大きさ
-	const Vector3 COLLISION_PORK_SCALE = { 40.0f, 30.0f, 140.0f };			//コリジョン（ポーク）の大きさ
+	const Vector3 EFFECTSCALE = { 2.5f,2.5f,1.0f };		        // エフェクトの大きさ
 	// float													
 	const float CHARACON_RADIUS = 18.0f;						// キャラコンの半径
 	const float CHARACON_HEIGHT = 55.0f;						// キャラコンの高さ
@@ -68,7 +66,7 @@ bool Player::Start()
 
 void Player::Update()
 {
-	if (m_game->phase >= 5)
+	if (m_game->m_phase >= 5)
 	{
 		return;
 	}
@@ -120,7 +118,7 @@ void Player::Update()
 	// 座標、回転、大きさの更新
 	m_modelRender.SetPosition(m_position);
 	m_modelRender.SetRotation(m_rotation);
-	m_modelRender.SetScale(MODEL_SCALE);
+	m_modelRender.SetScale(m_scale);
 
 
 	// モデルの更新
@@ -240,7 +238,7 @@ void Player::Collision()
 
 void Player::Render(RenderContext& rc)
 {
-	if (m_game->phase >= 5)
+	if (m_game->m_phase >= 5)
 	{
 		return;
 	}
@@ -284,7 +282,7 @@ void Player::ProcessCommonStateTransition()
 		m_effect->SetPosition(effectposi);
 		m_effect->SetRotation(effectRot);
 		// エフェクトの大きさを設定する。
-		m_effect->SetScale(scale * 12.0f);
+		m_effect->SetScale(EFFECTSCALE * 12.0f);
 		m_effect->Play();
 		//	m_effect->SetWorldMatrix(matrix);
 

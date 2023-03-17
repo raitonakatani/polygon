@@ -16,7 +16,7 @@ public:
 private:
 	//メンバ変数。
 	bool					m_isWaitFadeout = false;	//フェード。
-	Fade* m_fade = nullptr;           //フェード。
+	Fade*					m_fade = nullptr;           //フェード。
 	SpriteRender			m_spriteRender;				//スプライトレンダー。
 };
 

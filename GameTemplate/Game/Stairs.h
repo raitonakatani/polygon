@@ -38,30 +38,15 @@ public:
 		m_number = number;
 	}
 
-	ModelRender					m_modelRender;					//ステージ
 private:
-	Player* m_player;						//プレイヤー
-	PhysicsStaticObject			m_physicsStaticObject;			//静的物理オブジェクト・
-	Vector3						m_position;						//座標。
-	Quaternion					m_rotation;						//回転。
-	Vector3						m_scale = g_vec3One;						//大きさ。
-
-
-	Vector3 POS;
-	Vector2 UV;
-
-
-	SpriteInitData inkspriteinitdata;
-	Sprite inksprite;
-	SpriteInitData spriteinitdata;
-	Sprite sprite;
-
-	RenderingEngine* m_renderingEngine = &g_renderingEngine;
-
-
-	Vector3 startVector;
-	Vector3 endVector;
-
-	int m_number = 0;
-	int reset = 0;
+	Player*						m_player;									// プレイヤー
+	ModelRender					m_modelRender;								// ステージ
+	PhysicsStaticObject			m_physicsStaticObject;						// 静的物理オブジェクト・
+	Vector3						m_position;									// 座標。
+	Vector3						m_scale = g_vec3One;						// 大きさ。
+	Vector3						m_startVector;								// 開始座標
+	Vector3						m_endVector;								// 終了座標
+	Quaternion					m_rotation;									// 回転。
+	RenderingEngine*			m_renderingEngine = &g_renderingEngine;		// レンダリングエンジン
+	int							m_number = 0;								// ナンバー
 };

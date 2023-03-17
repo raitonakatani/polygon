@@ -32,7 +32,7 @@ bool Clearmodel::Start()
 void Clearmodel::Update()
 {
 	m_game = FindGO<Game>("game");
-	if (m_game->phase < PHASE)
+	if (m_game->m_phase < PHASE)
 	{
 		return;
 	}
@@ -52,7 +52,7 @@ void Clearmodel::Update()
 void Clearmodel::Render(RenderContext& rc)
 {
 	// ゲームをクリアしていなかったら。
-	if (m_game->phase < PHASE)
+	if (m_game->m_phase < PHASE)
 	{
 		// 処理を行わない。
 		return;

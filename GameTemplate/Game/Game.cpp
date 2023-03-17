@@ -96,7 +96,7 @@ bool Game::Start()
 
 
 	//レベルを構築する。
-	m_levelRender[phase].Init(m_file[phase].c_str(), [&](LevelObjectData& objData) {
+	m_levelRender[m_phase].Init(m_file[m_phase].c_str(), [&](LevelObjectData& objData) {
 		
 		//if (objData.EqualObjectName(L"player") == true) {
 		//	// プレイヤーのオブジェクトを生成する。
@@ -200,7 +200,7 @@ bool Game::Start()
 void Game::Update()
 {
 
-	if (m_paintnumber == 42 || phase >= 5)
+	if (m_paintnumber == 42 || m_phase >= 5)
 	{
 		m_timer += g_gameTime->GetFrameDeltaTime();
 	}
@@ -215,7 +215,7 @@ void Game::Update()
 	else {
 		//Aボタンを押したら。
 		if (m_paintnumber >= 42 && m_timer >= 3.0f ||
-			phase > 5 && m_timer >= 3.0f) {
+			m_phase > 5 && m_timer >= 3.0f) {
 			m_isWaitFadeout = true;
 			m_fade->StartFadeOut();
 		}
@@ -223,16 +223,16 @@ void Game::Update()
 
 	m_player = FindGO<Player>("player");
 	if (m_number == m_player->m_enemynumber) {
-		if (phase <= 4) {
+		if (m_phase <= 4) {
 			m_ui->m_number += 1;
-			phase += 1;
+			m_phase += 1;
 		}
-		if (phase == 5) {
-			phase += 1;
+		if (m_phase == 5) {
+			m_phase += 1;
 			return;
 		}
-		if (phase <= 4) {
-			m_levelRender[phase].Init(m_file[phase].c_str(), [&](LevelObjectData& objData) {
+		if (m_phase <= 4) {
+			m_levelRender[m_phase].Init(m_file[m_phase].c_str(), [&](LevelObjectData& objData) {
 				if (objData.EqualObjectName(L"enemy") == true) {
 					// 床のオブジェクトを生成する。
 					m_enemy = NewGO<Enemy>(0, "enemy");

@@ -16,9 +16,9 @@ public:
 	void Update();
 	void Render(RenderContext& rc);
 	//private:
-	Fade* m_fade = nullptr;				//フェード。
-	SpriteRender			m_spriteRender;					//タイトルの画像。
-	bool					m_isWaitFadeout = false;
-	float					m_alpha = 0.0f;					//pressbuttonのα値。
-	float					m_timer = 0.0f;
+	Fade*					m_fade = nullptr;				// フェード。
+	SpriteRender			m_spriteRender;					// タイトルの画像。
+	float					m_alpha = 0.0f;					// pressbuttonのα値。
+	float					m_timer = 0.0f;					// タイマー
+	bool					m_isWaitFadeout = false;		// フェードアウト
 };

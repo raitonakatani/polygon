@@ -36,12 +36,12 @@ void Stairs::Update()
 	m_modelRender.Update();
 
 	m_player = FindGO<Player>("player");
-	startVector = m_player->GetStartVector();
-	endVector = m_player->GetEndVector();
+	m_startVector = m_player->GetStartVector();
+	m_endVector = m_player->GetEndVector();
 
 	if (g_pad[0]->IsPress(enButtonRB1) == true)
 	{
-		m_renderingEngine->SpriteDraw(1, m_modelRender, m_number, startVector, endVector);
+		m_renderingEngine->SpriteDraw(1, m_modelRender, m_number, m_startVector, m_endVector);
 	}
 }
 void Stairs::Render(RenderContext& rc)

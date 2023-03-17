@@ -17,28 +17,20 @@ public:
 	int		m_reset = 2;
 private:
 
-	Game* m_game;
-
-	SpriteRender			m_compass;					// コンパスの画像
-	SpriteRender			m_compassguideline;			// 指針の画像
-	SpriteRender			m_phase[5];					// フェーズの画像
-	SpriteRender			m_directionPhase[5];		// 方向の画像
-	SpriteRender			m_gameover;					//	
-
-	Vector3					m_forward;					// 前方向のベクトル
-	Quaternion				m_rotation;					// 回転
-	float					m_rot = 0.0f;				// 回転量
-	float m_timer=0.0f;
-	float m_x = 0.0f;
-	float m_y = 675.0f;
-	float m_y2 = 550.0f;
-	Vector3 m_scale = Vector3::One;
-
-	float m_yposi = 800.0f;
-
-//	bool				m_isWaitFadeout = false;		//フェード。
-	Fade* m_fade = nullptr;				//フェード
-
+	Game*				m_game;						// ゲーム
+	Fade*				m_fade = nullptr;			// フェード
+	SpriteRender		m_compass;					// コンパスの画像
+	SpriteRender		m_compassguideline;			// 指針の画像
+	SpriteRender		m_phase[5];					// フェーズの画像
+	SpriteRender		m_directionPhase[5];		// 方向の画像
+	SpriteRender		m_gameover;					// ゲームオーバーの画像
+	Vector3				m_forward;					// 前方向のベクトル
+	Vector3				m_scale = Vector3::One;		// 大きさ 
+	Quaternion			m_rotation;					// 回転
+	float				m_rot = 0.0f;				// 回転量
+	float				m_timer=0.0f;				// タイマー
+	float				m_x = 0.0f;					// X軸
+	float				m_y = 675.0f;				// Y軸
+	float				m_y2 = 550.0f;				// Y軸２
+	float				m_yposi = 800.0f;			// Y座標
 };
-
-

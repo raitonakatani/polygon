@@ -36,17 +36,10 @@ public:
 	}
 
 private:
-	ModelRender					m_modelRender;					//ステージ
-	Player* m_player;						//プレイヤー
-	PhysicsStaticObject			m_physicsStaticObject;			//静的物理オブジェクト・
-	Vector3						m_position;						//座標。
-	Quaternion					m_rotation;						//回転。
-	Vector3						m_scale = g_vec3One;						//大きさ。
-	Magic* magic;
-
-	Vector2 m_uv;
-	Vector3 POS;
-	Vector3 BufferPosition[3];			//三角形の頂点座標
-
-
+	Player*						m_player;						// プレイヤー
+	ModelRender					m_modelRender;					// ステージ
+	PhysicsStaticObject			m_physicsStaticObject;			// 静的物理オブジェクト・
+	Vector3						m_position;						// 座標。
+	Quaternion					m_rotation;						// 回転。
+	Vector3						m_scale = g_vec3One;			// 大きさ。
 };

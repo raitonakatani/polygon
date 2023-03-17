@@ -48,7 +48,7 @@ bool GameCamera::Start()
 }
 void GameCamera::Update()
 {
-	if (m_game->phase >= 5) {
+	if (m_game->m_phase >= 5) {
 		//通常カメラ
 		Vector3 tage = Vector3{ 0.0f,150.0f,400.0f };
 		//プレイヤの足元からちょっと上を注視点とする。
@@ -69,8 +69,8 @@ void GameCamera::Update()
 	if (m_game->m_paintnumber == 40 && m_timer <= 13.0f)
 	{
 		m_timer += g_gameTime->GetFrameDeltaTime();
-		m_pos = m_game->enemyposi;
-		Vector3 target = m_game->enemypaint;
+		m_pos = m_game->m_enemyposi;
+		Vector3 target = m_game->m_enemypaint;
 		if (m_timer <= 12.0f) {
 			int ramx = -5 - rand() % 11;
 			int ramz = -5 - rand() % 11;
@@ -139,7 +139,7 @@ void GameCamera::Update()
 	//視点を計算する。
 	m_pos = target + m_toCameraPos;
 
-	if (m_game->phase >= 5) {
+	if (m_game->m_phase >= 5) {
 		Vector3 cameraposi = m_toCameraPos;
 		cameraposi.x *= -0.8f;
 		cameraposi.y -= 100.0f;

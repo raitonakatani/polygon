@@ -287,10 +287,10 @@ void Enemy::Attack()
 			
 			if (m_game->m_paintnumber == 40)
 			{
-				m_game->enemyposi = m_startVector + paint * -400.0f;
-				m_game->enemyposi.y = 550.0f;
-				m_game->enemypaint = m_paintposi;
-				m_game->enemypaint.y = 300.0f;
+				m_game->m_enemyposi = m_startVector + paint * -400.0f;
+				m_game->m_enemyposi.y = 550.0f;
+				m_game->m_enemypaint = m_paintposi;
+				m_game->m_enemypaint.y = 300.0f;
 			}
 
 			m_renderingEngine->SpriteDraw(0,m_cylinder->GetModel(), m_cylinder->GetNumber(), m_startVector, m_endVector);

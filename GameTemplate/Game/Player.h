@@ -143,21 +143,16 @@ private:
 	Vector3					m_position;					                // 座標
 	Vector3                 m_moveSpeed;                                // 移動速度
 	Vector3					m_scale = g_vec3One;		                // 拡大率
-	Vector3					scale = { 2.5f,2.5f,1.0f };		                // 拡大率
 	Quaternion				m_rotation;					                // 回転
 	AnimationClip           m_animationClipArray[enAnimClip_Num];		// アニメーションクリップ
 	EnPlayerState           m_playerState = enPlayerState_Idle;			// プレイヤーステート
-	float					m_move = 80.0f;								// 移動速度（加速度）
-	float					m_lStick_x = 0.0f;							// Lスティックの入力量
-	float					m_lStick_y = 0.0f;							// Lスティックの入力量
-	float					y = 0;										// Rスティックの入力量
-	float					y2 = 0;										// Rスティックの入力量
 	int                     m_gunId = -1;								//「Gun」ボーンのID。
-
-	int m_hp = 150;
-	float lStick_x = 0.0f;
-	float lStick_y = 0.0f;
-	bool m_damage = false;
-	float m_damageTimer = 0.0f;
-
+	int						m_hp = 150;									// HP
+	float					m_move = 80.0f;								// 移動速度（加速度）
+	float					m_lStick_x = 0.0f;							// Lスティックxの入力量
+	float					m_lStick_y = 0.0f;							// Lスティックyの入力量
+	float					lStick_x = 0.0f;							// Lスティックxの加速量
+	float					lStick_y = 0.0f;							// Lスティックyの加速量
+	float					m_damageTimer = 0.0f;						// 被ダメージ時間
+	bool					m_damage = false;							// ダメージ判定
 };
