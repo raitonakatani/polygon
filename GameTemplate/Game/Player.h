@@ -143,6 +143,7 @@ private:
 	Vector3					m_position;					                // 座標
 	Vector3                 m_moveSpeed;                                // 移動速度
 	Vector3					m_scale = g_vec3One;		                // 拡大率
+	Vector3					scale = { 2.5f,2.5f,1.0f };		                // 拡大率
 	Quaternion				m_rotation;					                // 回転
 	AnimationClip           m_animationClipArray[enAnimClip_Num];		// アニメーションクリップ
 	EnPlayerState           m_playerState = enPlayerState_Idle;			// プレイヤーステート
@@ -153,7 +154,7 @@ private:
 	float					y2 = 0;										// Rスティックの入力量
 	int                     m_gunId = -1;								//「Gun」ボーンのID。
 
-	int m_hp = 50;
+	int m_hp = 150;
 	float lStick_x = 0.0f;
 	float lStick_y = 0.0f;
 	bool m_damage = false;

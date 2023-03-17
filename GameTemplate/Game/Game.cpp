@@ -87,16 +87,16 @@ bool Game::Start()
 		std::string number;
 		//文字列に変換
 		number = std::to_string(i);
-		FILE[i] = "Assets/Level/testStage.phase";
-		FILE[i] += number;
-		FILE[i] += ".tkl";
+		m_file[i] = "Assets/Level/testStage.phase";
+		m_file[i] += number;
+		m_file[i] += ".tkl";
 	}
 
 	SkyCube* m_sky = NewGO<SkyCube>(0, "sky");
 
 
 	//レベルを構築する。
-	m_levelRender[phase].Init(FILE[phase].c_str(), [&](LevelObjectData& objData) {
+	m_levelRender[phase].Init(m_file[phase].c_str(), [&](LevelObjectData& objData) {
 		
 		//if (objData.EqualObjectName(L"player") == true) {
 		//	// プレイヤーのオブジェクトを生成する。
@@ -137,8 +137,6 @@ bool Game::Start()
 			m_enemy->SetPosition(objData.position);
 			m_enemy->SetRotation(objData.rotation);
 			m_number++;
-			m_enemy->phase = 0;
-		//	m_enemy->SetScale(objData.scale);
 			//trueにすると、レベルの方でモデルが読み込まれて配置される。
 			return true;
 		}
@@ -234,14 +232,13 @@ void Game::Update()
 			return;
 		}
 		if (phase <= 4) {
-			m_levelRender[phase].Init(FILE[phase].c_str(), [&](LevelObjectData& objData) {
+			m_levelRender[phase].Init(m_file[phase].c_str(), [&](LevelObjectData& objData) {
 				if (objData.EqualObjectName(L"enemy") == true) {
 					// 床のオブジェクトを生成する。
 					m_enemy = NewGO<Enemy>(0, "enemy");
 					m_enemy->SetPosition(objData.position);
 					m_enemy->SetRotation(objData.rotation);
 					m_number++;
-					m_enemy->phase = 1;
 					//trueにすると、レベルの方でモデルが読み込まれて配置される。
 					return true;
 				}

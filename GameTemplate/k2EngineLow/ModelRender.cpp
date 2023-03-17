@@ -117,23 +117,6 @@ namespace nsK2EngineLow {
 		m_model.Init(initData);
 	}
 
-	void ModelRender::InitTestModel(const char* filePath)
-	{
-		ModelInitData m_testInitData;;
-		// step-1 半透明のモデルを初期化
-		m_testInitData.m_tkmFilePath = filePath;
-		m_testInitData.m_fxFilePath = "Assets/shader/Splatoon/DrawTexture.fx";
-
-		m_testInitData.m_vsEntryPointFunc = "VSMain";
-
-		// 半透明モデルはモデルを描くときにライティングを行うので、ライトの情報を渡す。
-//		m_testInitData.m_expandConstantBuffer = &g_Light.GetLight();
-//		m_testInitData.m_expandConstantBufferSize = sizeof(g_Light.GetLight());
-
-		// 半透明の球体モデルを初期化。
-		m_testmodel.Init(m_testInitData);
-	}
-
 
 	void ModelRender::InitModel(const char* filePath)
 	{

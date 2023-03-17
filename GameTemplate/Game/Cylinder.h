@@ -42,24 +42,36 @@ public:
 		m_number = number;
 	}
 
-	int m_number = 0;
-	ModelRender					m_modelRender;								//ステージ
+	const int& GetNumber()
+	{
+		return m_number;
+	}
+
+	/// <summary>
+	/// モデルを取得する。
+	/// </summary>
+	/// <returns>モデル。</returns>
+	ModelRender& GetModel()
+	{
+		return m_modelRender;
+	}
+
 private:
-	Game* m_game;
-	GameEffect* m_gameeffect;
-	Player* m_player;
-	Enemy* m_enemy;
-	EffectEmitter* m_effect = nullptr;							// エフェクト
-	PhysicsStaticObject			m_physicsStaticObject;						//静的物理オブジェクト・
-	Vector3						m_position;									//座標。
-	Quaternion					m_rotation;									//回転。
-	Vector3						m_scale = g_vec3One;						//大きさ。
-
-	RenderingEngine*			m_renderingEngine = &g_renderingEngine;
-
-	Vector3 m_startVector;
-	Vector3 m_endVector;
-	float m_timer = 0.0f;
-	float m_falltimer = 0.0f;
-	bool m_towerUP = false;
+	ModelRender				m_modelRender;								// ステージ
+	Game*					m_game;										// ゲーム
+	GameEffect*				m_gameeffect;								// エフェクト
+	Player*					m_player;									// プレイヤー
+	Enemy*					m_enemy;									// 敵
+	EffectEmitter*			m_effect = nullptr;							// エフェクト
+	PhysicsStaticObject		m_physicsStaticObject;						// 静的物理オブジェクト・
+	Vector3					m_position;									// 座標。
+	Quaternion				m_rotation;									// 回転。
+	Vector3					m_scale = g_vec3One;						// 大きさ。
+	RenderingEngine*		m_renderingEngine = &g_renderingEngine;		// レンダリングエンジン
+	Vector3					m_startVector;								// 開始座標
+	Vector3					m_endVector;								// 終了座標
+	float					m_timer = 0.0f;								// タイマー
+	float					m_falltimer = 0.0f;							// タワーが落ちる時間
+	int						m_number = 0;								// 登録ナンバー
+	bool					m_towerUP = false;							// タワーの場所
 };

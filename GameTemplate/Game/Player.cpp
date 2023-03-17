@@ -96,7 +96,7 @@ void Player::Update()
 		// ボックス状のコリジョンを作成する。
 		m_collision->CreateBox(collisionPosition,		 // 座標。
 			m_rotation,                                      // 回転。
-			Vector3(40.0f, 20.0f, 250.0f)                    // 大きさ。
+			Vector3(60.0f, 40.0f, 250.0f)                    // 大きさ。
 		);
 		m_collision->SetName("player");
 	}
@@ -183,7 +183,7 @@ void Player::Move()
 
 	if (m_position.y <= -55.0f || m_hp <= 0) {
 		m_position = { 0.0f,200.0f,-500.0f };
-		m_hp = 50;
+		m_hp = 100;
 		Vector3 posi = m_position;
 		posi.y += 5.0f;
 		m_charaCon.SetPosition(posi);
@@ -233,6 +233,7 @@ void Player::Collision()
 		}
 		else {
 			m_damage = false;
+			return;
 		}
 	}
 }
@@ -252,6 +253,7 @@ void Player::Render(RenderContext& rc)
 		}
 	}
 	else {
+		m_damageTimer = 1.0f;
 		// モデルをドロー。
 		m_modelRender.Draw(rc);
 	}
@@ -268,7 +270,7 @@ void Player::ProcessCommonStateTransition()
 		Vector3 effectposi = m_position;
 		effectposi.y += 35.0f;
 		m_forward=g_camera3D->GetForward();
-		effectposi += m_forward * 50.0f;
+		effectposi += m_forward * 15.0f;
 
 		Vector3 m_right = Vector3::AxisX;
 		rot.Apply(m_right);
@@ -282,7 +284,7 @@ void Player::ProcessCommonStateTransition()
 		m_effect->SetPosition(effectposi);
 		m_effect->SetRotation(effectRot);
 		// エフェクトの大きさを設定する。
-		m_effect->SetScale(m_scale * 12.0f);
+		m_effect->SetScale(scale * 12.0f);
 		m_effect->Play();
 		//	m_effect->SetWorldMatrix(matrix);
 

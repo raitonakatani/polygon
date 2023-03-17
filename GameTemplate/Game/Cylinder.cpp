@@ -74,7 +74,7 @@ void Cylinder::Update()
 	for (auto m_enemy : m_enemys)
 	{
 		// “G‚ª•`‰æ‚³‚ê‚Ä‚¢‚È‚©‚Á‚½‚ç
-		if (m_enemy->m_timer <= DARWTIMER)
+		if (m_enemy->GetTimer() <= DARWTIMER || m_game->m_paintnumber >= TOWER_HP)
 		{
 			// ƒ^ƒ[‚Í‰º‚É‚ ‚éB
 			m_towerUP = false;

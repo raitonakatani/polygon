@@ -67,6 +67,15 @@ public:
 		m_scale = scale;
 	}
 
+	/// <summary>
+	/// タイマーを取得する。
+	/// </summary>
+	/// <returns>タイマー。</returns>
+	const float& GetTimer() const
+	{
+		return m_timer;
+	}
+
 
 	/// <summary>
 	/// 始点の座標を取得する。
@@ -91,23 +100,6 @@ public:
 		enAnimClip_Walk,			//歩くアニメーション
 		enAnimClip_Num,				//アニメーションの数
 	};
-
-	/*bool IsAttack()
-	{
-		return m_isAttack;
-	}*/
-	bool m_isAttack = false;
-	float yup = 0.0f;
-	int phase = 0;
-	int m_hp = 150;
-	int m_phaseNumber = 0;
-	float m_timer = 0.0f;
-
-	//void SetNumber(const int& number)
-	//{
-	//	m_number = number;
-	//}
-	bool gameover = false;
 
 private:
 	/// <summary>
@@ -164,17 +156,18 @@ private:
 
 
 	// クラス IGameObject
-	Game* m_game;
+	Game*					m_game;										// ゲーム
 	Player*					m_player;									// プレイヤー
 	GameSound*				m_gameSound;								// ゲームサウンド
-	Cylinder*				m_cylinder;
-	GameEffect*				m_gameEffect;
+	Cylinder*				m_cylinder;									// タワー
+	GameEffect*				m_gameEffect;								// エフェクト
 	// クラス Engine
 	ModelRender				m_modelRender;								// モデルレンダー
 	CharacterController     m_charaCon;	                                // キャラコン
-	SphereCollider			m_sphereCollider;							//スフィアコライダー
+	SphereCollider			m_sphereCollider;							// スフィアコライダー
 	EffectEmitter*			m_effect = nullptr;							// エフェクト
-	CollisionObject*		m_collision;
+	CollisionObject*		m_collision;						        // コリジョン
+	RenderingEngine*		m_renderingEngine = &g_renderingEngine;     // レンダリングエンジン
 	// パス
 	EnemyPath				m_enemypath;								//パス
 	// 関数
@@ -183,40 +176,28 @@ private:
 	Vector3                 m_forward = Vector3::AxisZ;                 // 前方向のベクトル
 	Vector3                 m_moveSpeed;                                // 移動速度
 	Vector3					m_scale = g_vec3One;		                // 拡大率
-	Vector3					scale= g_vec3One;
-	Vector3					paintposi = Vector3{ 0.0f,200.0f,0.0f };
+	Vector3					m_paintposi = Vector3{ 0.0f,200.0f,0.0f };
+	Vector3					m_position;									// 座標
+	Vector3					m_targetPointPosition = Vector3{ 0.0f,150.0f,200.0f };		// 目標地点の座標
+	Vector3					m_diff;										// エネミーの座標から目標地点に向かうベクトル
+	Vector3					m_oldPosition;								// パス更新前の座標
+	Vector3					m_targetposi = Vector3(0.0f, 150.0f, 200.0f);				// ペイント地点の座標
 	Quaternion				m_rotation;					                // 回転
 	AnimationClip           m_animationClipArray[enAnimClip_Num];		// アニメーションクリップ
 	EnEnemyState			m_enemyState = enEnemyState_Idle;			// プレイヤーステート
-	float					m_move = 80.0f;								// 移動速度（加速度）
-	float					m_lStick_x = 0.0f;							// Lスティックの入力量
-	float					m_lStick_y = 0.0f;							// Lスティックの入力量
-	int                     m_gunId = -1;								//「Gun」ボーンのID。
 	nsAI::NaviMesh			m_nvmMesh;									// ナビメッシュ
 	nsAI::Path				m_path;										// パス
 	nsAI::PathFinding		m_pathFiding;								// パス検索
-	Vector3					m_position;									// 座標
-	Vector3					m_targetPointPosition = Vector3{ 0.0f,150.0f,200.0f };		// 目標地点の座標
-
-	Vector3					m_diff;										// エネミーの座標から目標地点に向かうベクトル
+	int						a = 0;										// 配列ナンバー
+	int						b = 0;										// 配列ナンバー
+	int						m_hp = 150;									// 体力
 	float					timer = 0.0f;								// タイマー
-	Vector3					m_oldPosition;								// パス更新前の座標
-	bool					m_isSearchPlayer = false;					//見るけているか？
-	bool					m_death = false;
-	float aaa;
-	Vector3 m_targetposi = Vector3(0.0f, 150.0f, 200.0f);
-	//int m_number = 0;
-	float yposi = 0.0f;
-	RenderingEngine* m_renderingEngine = &g_renderingEngine;
+	float					m_ramtime = 0.0f;							// ランダムタイマー
+	float					m_timer = 0.0f;								// タイマー
+	float					m_damageTimer = 0.0f;						// 被ダメ時間
+	bool					m_damage = false;							// ダメージ判定処理
+	bool					m_isAttack = false;							// 攻撃判定処理
+	bool					m_isSearchPlayer = false;					// 見つけているか？
 
-	int a = 0;
-	int b = 0;
-
-	float			ramtime = 0.0f;
-	float			m_nowy;
-	int				m_paintnaumber = 0;
-	int				m_searchNumber = 0;
-	bool			m_damage = false;
-	float			m_damageTimer = 0.0f;
 };
 

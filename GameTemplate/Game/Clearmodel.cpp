@@ -4,8 +4,9 @@
 
 namespace
 {
-	Vector3 MODEL_POSITION = { 0.0f,150.0f,400.0f };		//　キャラクターの座標
-	int		PHASE = 5;										//現在のフェーズ
+	Vector3 MODEL_POSITION = { 0.0f,150.0f,400.0f };		// キャラクターの座標
+	int		PHASE = 5;										// 現在のフェーズ
+	float ANIMATIONSPEED = 0.5f;							// アニメーションの速度
 }
 
 bool Clearmodel::Start()
@@ -35,7 +36,7 @@ void Clearmodel::Update()
 	{
 		return;
 	}
-	m_modelRender.SetAnimationSpeed(0.5f);
+	m_modelRender.SetAnimationSpeed(ANIMATIONSPEED);
 
 	// モデルの座標を設定。
 	m_position = MODEL_POSITION;

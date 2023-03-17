@@ -40,8 +40,6 @@ namespace nsK2EngineLow {
 
 		void InitModel(const char* filePath);
 
-		void InitTestModel(const char* filePath);
-
 
 		void modelUpdate();
 
