@@ -20,16 +20,14 @@
 
 namespace
 {
-	const Vector3 PLAYER_SET_POSITION = { 0.0f,250.0f,-500.0f };	//プレイヤーのセットポジション
-	const Vector3 FLOOR_SET_POSITION = { 00.0f,0.0f,00.0f };		//床のセットポジション
+	const Vector3 PLAYER_SET_POSITION = { 0.0f,150.0f,-300.0f };	//プレイヤーのセットポジション
 	const Vector3 CYLINDER_SET_POSI = { 0.0f,-200.0f,0.0f };		//床のセットポジション
 
-
-	const int PRIORITY_ZERO = 0;								//プライオリティ 優先権
-	const float PLUS_COLOR = 0.015f;							//加算するカラーの値
-	const float MAX_AMBIENT_COLOR = 2.0f;						//環境光の最大値
-	const float SPRITE_COLOR = 1.0f;							//スプライトのカラー値
-	const float PLUS_ALPHA = 0.2f;								//乗算するα値
+	const int MAX_PHASE = 5;		// 最大フェーズ
+	const int PHASE = 4;			// 最大フェーズ
+	const int PLUS_COUNT = 1;		// カウントプラス
+	const int MAX_PAINT = 42;		// カウントプラス
+	const int LIMIT_TIMER = 3.0f;	// カウントプラス
 }
 
 Game::~Game()
@@ -79,10 +77,8 @@ Game::~Game()
 }
 bool Game::Start()
 {
-	int i = 1;
-
-
-	for (int i = 1;i < 5;i++) {
+	int i = PLUS_COUNT;
+	for (int i = 1;i < MAX_PHASE;i++) {
 		//パス
 		std::string number;
 		//文字列に変換
@@ -98,16 +94,6 @@ bool Game::Start()
 	//レベルを構築する。
 	m_levelRender[m_phase].Init(m_file[m_phase].c_str(), [&](LevelObjectData& objData) {
 		
-		//if (objData.EqualObjectName(L"player") == true) {
-		//	// プレイヤーのオブジェクトを生成する。
-		//	m_player = NewGO<Player>(0, "player");
-		//	m_player->SetPosition(objData.position);
-		//	//m_player->SetRotation(objData.rotation);
-		//	//m_player->SetScale(objData.scale);
-		//	//trueにすると、レベルの方でモデルが読み込まれて配置される。
-		//	return true;
-		//}
-
 		if (objData.EqualObjectName(L"stage") == true) {
 			// 床のオブジェクトを生成する。
 			m_background = NewGO<Background>(0, "background");
@@ -181,14 +167,15 @@ bool Game::Start()
 
 	m_floor = NewGO<Floor>(0, "floor");
 
+	// プレイヤーのオブジェクトを作成する
 	m_player = NewGO<Player>(0, "player");
-	m_player->SetPosition({ 0.0f,150.0f,-300.0f });
+	m_player->SetPosition(PLAYER_SET_POSITION);
 
 	// 当たり判定の描画
 	PhysicsWorld::GetInstance()->EnableDrawDebugWireFrame();
 
 	m_clearmodel = NewGO<Clearmodel>(0, "model");
-	m_clearmodel->SetPosition({ 0.0f,150.0f,-300.0f });
+	m_clearmodel->SetPosition(PLAYER_SET_POSITION);
 
 	// カメラのオブジェクトを生成する。
 	m_gameCamera = NewGO<GameCamera>(0, "gameCamera");
@@ -200,7 +187,7 @@ bool Game::Start()
 void Game::Update()
 {
 
-	if (m_paintnumber == 42 || m_phase >= 5)
+	if (m_paintnumber == MAX_PAINT || m_phase >= MAX_PHASE)
 	{
 		m_timer += g_gameTime->GetFrameDeltaTime();
 	}
@@ -214,8 +201,8 @@ void Game::Update()
 	}
 	else {
 		//Aボタンを押したら。
-		if (m_paintnumber >= 42 && m_timer >= 3.0f ||
-			m_phase > 5 && m_timer >= 3.0f) {
+		if (m_paintnumber >= MAX_PAINT && m_timer >= LIMIT_TIMER ||
+			m_phase > MAX_PHASE && m_timer >= LIMIT_TIMER) {
 			m_isWaitFadeout = true;
 			m_fade->StartFadeOut();
 		}
@@ -223,15 +210,15 @@ void Game::Update()
 
 	m_player = FindGO<Player>("player");
 	if (m_number == m_player->m_enemynumber) {
-		if (m_phase <= 4) {
-			m_ui->m_number += 1;
-			m_phase += 1;
+		if (m_phase <= PHASE) {
+			m_ui->m_number += PLUS_COUNT;
+			m_phase += PLUS_COUNT;
 		}
-		if (m_phase == 5) {
-			m_phase += 1;
+		if (m_phase == MAX_PHASE) {
+			m_phase += PLUS_COUNT;
 			return;
 		}
-		if (m_phase <= 4) {
+		if (m_phase <= PHASE) {
 			m_levelRender[m_phase].Init(m_file[m_phase].c_str(), [&](LevelObjectData& objData) {
 				if (objData.EqualObjectName(L"enemy") == true) {
 					// 床のオブジェクトを生成する。

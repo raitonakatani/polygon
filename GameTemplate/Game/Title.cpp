@@ -25,6 +25,7 @@ bool Title::Start()
 	//画像を読み込む。
 	m_spriteRender.Init("Assets/sprite/Title.dds");
 
+	// フェードを読み込む
 	m_fade = FindGO<Fade>("fade");
 	m_fade->StartFadeIn();
 
@@ -55,6 +56,7 @@ void Title::Update()
 void Title::Render(RenderContext& rc)
 {
 	if (m_isWaitFadeout == false) {
+		// 描画処理
 		m_spriteRender.Draw(rc);
 	}
 }

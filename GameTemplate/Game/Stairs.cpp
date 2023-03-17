@@ -5,11 +5,12 @@
 
 bool Stairs::Start()
 {
+	// モデルを読み込む。
 	m_modelRender.Init("Assets/modelData/testModel/stairs.tkm", true);
 	//モデルの座標を設定。
 	m_modelRender.SetPosition(m_position);
 	//モデルの回転を設定。
-//	m_modelRender.SetRotation(m_rotation);
+	//	m_modelRender.SetRotation(m_rotation);
 	//モデルの大きさを設定。
 	m_modelRender.SetScale(m_scale);
 	//モデルの更新処理。
@@ -31,16 +32,23 @@ bool Stairs::Start()
 }
 void Stairs::Update()
 {
+	// モデルの座標を設定する
 	m_modelRender.SetPosition(m_position);
+	// モデルの大きさを設定する
 	m_modelRender.SetScale(m_scale);
+	// モデルを更新する
 	m_modelRender.Update();
 
+	// プレイヤーを探す
 	m_player = FindGO<Player>("player");
+	// 開始座標と終了座標を設定する
 	m_startVector = m_player->GetStartVector();
 	m_endVector = m_player->GetEndVector();
 
+	// 攻撃されていた場合
 	if (g_pad[0]->IsPress(enButtonRB1) == true)
 	{
+		// インクの処理を行う
 		m_renderingEngine->SpriteDraw(1, m_modelRender, m_number, m_startVector, m_endVector);
 	}
 }
