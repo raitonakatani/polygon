@@ -94,7 +94,6 @@ namespace nsK2EngineLow {
 		const char* filePath
 	) 
 	{
-		m_uvscroll = true;
 		ModelInitData initData;
 
 		initData.m_tkmFilePath = filePath;
@@ -117,25 +116,6 @@ namespace nsK2EngineLow {
 		m_model.Init(initData);
 	}
 
-
-	void ModelRender::InitModel(const char* filePath)
-	{
-		// step-1 半透明のモデルを初期化
-		transModelInitData.m_tkmFilePath = filePath;
-		transModelInitData.m_fxFilePath = "Assets/shader/model.fx";
-		// 半透明モデルはモデルを描くときにライティングを行うので、ライトの情報を渡す。
-		transModelInitData.m_expandConstantBuffer = &g_Light.GetLight();
-		transModelInitData.m_expandConstantBufferSize = sizeof(g_Light.GetLight());
-		// ピクセルシェーダのエントリーポイントが不透明モデルとは異なる。
-		// 不透明モデルはPSMain、半透明モデルはPSMainTransを使用する。
-		// ピクセルシェーダの実装は後で確認。
-//		transModelInitData.m_psEntryPointFunc = "PSMainTrans";
-
-		//【重要】半透明合成。
-		transModelInitData.m_alphaBlendMode = AlphaBlendMode_Trans;
-		// 半透明の球体モデルを初期化。
-		sphereModel.Init(transModelInitData);
-	}
 
 	void ModelRender::modelUpdate()
 	{
@@ -168,10 +148,7 @@ namespace nsK2EngineLow {
 	}
 
 	void ModelRender::Update()
-	{
-		m_uv += 0.005f;
-	//	g_renderingEngine.IsUVScroll(m_uv);
-		
+	{	
 		m_model.UpdateWorldMatrix(m_position, m_rotation, m_scale);
 		m_shadowmodel.UpdateWorldMatrix(m_position, m_rotation, m_scale);
 		if (m_skeleton.IsInited()) {
@@ -189,11 +166,6 @@ namespace nsK2EngineLow {
 	void ModelRender::Draw(RenderContext& rc)
 	{
 		m_model.Draw(rc);
-		//半透明オブジェクトを描画！
-		//sphereModel.Draw(rc);
-
-		//m_testmodel.Draw(rc);
-
 		g_renderingEngine.AddRenderObject(this);
 	}
 

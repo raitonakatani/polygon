@@ -37,10 +37,6 @@ namespace nsK2EngineLow {
 		Sprite defferdLightinSpr;
 	public:
 
-
-		void InitModel(const char* filePath);
-
-
 		void modelUpdate();
 
 		Model m_testmodel;
@@ -452,29 +448,6 @@ namespace nsK2EngineLow {
 			return m_isHit;
 		}
 
-		///やりたいことリスト（やらなければならない）
-		///その１　当たった場所を求める　　　　　　　						できた		modelRender.hで行っている
-		///　　　　衝突したポリゴンの３頂点のUV座標を持ってくる				できた
-		///その２　当たったかどうかの判定									できた		modelRender.hで行っている
-		///その３　インクをテクスチャにオフスクリーンレンダリング			出来てない　　DrawTextureクラスで行う
-		///　　　　メイン部分　　　その時にテクスチャ差し替え				できた
-		///　　　　シェーダー部分　衝突点のUV座標を求める　　　　　　　　　
-		///その４　できたやつをオンスクリーンレンダリング
-		///        メイン部分　　　差し替えたテクスチャを元に戻す			
-
-
-		///その後　インゲーム部分
-		/// プレイヤーのアニメーション部分の作成
-		/// アイドル（棒立ち）　走る　撃つ（止まりながら）　撃つ（走りながら）
-		/// スプラ２のイクラモードを想定してマップを作る
-		/// ゲーム内容はガチエリア　敵に一定以上陣地を塗られたらゲームオーバー
-		/// ウェーブを乗り越えたらゲームクリア
-		/// ラストらへんでラッシュを作る
-		/// 
-		/// 
-		/// 
-
-
 
 
 	private:
@@ -498,15 +471,14 @@ namespace nsK2EngineLow {
 			const Matrix& lvpMatrix
 		);
 
-		//		const  GetVertexBuffer();
 
 
 	private:
-		Model						m_model;
-		Model					m_shadowmodel;							//シャドウモデル。
-		Skeleton					m_skeleton;							// スケルトン
-		float						m_animationSpeed = 1.0f;
-		AnimationClip* m_animationClips = nullptr;						// アニメーションクリップ。
+		Model						m_model;							// 通常モデル。
+		Model						m_shadowmodel;						// シャドウモデル。
+		Skeleton					m_skeleton;							// スケルトン。
+		float						m_animationSpeed = 1.0f;			// アニメーションの速度。
+		AnimationClip*				m_animationClips = nullptr;			// アニメーションクリップ。
 		int							m_numAnimationClips = 0;			// アニメーションクリップの数。
 		Animation					m_animation;						// アニメーション。
 		Vector3 					m_position;							// 座標。
@@ -519,12 +491,7 @@ namespace nsK2EngineLow {
 		bool						m_isEnableInstancingDraw = false;	// インスタンシング描画が有効？
 		std::unique_ptr<Matrix[]>	m_worldMatrixArray;					// ワールド行列の配列。
 		StructuredBuffer			m_worldMatrixArraySB;				// ワールド行列の配列のストラクチャードバッファ。
-		EnModelUpAxis			m_enFbxUpAxis = enModelUpAxisZ;			// FBXの上方向。
-		bool					m_isShadowCaster = true;
-
-		//TkmFile m_tkm;
-		//		ModelRenderCB* m_modelCB;
-		bool m_uvscroll = false;
-		float m_uv = 0.0f;
+		EnModelUpAxis				m_enFbxUpAxis = enModelUpAxisZ;		// FBXの上方向。
+		bool						m_isShadowCaster = true;			// シャドウキャスター
 	};
 }
