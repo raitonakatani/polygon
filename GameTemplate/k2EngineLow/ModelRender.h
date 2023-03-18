@@ -218,7 +218,7 @@ namespace nsK2EngineLow {
 			return m_model.GetTkmFile();
 		}
 
-		bool m_isHit;
+	bool m_isHit;
 
 		//三角形と点の当たり判定
 		bool hittest_polygon_3d(
@@ -364,7 +364,7 @@ namespace nsK2EngineLow {
 			nsK2EngineLow::TkmFile::VectorBuffer rushPoint;
 			for (int v = 0; v < polygon.size();v++) {
 
-
+				// 近い方の衝突点を優先する
 				if (v == 0)
 				{
 					rushPoint = polygon[v];
@@ -382,7 +382,7 @@ namespace nsK2EngineLow {
 				}
 			}
 
-
+			// 外積を求めて、面積を比率を求める
 			auto v0v1 = rushPoint.buffer[1] - rushPoint.buffer[0];
 			auto v0h = rushPoint.Rushpoint - rushPoint.buffer[0];
 			Vector3 z;
@@ -412,7 +412,7 @@ namespace nsK2EngineLow {
 			uvy = yarea / xyz;
 			uvz = zarea / xyz;
 
-
+			// 求めた値を三頂点のUV座標に乗算する。
 			Huv0.x = rushPoint.uv[0].x * uvx;
 			Huv0.y = rushPoint.uv[0].y * uvx;
 
