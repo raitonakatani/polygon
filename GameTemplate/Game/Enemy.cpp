@@ -191,22 +191,28 @@ void Enemy::Move()
 		);
 	}
 	if (m_diff.Length() >= range && timer < 0.3f) {
+		Vector3 position = m_position;
 		// パス上を移動する。
-		m_position = m_path.Move(
-			m_position,
+		position = m_path.Move(
+			position,
 			4.0f,
 			isEnd
 		);
-		m_position* m_forward;
-		diff = m_position - m_oldPosition;
+		position* m_forward;
+		diff = position - m_oldPosition;
 		diff.Normalize();
 		m_moveSpeed = diff;
 	}
 
 	// 重力
 	m_moveSpeed.y -= GRAVITY * g_gameTime->GetFrameDeltaTime();
-	m_charaCon.SetPosition(m_position);
-	m_charaCon.Execute(m_moveSpeed, g_gameTime->GetFrameDeltaTime());
+	//m_charaCon.SetPosition(m_position);
+	m_moveSpeed.x *= 150.0f;
+	m_moveSpeed.z *= 150.0f;
+	m_position = m_charaCon.Execute(m_moveSpeed, g_gameTime->GetFrameDeltaTime());
+
+	m_moveSpeed.x /= 150.0f;
+	m_moveSpeed.z /= 150.0f;
 
 	// 座標の更新
 	Vector3 modelPosition = m_position;
@@ -399,6 +405,7 @@ void Enemy::Collision()
 			m_damage = false;
 		}
 	}
+
 }
 
 void Enemy::ProcessCommonStateTransition()
@@ -426,7 +433,7 @@ void Enemy::ProcessCommonStateTransition()
 		m_enemyState = enEnemyState_Shot;
 		return;
 	}
-
+	else{
 	// xかzの移動速度があったら
 	if (fabsf(m_moveSpeed.x) >= 0.001f || fabsf(m_moveSpeed.z) >= 0.001f)
 	{
@@ -439,7 +446,7 @@ void Enemy::ProcessCommonStateTransition()
 		m_enemyState = enEnemyState_Idle;
 		return;
 	}
-}
+}}
 
 void Enemy::ProcessIdleStateTransition()
 {
